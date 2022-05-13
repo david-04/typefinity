@@ -21,6 +21,11 @@ module.exports = {
     output: {
         filename: "index.js",
         path: path.resolve(__dirname, "build/webpack"),
+        library: {
+            name: 'typefinity',
+            type: 'umd',
+        },
+        globalObject: 'this',
     },
     plugins: [
         new DtsBundleWebpack({

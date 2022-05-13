@@ -11,11 +11,12 @@ JS=$(patsubst src/%.ts, build/tsc/%.js, $(TS))
 # Phony targets
 #-----------------------------------------------------------------------------------------------------------------------
 
-.PHONY: clean run tsc
+.PHONY: clean run tsc webpack
 
 CLEAN_DESCRIPTION=remove the build directory
 RUN_DESCRIPTION=run the playground module
 TSC_DESCRIPTION=compile sources via tsc
+WEBPACK_DESCRIPTION=bundle library via webpack
 
 autorun : help;
 
@@ -24,9 +25,10 @@ help :
 	$(info $(UNDEFINED)  clean ... $(CLEAN_DESCRIPTION))
 	$(info $(UNDEFINED)  run ..... $(RUN_DESCRIPTION))
 	$(info $(UNDEFINED)  tsc ..... $(TSC_DESCRIPTION))
+	$(info $(UNDEFINED)  webpack ..... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Typescript compilation
+# Compile TypeScript via TSC
 #-----------------------------------------------------------------------------------------------------------------------
 
 tsc: $(JS);
@@ -36,11 +38,21 @@ $(JS) : $(TS) src/tsconfig.json
 	tsc -p src/tsconfig.json
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Run playground
+# Run the playground module
 #-----------------------------------------------------------------------------------------------------------------------
 
 run : build/tsc/playground.js
 	node --enable-source-maps $^
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Webpack
+#-----------------------------------------------------------------------------------------------------------------------
+
+webpack : build/webpack/typefinity.js;
+
+build/webpack/typefinity.js : $(TS) src/tsconfig.json
+	echo Bundeling via webpack...
+	webpack
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Cleanup

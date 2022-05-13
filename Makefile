@@ -22,10 +22,10 @@ autorun : help;
 
 help :
 	$(info )
-	$(info $(UNDEFINED)  clean ... $(CLEAN_DESCRIPTION))
-	$(info $(UNDEFINED)  run ..... $(RUN_DESCRIPTION))
-	$(info $(UNDEFINED)  tsc ..... $(TSC_DESCRIPTION))
-	$(info $(UNDEFINED)  webpack ..... $(WEBPACK_DESCRIPTION))
+	$(info $()  clean ..... $(CLEAN_DESCRIPTION))
+	$(info $()  run ....... $(RUN_DESCRIPTION))
+	$(info $()  tsc ....... $(TSC_DESCRIPTION))
+	$(info $()  webpack ... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Compile TypeScript via TSC
@@ -50,7 +50,7 @@ run : build/tsc/playground.js
 
 webpack : build/webpack/typefinity.js;
 
-build/webpack/typefinity.js : $(TS) src/tsconfig.json
+build/webpack/typefinity.js : $(TS) src/tsconfig.json webpack.config.js
 	echo Bundeling via webpack...
 	webpack
 

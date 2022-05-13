@@ -1,0 +1,22 @@
+{
+  "name": "typefinity",
+  "version": "0.0.1",
+  "description": "A general-purpose TypeScript library to quickly draft everyday scripts",
+  "main": "typefinity.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/david-04/typefinity.git",
+    "directory": "package"
+  },
+  "keywords": [
+    "typescript",
+    "library"
+  ],
+  "author": "David Hofmann",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/david-04/typefinity/issues"
+  },
+  "homepage": "https://github.com/david-04/typefinity#readme",
+  "bin": "./cli.js"
+}

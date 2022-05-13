@@ -52,7 +52,9 @@ wp webpack : build/webpack/typefinity.js;
 
 build/webpack/typefinity.js : $(JS) src/tsconfig.json webpack.config.js
 	echo Bundeling via webpack...
-	webpack
+	webpack \
+		&& sed 's|webpack:///./src/|./src/|g' build/webpack/typefinity.js.map.tmp > build/webpack/typefinity.js.map \
+		&& rm build/webpack/typefinity.js.map.tmp
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Cleanup

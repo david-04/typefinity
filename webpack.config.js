@@ -1,10 +1,11 @@
 const path = require("path");
 const DtsBundleWebpack = require("dts-bundle-webpack");
+const webpack = require("webpack");
 
 module.exports = {
     entry: "./src/library/typefinity.ts",
     mode: "production",
-    devtool: "source-map",
+    devtool: false,
     module: {
         rules: [
             {
@@ -27,7 +28,12 @@ module.exports = {
             main: "build/tsc/library/typefinity.d.ts",
             out: "../../webpack/typefinity.d.ts",
             externals: false,
-            verbose: true,
+            verbose: false,
+        }),
+        new webpack.SourceMapDevToolPlugin({
+            noSources: true,
+            filename: "typefinity.js.map.tmp",
+            append: "\n//# sourceMappingURL=typefinity.js.map\n",
         }),
     ],
 };

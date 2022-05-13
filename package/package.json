@@ -2,7 +2,7 @@
   "name": "typefinity",
   "version": "0.0.1",
   "description": "A general-purpose TypeScript library to quickly draft everyday scripts",
-  "main": "typefinity.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/david-04/typefinity.git",

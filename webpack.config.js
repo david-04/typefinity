@@ -19,21 +19,21 @@ module.exports = {
         extensions: [".tsx", ".ts", ".js"],
     },
     output: {
-        filename: "typefinity.js",
+        filename: "index.js",
         path: path.resolve(__dirname, "build/webpack"),
     },
     plugins: [
         new DtsBundleWebpack({
-            name: "typefinity",
+            name: "@david-04/typefinity",
             main: "build/tsc/library/typefinity.d.ts",
-            out: "../../webpack/typefinity.d.ts",
+            out: "../../webpack/index.d.ts",
             externals: false,
             verbose: false,
         }),
         new webpack.SourceMapDevToolPlugin({
             noSources: true,
-            filename: "typefinity.js.map.tmp",
-            append: "\n//# sourceMappingURL=typefinity.js.map\n",
+            filename: "index.js.map.tmp",
+            append: "\n//# sourceMappingURL=index.js.map\n",
         }),
     ],
 };

@@ -6,7 +6,7 @@
 
 TS=$(wildcard $(patsubst %,src/%.ts, * */* */*/* */*/*/* */*/*/*/* */*/*/*/*/* */*/*/*/*/*/* */*/*/*/*/*/*/*))
 JS=$(patsubst src/%.ts, build/tsc/%.js, $(TS))
-BUNDLE=$(patsubst %, build/webpack/typefinity.%, d.ts js js.map)
+BUNDLE=$(patsubst %, build/webpack/index.%, d.ts js js.map)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Phony targets
@@ -34,43 +34,52 @@ help :
 # Compile TypeScript via TSC
 #-----------------------------------------------------------------------------------------------------------------------
 
-compile tsc: $(JS);
+TSC_TIMESTAMP_FILE=build/tsc/timestamp.tmp
 
-$(JS) : $(TS) src/tsconfig.json
-	echo Compiling...
-	tsc -p src/tsconfig.json
+compile tsc: $(TSC_TIMESTAMP_FILE);
+
+$(TSC_TIMESTAMP_FILE) : $(TS) src/tsconfig.json Makefile
+	echo Compiling... \
+		&& tsc -p src/tsconfig.json \
+		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Run the playground module
 #-----------------------------------------------------------------------------------------------------------------------
 
-run : build/tsc/playground.js
-	node --enable-source-maps $^
+run : $(TSC_TIMESTAMP_FILE)
+	node --enable-source-maps build/tsc/playground.js
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Webpack
 #-----------------------------------------------------------------------------------------------------------------------
 
-wp webpack : $(BUNDLE);
+WEBPACK_TIMESTAMP_FILE=build/webpack/timestamp.tmp
 
-$(BUNDLE) : $(JS) src/tsconfig.json webpack.config.js
-	echo Bundeling via webpack..\
+wp webpack : $(WEBPACK_TIMESTAMP_FILE);
+
+$(WEBPACK_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE) webpack.config.js Makefile
+	echo Bundling... \
 		&& webpack \
-		&& sed 's|webpack:///./src/library/|./src/|g' build/webpack/typefinity.js.map.tmp \
-		   > build/webpack/typefinity.js.map \
-		&& rm build/webpack/typefinity.js.map.tmp \
-		&& touch $(BUNDLE)
+		&& sed 's|webpack:///./src/library/|./src/|g' build/webpack/index.js.map.tmp \
+		   > build/webpack/index.js.map \
+		&& rm build/webpack/index.js.map.tmp \
+		&& touch $(WEBPACK_TIMESTAMP_FILE)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Package
 #-----------------------------------------------------------------------------------------------------------------------
 
-package : $(BUNDLE) $(JS)
-	echo Creating package... \
+EXCLUDED_SOURCES=*.json playground.ts
+EXCLUDE_OPTIONS=$(foreach pattern, $(EXCLUDED_SOURCES), "--exclude=$(pattern)" )
+
+package : $(WEBPACK_TIMESTAMP_FILE)
+	echo Packaging... \
 		&& mkdir -p package \
-		$(foreach file, $(BUNDLE), && cp -f $(file) package/) \
+		&& cp -f build/webpack/index.* package/ \
+		&& rm -rf package/src \
 		&& mkdir -p package/src \
-		&& cp -r src/library/* package/src
+		&& rsync -r -m -p -A $(EXCLUDE_OPTIONS) src/library/ package/src
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Cleanup

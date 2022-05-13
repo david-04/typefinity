@@ -1,4 +1,5 @@
 const path = require("path");
+const DtsBundleWebpack = require("dts-bundle-webpack");
 
 module.exports = {
     entry: "./src/library/typefinity.ts",
@@ -20,4 +21,13 @@ module.exports = {
         filename: "typefinity.js",
         path: path.resolve(__dirname, "build/webpack"),
     },
+    plugins: [
+        new DtsBundleWebpack({
+            name: "typefinity",
+            main: "build/tsc/library/typefinity.d.ts",
+            out: "../../webpack/typefinity.d.ts",
+            externals: false,
+            verbose: true,
+        }),
+    ],
 };

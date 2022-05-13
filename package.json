@@ -1,6 +1,7 @@
 {
     "devDependencies": {
         "@types/node": "^16",
+        "dts-bundle-webpack": "*",
         "ts-loader": "*",
         "typescript": "*",
         "webpack": "*",

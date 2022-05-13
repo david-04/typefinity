@@ -31,7 +31,7 @@ help :
 # Compile TypeScript via TSC
 #-----------------------------------------------------------------------------------------------------------------------
 
-tsc: $(JS);
+compile tsc: $(JS);
 
 $(JS) : $(TS) src/tsconfig.json
 	echo Compiling...
@@ -48,9 +48,9 @@ run : build/tsc/playground.js
 # Webpack
 #-----------------------------------------------------------------------------------------------------------------------
 
-webpack : build/webpack/typefinity.js;
+wp webpack : build/webpack/typefinity.js;
 
-build/webpack/typefinity.js : $(TS) src/tsconfig.json webpack.config.js
+build/webpack/typefinity.js : $(JS) src/tsconfig.json webpack.config.js
 	echo Bundeling via webpack...
 	webpack
 

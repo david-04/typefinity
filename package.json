@@ -3,6 +3,7 @@
         "@types/node": "^16",
         "dts-bundle-webpack": "*",
         "ts-loader": "*",
+        "typedoc": "*",
         "typescript": "*",
         "webpack": "*",
         "webpack-cli": "*"

@@ -12,12 +12,14 @@ BUNDLE=$(patsubst %, build/webpack/index.%, d.ts js js.map)
 # Phony targets
 #-----------------------------------------------------------------------------------------------------------------------
 
-.PHONY: clean package run tsc webpack
+.PHONY: clean doc docs package run tsc webpack typedoc
 
+CLEAN_DESCRIPTION=remove the build directory
 CLEAN_DESCRIPTION=remove the build directory
 PACKAGE_DESCRIPTION=create the NPM package
 RUN_DESCRIPTION=run the playground module
 TSC_DESCRIPTION=compile sources via tsc
+TYPEDOC_DESCRIPTION=create the API documentation
 WEBPACK_DESCRIPTION=bundle library via webpack
 
 autorun : help;
@@ -28,6 +30,7 @@ help :
 	$(info $()  package ... $(PACKAGE_DESCRIPTION))
 	$(info $()  run ....... $(RUN_DESCRIPTION))
 	$(info $()  tsc ....... $(TSC_DESCRIPTION))
+	$(info $()  typedoc ... $(TYPEDOC_DESCRIPTION))
 	$(info $()  webpack ... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -64,7 +67,7 @@ $(WEBPACK_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE) webpack.config.js Makefile
 		&& sed 's|webpack:///./src/library/|./src/|g' build/webpack/index.js.map.tmp \
 		   > build/webpack/index.js.map \
 		&& rm build/webpack/index.js.map.tmp \
-		&& touch $(WEBPACK_TIMESTAMP_FILE)
+		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Package
@@ -80,6 +83,29 @@ package : $(WEBPACK_TIMESTAMP_FILE)
 		&& rm -rf package/src \
 		&& mkdir -p package/src \
 		&& rsync -r -m -p -A $(EXCLUDE_OPTIONS) src/library/ package/src
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Documentation
+#-----------------------------------------------------------------------------------------------------------------------
+
+TYPEDOC_TIMESTAMP_FILE=build/typedoc/timestamp.tmp
+
+typedoc docs doc : $(TYPEDOC_TIMESTAMP_FILE)
+
+$(TYPEDOC_TIMESTAMP_FILE) : $(TS) Makefile
+	echo Documenting... \
+		&& mkdir -p build/typedoc \
+		&& typedoc --out build/typedoc \
+				   --tsconfig src/tsconfig.json \
+				   --name typefinity \
+				   --githubPages false \
+				   --gitRemote https://github.com/david-04/typefinity.git \
+				   --excludePrivate \
+				   --excludeProtected \
+				   --sort static-first --sort alphabetical \
+				   src/library/typefinity.ts \
+		&& touch $@
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Cleanup

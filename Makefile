@@ -1,37 +1,43 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# This Makefile requires GNU Make
+#-----------------------------------------------------------------------------------------------------------------------
+
+.SILENT :
+
 TS=$(wildcard $(patsubst %,src/%.ts, * */* */*/* */*/*/* */*/*/*/* */*/*/*/*/* */*/*/*/*/*/* */*/*/*/*/*/*/*))
-JS_TSC=$(patsubst src/%.ts, build/tsc/%.js, $(TS))
-EMPTY=
-BLANK=$(EMPTY) $(EMPTY)
+JS=$(patsubst src/%.ts, build/tsc/%.js, $(TS))
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Global targets
+# Phony targets
 #-----------------------------------------------------------------------------------------------------------------------
 
-autorun : tsc;
+.PHONY: clean run tsc
+
+CLEAN_DESCRIPTION=remove the build directory
+RUN_DESCRIPTION=run the playground module
+TSC_DESCRIPTION=compile sources via tsc
+
+autorun : help;
 
 help :
 	$(info )
-	$(info $(BLANK) tsc ..... compile sources via tsc)
-	$(info $(BLANK) run ..... run the playground module)
-	$(info $(BLANK) clean ... remove the build directory)
+	$(info $(UNDEFINED)  clean ... $(CLEAN_DESCRIPTION))
+	$(info $(UNDEFINED)  run ..... $(RUN_DESCRIPTION))
+	$(info $(UNDEFINED)  tsc ..... $(TSC_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Typescript compilation
 #-----------------------------------------------------------------------------------------------------------------------
 
-.PHONY: tsc
+tsc: $(JS);
 
-tsc: $(JS_TSC);
-
-$(JS_TSC) : $(TS) src/tsconfig.json
+$(JS) : $(TS) src/tsconfig.json
 	echo Compiling...
 	tsc -p src/tsconfig.json
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Run playground
 #-----------------------------------------------------------------------------------------------------------------------
-
-.PHONY: run;
 
 run : build/tsc/playground.js
 	node --enable-source-maps $^

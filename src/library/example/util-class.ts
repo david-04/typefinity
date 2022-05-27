@@ -1,0 +1,13 @@
+export namespace tfu {
+    /**
+     * An example class
+     */
+    export class MyClass {
+        /** An example property */
+        public static readonly MY_PROPERTY = "default-value";
+
+        public printHelloWorld() {
+            console.log("Hello world!");
+        }
+    }
+}

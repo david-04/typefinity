@@ -3,7 +3,7 @@ const DtsBundleWebpack = require("dts-bundle-webpack");
 const webpack = require("webpack");
 
 module.exports = {
-    entry: "./src/library/typefinity.ts",
+    entry: "./src/library/export.ts",
     mode: "production",
     devtool: false,
     module: {
@@ -30,7 +30,7 @@ module.exports = {
     plugins: [
         new DtsBundleWebpack({
             name: "@david-04/typefinity",
-            main: "build/tsc/library/typefinity.d.ts",
+            main: "build/tsc/library/export.d.ts",
             out: "../../webpack/index.d.ts",
             externals: false,
             verbose: false,

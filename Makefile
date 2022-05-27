@@ -102,8 +102,10 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(TS) Makefile
 				   --gitRemote https://github.com/david-04/typefinity.git \
 				   --excludePrivate \
 				   --excludeProtected \
-				   --sort static-first --sort alphabetical \
-				   src/library/typefinity.ts \
+				   --sort static-first \
+				   --sort alphabetical \
+				   --internalNamespace tft \
+				   src/library/export.ts \
 		&& touch $@
 
 

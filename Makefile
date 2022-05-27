@@ -5,6 +5,15 @@
 .SILENT :
 
 SOURCES=$(wildcard $(patsubst %,src/%, * */* */*/* */*/*/* */*/*/*/* */*/*/*/*/* */*/*/*/*/*/* */*/*/*/*/*/*/*))
+VERSION_NUMBER=$(shell grep -E "^## \[[0-9.]+\]" CHANGELOG.md | head -1 | sed "s|^\#\# \[||;s|\].*||")
+BRACKET=(
+COPYRIGHT_FROM=$(shell   grep -E "^## \[[0-9.]+\]" CHANGELOG.md | tail -1 | sed "s|.*$(BRACKET)||;s|-.*||")
+COPYRIGHT_UNITL=$(shell   grep -E "^## \[[0-9.]+\]" CHANGELOG.md | head -1 | sed "s|.*$(BRACKET)||;s|-.*||")
+ifeq "$(COPYRIGHT_FROM)" "$(COPYRIGHT_UNITL)"
+COPYRIGHT_YEARS=$(COPYRIGHT_FROM)
+else
+COPYRIGHT_YEARS=$(COPYRIGHT_FROM)-$(COPYRIGHT_UNITL)
+endif
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Phony targets
@@ -15,6 +24,7 @@ SOURCES=$(wildcard $(patsubst %,src/%, * */* */*/* */*/*/* */*/*/*/* */*/*/*/*/*
 CLEAN_DESCRIPTION=remove the build directory
 PACKAGE_DESCRIPTION=create the NPM package
 PREPROCESS_DESCRIPTION=generate preprocessed/reformatted sources
+RELEASE_DESCRIPTION=create a release
 RUN_DESCRIPTION=run the playground module
 TSC_DESCRIPTION=compile sources via tsc
 TYPEDOC_DESCRIPTION=create the API documentation
@@ -27,6 +37,7 @@ help :
 	$(info $()  clean ........ $(CLEAN_DESCRIPTION))
 	$(info $()  package ...... $(PACKAGE_DESCRIPTION))
 	$(info $()  preprocess ... $(PREPROCESS_DESCRIPTION))
+	$(info $()  release ...... $(RELEASE_DESCRIPTION))
 	$(info $()  run .......... $(RUN_DESCRIPTION))
 	$(info $()  tsc .......... $(TSC_DESCRIPTION))
 	$(info $()  typedoc ...... $(TYPEDOC_DESCRIPTION))
@@ -58,7 +69,6 @@ $(PREPROCESS_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE)
 		&& node --enable-source-maps build/tsc/scripts/build/preprocess-sources.js src build/preprocess \
 		&& touch $@
 
-
 #-----------------------------------------------------------------------------------------------------------------------
 # Webpack
 #-----------------------------------------------------------------------------------------------------------------------
@@ -69,7 +79,7 @@ webpack bundle : $(WEBPACK_TIMESTAMP_FILE);
 
 $(WEBPACK_TIMESTAMP_FILE) : $(PREPROCESS_TIMESTAMP_FILE) webpack.config.js Makefile
 	echo Bundling... \
-		&& webpack \
+		&& webpack --no-stats \
 		&& sed 's|webpack:///./build/preprocess/library/|./src/|g' build/webpack/index.js.map.tmp \
 		   > build/webpack/index.js.map \
 		&& rm build/webpack/index.js.map.tmp \
@@ -123,15 +133,36 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(PREPROCESS_TIMESTAMP_FILE)
 				   build/preprocess/library/export.ts \
 		&& touch $@
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Release
+#-----------------------------------------------------------------------------------------------------------------------
+
+release : update-version-number-and-copyright-years package;
+
+update-version-number-and-copyright-years :
+	echo Updating version information... \
+		&& cat src/scripts/package/version-info.ts \
+			| sed 's/.*VERSION_NUMBER.*/export const VERSION_NUMBER = "$(VERSION_NUMBER)";/g' \
+			| sed 's/.*COPYRIGHT_YEARS.*/export const COPYRIGHT_YEARS = "$(COPYRIGHT_YEARS)";/g' \
+			> build/version-info.ts.tmp \
+		&& mv -f build/version-info.ts.tmp src/scripts/package/version-info.ts \
+		&& cat LICENSE \
+			| sed 's/.*David Hofmann.*/Copyright (c) $(COPYRIGHT_YEARS) David Hofmann/' \
+			> build/LICENSE.tmp \
+		&& mv -f build/LICENSE.tmp LICENSE \
+		&& cat package/package.json \
+			| sed 's/"version": "[^"]*"/"version": "$(VERSION_NUMBER)"/g' \
+			> build/package.json \
+		&& mv -f build/package.json package/package.json
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Cleanup
 #-----------------------------------------------------------------------------------------------------------------------
 
 clean :
-    #ifneq "$(wildcard build)" ""
+    ifneq "$(wildcard build)" ""
 	rm -rf build
-    #endif
+    endif
 
 
 #-----------------------------------------------------------------------------------------------------------------------

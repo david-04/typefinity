@@ -4,11 +4,9 @@
         "dts-bundle-webpack": "*",
         "ts-loader": "*",
         "typedoc": "*",
+        "typedoc-plugin-missing-exports": "*",
         "typescript": "*",
         "webpack": "*",
         "webpack-cli": "*"
-    },
-    "dependencies": {
-        "typedoc-plugin-missing-exports": "^0.22.6"
     }
 }

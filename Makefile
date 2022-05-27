@@ -4,22 +4,29 @@
 
 .SILENT :
 
-SOURCES=$(wildcard $(patsubst %,src/%, * */* */*/* */*/*/* */*/*/*/* */*/*/*/*/* */*/*/*/*/*/* */*/*/*/*/*/*/*))
-VERSION_NUMBER=$(shell grep -E "^## \[[0-9.]+\]" CHANGELOG.md | head -1 | sed "s|^\#\# \[||;s|\].*||")
+#-----------------------------------------------------------------------------------------------------------------------
+# Version numbers and copyright years
+#-----------------------------------------------------------------------------------------------------------------------
+
+TYPEFINITY_VERSION=$(shell grep -E "^## \[[0-9.]+\]" CHANGELOG.md | head -1 | sed "s|^\#\# \[||;s|\].*||")
 BRACKET=(
-COPYRIGHT_FROM=$(shell   grep -E "^## \[[0-9.]+\]" CHANGELOG.md | tail -1 | sed "s|.*$(BRACKET)||;s|-.*||")
-COPYRIGHT_UNITL=$(shell   grep -E "^## \[[0-9.]+\]" CHANGELOG.md | head -1 | sed "s|.*$(BRACKET)||;s|-.*||")
+COPYRIGHT_FROM=$(shell grep -E "^## \[[0-9.]+\]" CHANGELOG.md | tail -1 | sed "s|.*$(BRACKET)||;s|-.*||")
+COPYRIGHT_UNITL=$(shell grep -E "^## \[[0-9.]+\]" CHANGELOG.md | head -1 | sed "s|.*$(BRACKET)||;s|-.*||")
 ifeq "$(COPYRIGHT_FROM)" "$(COPYRIGHT_UNITL)"
 COPYRIGHT_YEARS=$(COPYRIGHT_FROM)
 else
 COPYRIGHT_YEARS=$(COPYRIGHT_FROM)-$(COPYRIGHT_UNITL)
+endif
+NODE_VERSION=$(shell node --version | sed 's|^v||;s|\..*||')
+ifneq "$(NODE_VERSION)" "$(shell grep -E '^## \[[0-9.]+\]' CHANGELOG.md | head -1 | sed 's|^## \[||;s|\..*||;')"
+$(error Please update the major version number in CHANGELOG.md to $(NODE_VERSION) and run "make uplift")
 endif
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Phony targets
 #-----------------------------------------------------------------------------------------------------------------------
 
-.PHONY: clean doc docs package run tsc webpack typedoc
+.PHONY: bundle clean compile doc docs help package preprocess release run tsc test uplift webpack typedoc
 
 CLEAN_DESCRIPTION=remove the build directory
 PACKAGE_DESCRIPTION=create the NPM package
@@ -28,6 +35,7 @@ RELEASE_DESCRIPTION=create a release
 RUN_DESCRIPTION=run the playground module
 TSC_DESCRIPTION=compile sources via tsc
 TYPEDOC_DESCRIPTION=create the API documentation
+UPLIFT_DESCRIPTION=upgrade to the lasted Node version
 WEBPACK_DESCRIPTION=bundle library via webpack
 
 autorun : help;
@@ -41,6 +49,7 @@ help :
 	$(info $()  run .......... $(RUN_DESCRIPTION))
 	$(info $()  tsc .......... $(TSC_DESCRIPTION))
 	$(info $()  typedoc ...... $(TYPEDOC_DESCRIPTION))
+	$(info $()  uplift ....... $(UPLIFT_DESCRIPTION))
 	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -51,7 +60,7 @@ TSC_TIMESTAMP_FILE=build/tsc/timestamp.tmp
 
 compile tsc: $(TSC_TIMESTAMP_FILE);
 
-$(TSC_TIMESTAMP_FILE) : $(SOURCES) Makefile
+$(TSC_TIMESTAMP_FILE) : Makefile $(wildcard $(patsubst %,src/%, * */* */*/* */*/*/* */*/*/*/* */*/*/*/*/* */*/*/*/*/*/* */*/*/*/*/*/*/*))
 	echo Compiling... \
 		&& tsc -p src/tsconfig.json \
 		&& touch $@
@@ -105,7 +114,8 @@ $(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 		&& cp -f build/webpack/index-global.d.ts package/global/index.d.ts \
 		&& rm -rf package/src \
 		&& mkdir -p package/src \
-		&& rsync -r -m -p -A $(EXCLUDE_OPTIONS) src/library/ package/src \
+		&& rsync -r -m -p -A --delete --delete-excluded $(EXCLUDE_OPTIONS) src/library/ package/src \
+		&& rsync -r -m -p -A --delete --delete-excluded --exclude=*.d.ts build/tsc/scripts/package/ package/scripts \
 		&& mkdir -p $@/.. \
 		&& touch $@
 
@@ -134,16 +144,35 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(PREPROCESS_TIMESTAMP_FILE)
 		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Uplift
+#-----------------------------------------------------------------------------------------------------------------------
+
+uplift :
+	echo Updating dependencies... \
+		&& mkdir -p build \
+		&& cat package.json \
+			| sed 's|"@types/node": "[^"]*"|"@types/node": "^$(NODE_VERSION)"|' \
+			> build.package.json.tmp \
+		&& mv -f build.package.json.tmp package.json \
+		&& cat package/package.json \
+			| sed 's|"@types/node": "[^"]*"|"@types/node": "^$(NODE_VERSION)"|' \
+			> build.package.json.tmp \
+		&& mv -f build.package.json.tmp package/package.json \
+		&& npm update \
+		&& make --silent --no-print-directory update-version-numbers-and-copyright-years
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Release
 #-----------------------------------------------------------------------------------------------------------------------
 
-release : update-version-number-and-copyright-years package;
+release : update-version-numbers-and-copyright-years package;
 
-update-version-number-and-copyright-years :
+update-version-numbers-and-copyright-years :
 	echo Updating version information... \
 		&& cat src/scripts/package/version-info.ts \
-			| sed 's/.*VERSION_NUMBER.*/export const VERSION_NUMBER = "$(VERSION_NUMBER)";/g' \
+			| sed 's/.*TYPEFINITY_VERSION.*/export const TYPEFINITY_VERSION = "$(TYPEFINITY_VERSION)";/g' \
 			| sed 's/.*COPYRIGHT_YEARS.*/export const COPYRIGHT_YEARS = "$(COPYRIGHT_YEARS)";/g' \
+			| sed 's/.*NODE_VERSION.*/export const NODE_VERSION = $(NODE_VERSION);/g' \
 			> build/version-info.ts.tmp \
 		&& mv -f build/version-info.ts.tmp src/scripts/package/version-info.ts \
 		&& cat LICENSE \
@@ -151,7 +180,7 @@ update-version-number-and-copyright-years :
 			> build/LICENSE.tmp \
 		&& mv -f build/LICENSE.tmp LICENSE \
 		&& cat package/package.json \
-			| sed 's/"version": "[^"]*"/"version": "$(VERSION_NUMBER)"/g' \
+			| sed 's/"version": "[^"]*"/"version": "$(TYPEFINITY_VERSION)"/g' \
 			> build/package.json \
 		&& mv -f build/package.json package/package.json
 

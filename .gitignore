@@ -1,5 +1,6 @@
 /build
 /node_modules
 /package/src
+/package/scripts
 /package/index.*
 /package/global/index.d.ts

@@ -3,7 +3,7 @@ const DtsBundleWebpack = require("dts-bundle-webpack");
 const webpack = require("webpack");
 
 module.exports = {
-    entry: "./src/library/export.ts",
+    entry: "./build/preprocess/library/export.ts",
     mode: "production",
     devtool: false,
     module: {

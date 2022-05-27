@@ -1,5 +1,9 @@
 export namespace tft {
-    /** Subtraction result */
+
+    /**-----------------------------------------------------------------------------------------------------------------
+     *  Subtraction result
+     *----------------------------------------------------------------------------------------------------------------*/
+
     export interface SubtractResult {
         /** First value */
         x: number;
@@ -10,11 +14,13 @@ export namespace tft {
     }
 }
 
-/**
+/**---------------------------------------------------------------------------------------------------------------------
  * Subtract two values.
  * @param x First value
+ * @param y Second value
  * @returns The difference between x an y
- */
-export function subtract(x: number, /** Second value */ y: number): tft.SubtractResult {
+ *--------------------------------------------------------------------------------------------------------------------*/
+
+export function subtract(x: number, y: number): tft.SubtractResult {
     return { x, y, difference: x - y };
 }

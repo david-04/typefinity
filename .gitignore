@@ -2,3 +2,4 @@
 /node_modules
 /package/src
 /package/index.*
+/package/global/index.d.ts

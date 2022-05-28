@@ -7,14 +7,16 @@
         {
             "type": "pwa-node",
             "request": "launch",
-            "name": "Playground",
+            "name": "Launch Program",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\src\\playground.ts",
+            "preLaunchTask": "tsc",
+            "internalConsoleOptions": "openOnSessionStart",
+            "program": "${workspaceFolder}/src/library/debug.ts",
             "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+                "${workspaceFolder}/build/tsc/**/*.js"
+            ],
         }
     ]
 }

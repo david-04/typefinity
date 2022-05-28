@@ -104,12 +104,14 @@ WEBPACK_TIMESTAMP_FILE=build/webpack/timestamp.tmp
 webpack bundle : $(WEBPACK_TIMESTAMP_FILE);
 
 $(WEBPACK_TIMESTAMP_FILE) : $(PREPROCESS_TIMESTAMP_FILE) webpack.config.js Makefile
-	echo Bundling... \
-		&& webpack --no-stats \
+	echo Bundling declarations... \
+		&& webpack --entry ./build/preprocess/library/export.ts --stats errors-only \
 		&& sed 's|webpack:///./build/preprocess/library/|./src/|g' build/webpack/index.js.map.tmp \
 		   > build/webpack/index.js.map \
 		&& rm build/webpack/index.js.map.tmp \
 		&& node --enable-source-maps build/tsc/scripts/build/modify-declaration.js build/webpack/index.d.ts \
+		&& echo Bundling source... \
+		&& webpack --entry ./src/library/export.ts --stats errors-only \
 		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -176,15 +178,15 @@ uplift :
 			> build.package.json.tmp \
 		&& mv -f build.package.json.tmp package/package.json \
 		&& npm update \
-		&& make --silent --no-print-directory update-version-numbers-and-copyright-years
+		&& make --silent --no-print-directory update-metadata
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Release
 #-----------------------------------------------------------------------------------------------------------------------
 
-release : clean update-version-numbers-and-copyright-years package;
+release : clean update-metadata package;
 
-update-version-numbers-and-copyright-years :
+update-metadata :
 	echo Updating version information... \
 		&& mkdir -p build \
 		&& cat src/scripts/package/version-info.ts \

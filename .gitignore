@@ -4,3 +4,4 @@
 /package/scripts
 /package/index.*
 /package/global/index.d.ts
+/src/scripts/package/resources.ts

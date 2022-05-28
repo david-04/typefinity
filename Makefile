@@ -53,6 +53,23 @@ help :
 	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Resources
+#-----------------------------------------------------------------------------------------------------------------------
+
+CURLY_BRACKET={
+
+src/scripts/package/resources.ts : $(wildcard src/scripts/package/resources/*)
+	echo Bundling resources... \
+		&& rm -f $@ \
+		&& touch $@ \
+		$(foreach file, $^, \
+			&& echo $(file) | sed -E 's|.*/resources/||;s/[^a-zA-Z0-9]+/_/g;s/^/export const /;s/$$/ = `/' >> $@ \
+			&& sed 's/\\/\\\\/g;s/\$$$(CURLY_BRACKET)/\\$$$(CURLY_BRACKET)/g' $(file) >> $@ \
+			&& echo '`.trim();' >> $@ \
+			&& echo "" >> $@ \
+		)
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Compile
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -165,10 +182,11 @@ uplift :
 # Release
 #-----------------------------------------------------------------------------------------------------------------------
 
-release : update-version-numbers-and-copyright-years package;
+release : clean update-version-numbers-and-copyright-years package;
 
 update-version-numbers-and-copyright-years :
 	echo Updating version information... \
+		&& mkdir -p build \
 		&& cat src/scripts/package/version-info.ts \
 			| sed 's/.*TYPEFINITY_VERSION.*/export const TYPEFINITY_VERSION = "$(TYPEFINITY_VERSION)";/g' \
 			| sed 's/.*COPYRIGHT_YEARS.*/export const COPYRIGHT_YEARS = "$(COPYRIGHT_YEARS)";/g' \

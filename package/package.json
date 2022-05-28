@@ -1,7 +1,7 @@
 {
   "name": "typefinity",
   "version": "16.0.0",
-  "description": "A general-purpose TypeScript library to quickly draft everyday scripts",
+  "description": "A general-purpose TypeScript library for everyday scripts",
   "main": "index.js",
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
     "url": "https://github.com/david-04/typefinity/issues"
   },
   "homepage": "https://github.com/david-04/typefinity#readme",
-  "bin": "./scripts/cli.js",
+  "bin": "./cli.js",
   "peerDependencies": {
     "@types/node": "^16"
   }

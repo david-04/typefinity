@@ -159,8 +159,14 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 				   --gitRemote https://github.com/david-04/typefinity.git \
 				   --excludePrivate \
 				   --excludeProtected \
+				   --excludeExternals \
 				   --sort static-first \
 				   --sort alphabetical \
+				   --disableSources \
+				   --hideGenerator \
+				   --logLevel Warn \
+				   --treatWarningsAsErrors \
+				   --cleanOutputDir false \
 				   --tsconfig build/typedoc/tsconfig.json \
 				   build/typedoc/typedoc.ts \
 		&& rm -f build/typedoc/tsconfig.json build/typedoc/typedoc.ts \

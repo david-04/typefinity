@@ -146,9 +146,12 @@ TYPEDOC_TIMESTAMP_FILE=build/typedoc/timestamp.tmp
 
 typedoc docs doc : $(TYPEDOC_TIMESTAMP_FILE)
 
-$(TYPEDOC_TIMESTAMP_FILE) : $(PREPROCESS_TIMESTAMP_FILE)
+$(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 	echo Documenting... \
+		&& rm -rf build/typedoc \
 		&& mkdir -p build/typedoc \
+		&& cp build/preprocess/tsconfig.json build/typedoc/ \
+		&& cp build/webpack/index-module.d.ts build/typedoc/typedoc.ts \
 		&& typedoc --out build/typedoc \
 				   --tsconfig build/preprocess/tsconfig.json \
 				   --name typefinity \
@@ -158,8 +161,9 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(PREPROCESS_TIMESTAMP_FILE)
 				   --excludeProtected \
 				   --sort static-first \
 				   --sort alphabetical \
-				   --internalNamespace tft \
-				   build/preprocess/library/export.ts \
+				   --tsconfig build/typedoc/tsconfig.json \
+				   build/typedoc/typedoc.ts \
+		&& rm -f build/typedoc/tsconfig.json build/typedoc/typedoc.ts \
 		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------

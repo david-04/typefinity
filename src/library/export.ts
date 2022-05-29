@@ -1,48 +1,37 @@
 //----------------------------------------------------------------------------------------------------------------------
-// example/add
+// Export public modules
 //----------------------------------------------------------------------------------------------------------------------
 
-export * from "./example/add";
-import * as add from "./example/add";
-export namespace tft {
-    export type AddResult = add.tft.AddResult;
+export * as tfAdd from "./example/add";
+export * as tfSubtract from "./example/subtract";
+export * as tfIsEmpty from "./example/util-is-empty";
+export * as tfLog from "./example/util-log";
+export * as tfClass from "./example/util-class";
+
+//----------------------------------------------------------------------------------------------------------------------
+// Flatten exports
+//----------------------------------------------------------------------------------------------------------------------
+
+const namespaces: { [index: string]: { [index: string]: unknown; }; } = {
+    tft: {},
+    tfu: {},
+};
+
+const otherExports: { [index: string]: unknown; } = {};
+
+for (const moduleName of Object.keys(module.exports)) {
+    const moduleDefinition = module.exports[moduleName];
+    for (const exportedItemName of Object.keys(moduleDefinition)) {
+        const exportedItemDefinition = moduleDefinition[exportedItemName];
+        if (Object.prototype.hasOwnProperty.call(namespaces, exportedItemName)) {
+            namespaces[exportedItemName] = {
+                ...namespaces[exportedItemName],
+                ...exportedItemDefinition
+            };
+        } else {
+            otherExports[exportedItemName] = exportedItemDefinition;
+        }
+    }
 }
 
-//----------------------------------------------------------------------------------------------------------------------
-// example/subtract
-//----------------------------------------------------------------------------------------------------------------------
-
-export * from "./example/subtract";
-import * as subtract from "./example/subtract";
-export namespace tft {
-    export type SubtractResult = subtract.tft.SubtractResult;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-// example/util-is-empty
-//----------------------------------------------------------------------------------------------------------------------
-
-import * as uilIsEmpty from "./example/util-is-empty";
-export namespace tfu {
-    export const isEmpty = uilIsEmpty.tfu.isEmpty;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-// example/util-log
-//----------------------------------------------------------------------------------------------------------------------
-
-import * as utilLog from "./example/util-log";
-export namespace tfu {
-    export const log = utilLog.tfu.log;
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// example/util-class
-//----------------------------------------------------------------------------------------------------------------------
-
-import * as utilClass from "./example/util-class";
-export namespace tfu {
-    export const MyClass = utilClass.tfu.MyClass;
-    export type MyClass = typeof utilClass.tfu.MyClass;
-}
+module.exports = { ...otherExports, ...namespaces };

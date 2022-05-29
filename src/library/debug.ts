@@ -1,4 +1,4 @@
-import { add } from "./export";
+import { add } from "./example/add";
 
 console.log("hello world");
 console.log(add(1, 2)); //NOSONAR

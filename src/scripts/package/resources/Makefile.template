@@ -1,1 +1,8 @@
-# Copy-and-paste template for each project
+include node_modules/@david-04/typefinity/resources/Makefile.variables
+
+TYPEFINITY_CLEAN= # add files (other than the dist directory) to remove
+
+autorun : $(TYPEFINITY_COMPILE)
+	node --enable-source-maps dist/${MAIN_MODULE_NAME}.js
+
+include node_modules/@david-04/typefinity/resources/Makefile.targets

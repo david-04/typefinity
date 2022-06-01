@@ -65,7 +65,7 @@ src/scripts/package/resources.ts : $(wildcard src/scripts/package/resources/*)
 		$(foreach file, $^, \
 			&& echo $(file) | sed -E 's|.*/resources/||;s/[^a-zA-Z0-9]+/_/g;s/^/export const /;s/$$/ = `/' >> $@ \
 			&& sed 's/\\/\\\\/g;s/\$$$(CURLY_BRACKET)/\\$$$(CURLY_BRACKET)/g' $(file) >> $@ \
-			&& echo '`.trim();' >> $@ \
+			&& echo '`;' >> $@ \
 			&& echo "" >> $@ \
 		)
 

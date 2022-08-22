@@ -15,9 +15,7 @@ export namespace tft {
 }
 
 class AddResult implements tft.AddResult {
-    public constructor(public readonly x: number, public readonly y: number, public readonly sum: number) {
-
-    }
+    public constructor(public readonly x: number, public readonly y: number, public readonly sum: number) { }
 }
 
 /**---------------------------------------------------------------------------------------------------------------------

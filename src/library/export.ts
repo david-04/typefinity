@@ -2,6 +2,8 @@
 // Export public modules
 //----------------------------------------------------------------------------------------------------------------------
 
+export * as tfUtilityTypes from "./data/utility-types";
+
 export * as tfAdd from "./example/add";
 export * as tfSubtract from "./example/subtract";
 export * as tfIsEmpty from "./example/util-is-empty";

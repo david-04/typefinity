@@ -29,15 +29,14 @@ module.exports = {
     plugins: [
         new DtsBundleWebpack({
             name: "@david-04/typefinity",
-            main: "build/tsc/library/export.d.ts",
-            out: "../../webpack/index.d.ts",
+            main: "build/preprocess/build/library/export.d.ts",
+            out: "../../../webpack/index.d.ts",
             externals: false,
             verbose: false,
         }),
         new webpack.SourceMapDevToolPlugin({
             noSources: true,
-            filename: "index.js.map.tmp",
-            append: "\n//# sourceMappingURL=index.js.map\n",
+            filename: "index.js.map",
         }),
-    ],
+    ]
 };

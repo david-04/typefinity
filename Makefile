@@ -53,23 +53,6 @@ help :
 	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Resources
-#-----------------------------------------------------------------------------------------------------------------------
-
-CURLY_BRACKET={
-
-src/scripts/package/resources.ts : $(wildcard src/scripts/package/resources/*)
-	echo Bundling resources... \
-		&& rm -f $@ \
-		&& touch $@ \
-		$(foreach file, $^, \
-			&& echo $(file) | sed -E 's|.*/resources/||;s/[^a-zA-Z0-9]+/_/g;s/^/export const /;s/$$/ = `/' >> $@ \
-			&& sed 's/\\/\\\\/g;s/\$$$(CURLY_BRACKET)/\\$$$(CURLY_BRACKET)/g' $(file) >> $@ \
-			&& echo '`;' >> $@ \
-			&& echo "" >> $@ \
-		)
-
-#-----------------------------------------------------------------------------------------------------------------------
 # Compile
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -88,11 +71,15 @@ $(TSC_TIMESTAMP_FILE) : Makefile $(wildcard $(patsubst %,src/%, * */* */*/* */*/
 
 PREPROCESS_TIMESTAMP_FILE=build/preprocess/timestamp.tmp
 
-preprocess: $(PREPROCESS_TIMESTAMP_FILE);
+preprocess : $(PREPROCESS_TIMESTAMP_FILE);
 
 $(PREPROCESS_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE)
 	echo Preprocessing... \
-		&& node --enable-source-maps build/tsc/scripts/build/preprocess-sources.js src build/preprocess \
+		&& node --enable-source-maps build/tsc/scripts/build/preprocess-sources.js src build/preprocess/src \
+		&& sed 's|"../../build/tsc"|"../build"|g;s|"../../node_modules/@types"|"../../../node_modules/@types"|g' \
+			   build/preprocess/src/tsconfig.json \
+			   > build/preprocess/src/tsconfig.json.tmp \
+		&& mv -f build/preprocess/src/tsconfig.json.tmp build/preprocess/src/tsconfig.json \
 		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -105,13 +92,13 @@ webpack bundle : $(WEBPACK_TIMESTAMP_FILE);
 
 $(WEBPACK_TIMESTAMP_FILE) : $(PREPROCESS_TIMESTAMP_FILE) webpack.config.js Makefile
 	echo Bundling declarations... \
-		&& webpack --entry ./build/preprocess/library/export.ts --stats errors-only \
-		&& sed 's|webpack:///./build/preprocess/library/|./src/|g' build/webpack/index.js.map.tmp \
-		   > build/webpack/index.js.map \
-		&& rm build/webpack/index.js.map.tmp \
+		&& webpack --entry ./build/preprocess/src/library/export.ts --stats errors-only \
 		&& node --enable-source-maps build/tsc/scripts/build/modify-declaration.js build/webpack/index.d.ts \
-		&& echo Bundling source... \
+		&& echo Bundling sources... \
 		&& webpack --entry ./src/library/export.ts --stats errors-only \
+		&& sed 's|webpack:///./src/library/|./src/|g' build/webpack/index.js.map \
+		   > build/webpack/index.js.map.tmp \
+		&& mv -f build/webpack/index.js.map.tmp build/webpack/index.js.map \
 		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -129,6 +116,7 @@ $(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 	echo Packaging... \
 		&& mkdir -p package \
 		&& cp -f build/webpack/index.js package/ \
+		&& cp -f build/webpack/index.js.map package/ \
 		&& cp -f build/webpack/index-module.d.ts package/index.d.ts \
 		&& cp -f build/webpack/index-global.d.ts package/global/index.d.ts \
 		&& rm -rf package/src \
@@ -150,10 +138,10 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 	echo Documenting... \
 		&& rm -rf build/typedoc \
 		&& mkdir -p build/typedoc \
-		&& cp build/preprocess/tsconfig.json build/typedoc/ \
+		&& cp build/preprocess/src/tsconfig.json build/typedoc/ \
 		&& cp build/webpack/index-module.d.ts build/typedoc/typedoc.ts \
 		&& typedoc --out build/typedoc \
-				   --tsconfig build/preprocess/tsconfig.json \
+				   --tsconfig build/preprocess/src/tsconfig.json \
 				   --name typefinity \
 				   --githubPages false \
 				   --gitRemote https://github.com/david-04/typefinity.git \

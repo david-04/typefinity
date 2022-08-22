@@ -1,7 +1,6 @@
-import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { basename, dirname } from "path";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
+import { basename, dirname, join } from "path";
 import { createInterface } from "readline";
-import { gitignore, launch_json, Makefile_template, tasks_json, tsconfig_json } from "./resources";
 
 const MAIN_MODULE_NAME = "${MAIN_MODULE_NAME}";
 
@@ -59,22 +58,33 @@ async function readLine(): Promise<string> {
 //----------------------------------------------------------------------------------------------------------------------
 
 function getFiles(projectName: string) {
-    const toJson = (name: string, content: string) => ({
-        name: name, exists: existsSync(name), content: content.replaceAll(MAIN_MODULE_NAME, projectName)
+    const toJson = (name: string, filename: string) => ({
+        name: name,
+        exists: existsSync(name),
+        content: filename.replaceAll(MAIN_MODULE_NAME, projectName)
     });
     const files = [
-        toJson(".vscode/launch.json", launch_json),
-        toJson(".vscode/tasks.json", tasks_json),
+        toJson(".vscode/launch.json", loadTemplate("launch.json")),
+        toJson(".vscode/tasks.json", loadTemplate("tasks.json")),
         toJson(`src/${projectName}.ts`, createMainModule()),
         toJson("src/debug.ts", createDebugModule()),
-        toJson(".gitignore", gitignore),
-        toJson("Makefile", Makefile_template),
-        toJson("tsconfig.json", tsconfig_json),
+        toJson(".gitignore", loadTemplate(".gitignore")),
+        toJson("Makefile", loadTemplate("Makefile.template")),
+        toJson("tsconfig.json", loadTemplate("tsconfig.json")),
     ];
     return {
         existing: files.filter(file => file.exists),
         missing: files.filter(file => !file.exists),
     };
+}
+
+
+//----------------------------------------------------------------------------------------------------------------------
+// Load a file from resources/templates
+//----------------------------------------------------------------------------------------------------------------------
+
+function loadTemplate(file: string) {
+    return readFileSync(join(__dirname, "..", "resources", "templates", file)).toString();
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -95,7 +105,7 @@ function createMainModule() {
     return [
         'import "@david-04/typefinity/global";',
         "",
-        'console.log("Hello world!");',
+        "console.log(add(1, 2));",
     ].join("\n");
 }
 

@@ -148,6 +148,7 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 				   --excludePrivate \
 				   --excludeProtected \
 				   --excludeExternals \
+				   --excludeInternal \
 				   --sort static-first \
 				   --sort alphabetical \
 				   --disableSources \

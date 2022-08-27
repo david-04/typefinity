@@ -2,13 +2,11 @@
 // Export public modules
 //----------------------------------------------------------------------------------------------------------------------
 
-export * as tfUtilityTypes from "./data/utility-types";
-
-export * as tfAdd from "./example/add";
-export * as tfSubtract from "./example/subtract";
-export * as tfIsEmpty from "./example/util-is-empty";
-export * as tfLog from "./example/util-log";
-export * as tfClass from "./example/util-class";
+export * as tfDataUtilsTypes /*     */ from "./data/utils/types";
+export * as tfDataUtilsUnify /*     */ from "./data/utils/unify";
+export * as tfFunctionsAddon /*     */ from "./functions/addon";
+export * as tfFunctionsBatch /*     */ from "./functions/batch";
+export * as tfMiscUtilsUnsafe /*    */ from "./misc/utils/unsafe";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Flatten exports

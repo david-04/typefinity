@@ -31,6 +31,18 @@ export namespace tfi {
         }
 
         /**-------------------------------------------------------------------------------------------------------------
+         * Wrap the given value into a read-only array if it isn't an array already
+         *
+         * @param   value An array or a value to wrap into an array
+         * @return  The value wrapped into an array or the value itself if it is an array already
+         *------------------------------------------------------------------------------------------------------------*/
+
+        export function toReadonlyArray<T>(value: T):
+            T extends Array<infer V> | ReadonlyArray<infer V> ? ReadonlyArray<V> : ReadonlyArray<T> {
+            return unsafe.asAny(toArray(value));
+        }
+
+        /**-------------------------------------------------------------------------------------------------------------
          * If a function is passed, call it an return its return value. Otherwise, return the the parameter as it is.
          *
          * @param   value A function or a non-function value

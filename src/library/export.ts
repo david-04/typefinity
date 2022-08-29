@@ -7,6 +7,7 @@ export * as tfDataUtilsUnify /*     */ from "./data/utils/unify";
 export * as tfFunctionsAddon /*     */ from "./functions/addon";
 export * as tfFunctionsBatch /*     */ from "./functions/batch";
 export * as tfMiscUtilsUnsafe /*    */ from "./misc/utils/unsafe";
+export * as tfTestDefinitionApi /*  */ from "./misc/test-framework/definition/test-definition-api";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Flatten exports

@@ -42,7 +42,8 @@ function reformat(source: string, destination: string, formatter: (fileContent: 
 function formatModule(fileContent: string) {
     return removeMainModule(fileContent)
         .replaceAll(/declare module '@david-04\/typefinity\/[^']*'/g, MAIN_MODULE_DECLARATION)
-        .replaceAll(/\n\}\s*declare module '@david-04\/typefinity'\s*\{/g, "\n");
+        .replaceAll(/\n\}\s*declare module '@david-04\/typefinity'\s*\{/g, "\n")
+        .replaceAll(/import\s+\{[^}]*\}\s+from\s+"@david-04\/typefinity[^"]*";/g, "");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

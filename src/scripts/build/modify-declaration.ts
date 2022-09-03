@@ -43,7 +43,8 @@ function formatModule(fileContent: string) {
     return removeMainModule(fileContent)
         .replaceAll(/declare module '@david-04\/typefinity\/[^']*'/g, MAIN_MODULE_DECLARATION)
         .replaceAll(/\n\}\s*declare module '@david-04\/typefinity'\s*\{/g, "\n")
-        .replaceAll(/import\s+\{[^}]*\}\s+from\s+"@david-04\/typefinity[^"]*";/g, "");
+        .replaceAll(/import\s+\{[^}]*\}\s+from\s+"@david-04\/typefinity[^"]*";/g, "")
+        .replaceAll(/(tft|tfi|tfu)\$[0-9a-z_]+\./gi, "$1.");
 }
 
 //----------------------------------------------------------------------------------------------------------------------

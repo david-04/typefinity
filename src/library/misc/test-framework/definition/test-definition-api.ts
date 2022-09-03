@@ -1,4 +1,4 @@
-import { ValueOrReadonlyArray } from "../../../data/utils/types";
+import { ValueOrReadonlyArray } from "../../../data/types/union-types";
 import { unify } from "../../../data/utils/unify";
 import { TestCase, UninitializedTestSuite } from "./test-suite";
 import { testSuiteBuilderStack } from "./test-suite-builder";

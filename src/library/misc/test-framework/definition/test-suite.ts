@@ -1,5 +1,5 @@
 import { unify } from "../../../data/utils/unify";
-import { addon } from "../../../functions/addon";
+import { addInterceptor } from "../../../functions/interceptors";
 import { createTestSuite } from "./test-suite-builder";
 
 /**---------------------------------------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ export class NamedTestComponent {
     public constructor(parentName: ReadonlyArray<string>, name: ReadonlyArray<string>) {
         this.name = NamedTestComponent.normalizeName(name);
         this.parentName = NamedTestComponent.normalizeName(parentName);
-        this.qualifiedNameSupplier = addon.cacheResult(() => [...this.parentName, ...this.name] as const);
+        this.qualifiedNameSupplier = addInterceptor.cacheResult(() => [...this.parentName, ...this.name] as const);
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -89,14 +89,14 @@ export class UninitializedTestSuite extends UnloadedTestComponent {
      * Invoke the implementation/callback to create an initialized test suite
      *----------------------------------------------------------------------------------------------------------------*/
 
-    public load = addon.cacheResult(() => createTestSuite(this.parentName, this.name, this.implementation));
+    public load = addInterceptor.cacheResult(() => createTestSuite(this.parentName, this.name, this.implementation));
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Base class for mutable and immutable test suites containing test cases, hooks, and child test suites
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export abstract class TestSuiteBase<HOOK, CHILDREN> extends NamedTestComponent {
+export abstract class TestSuiteBase<H, C> extends NamedTestComponent {
 
     public constructor(
         /** The parent test suite's qualified name */
@@ -104,15 +104,15 @@ export abstract class TestSuiteBase<HOOK, CHILDREN> extends NamedTestComponent {
         /** The component's name (excluding the parent test suite's names) */
         name: ReadonlyArray<string>,
         /** Code to run once before running all the test cases in the suite */
-        public readonly beforeAll: HOOK,
+        public readonly beforeAll: H,
         /** Code to run once after running all the test cases in the suite */
-        public readonly afterAll: HOOK,
+        public readonly afterAll: H,
         /** Code to run before each and every test case in the suite */
-        public readonly beforeEach: HOOK,
+        public readonly beforeEach: H,
         /** Code to run after each and every test case in the suite */
-        public readonly afterEach: HOOK,
+        public readonly afterEach: H,
         /** Test cases and nested test suites */
-        public readonly children: CHILDREN
+        public readonly children: C
     ) {
         super(parentName, name);
     }

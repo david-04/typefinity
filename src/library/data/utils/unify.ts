@@ -1,4 +1,7 @@
 import { unsafe } from "../../misc/utils/unsafe";
+import { tft as tft$extraction } from "../types/extraction-types";
+import { tft as tft$assertion } from "../types/assertion-types";
+import { Supplier } from "../types/function-types";
 
 export namespace tfi {
 
@@ -7,6 +10,14 @@ export namespace tfi {
      *----------------------------------------------------------------------------------------------------------------*/
 
     export namespace Unify {
+
+        export type UnifiedArray<T> = tft$assertion.IfNever<
+            tft$extraction.ExtractReadonlyArrays<T>,
+            tft$extraction.ExtractScalarsAndArrayElements<T>[],
+            readonly tft$extraction.ExtractScalarsAndArrayElements<T>[]
+        >;
+
+        export type UnifiedReadonlyArray<T> = readonly tft$extraction.ExtractScalarsAndArrayElements<T>[];
 
         /**-------------------------------------------------------------------------------------------------------------
          * Wrap the given value into a resolved promise if it isn't a promise already
@@ -26,7 +37,7 @@ export namespace tfi {
          * @return  The value wrapped into an array or the value itself if it is an array already
          *------------------------------------------------------------------------------------------------------------*/
 
-        export function toArray<T>(value: T): T extends Array<unknown> | ReadonlyArray<unknown> ? T : T[] {
+        export function toArray<T>(value: T): UnifiedArray<T> {
             return unsafe.asAny(Array.isArray(value) ? value : [value]);
         }
 
@@ -37,9 +48,8 @@ export namespace tfi {
          * @return  The value wrapped into an array or the value itself if it is an array already
          *------------------------------------------------------------------------------------------------------------*/
 
-        export function toReadonlyArray<T>(value: T):
-            T extends Array<infer V> | ReadonlyArray<infer V> ? ReadonlyArray<V> : ReadonlyArray<T> {
-            return unsafe.asAny(toArray(value));
+        export function toReadonlyArray<T>(value: T): UnifiedReadonlyArray<T> {
+            return toArray(value);
         }
 
         /**-------------------------------------------------------------------------------------------------------------
@@ -49,7 +59,7 @@ export namespace tfi {
          * @param   The function's return value if a function is passed and the value itself otherwise
          *------------------------------------------------------------------------------------------------------------*/
 
-        export function toSupplied<T>(value: T extends Function ? never : (T | (() => T))): T {
+        export function toSupplied<T>(value: T extends Function ? never : (T | Supplier<T>)): T {
             return "function" === typeof value ? unsafe.asAny(value)() : value;
         }
     }

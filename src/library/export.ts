@@ -2,11 +2,14 @@
 // Export public modules
 //----------------------------------------------------------------------------------------------------------------------
 
-export * as tfDataUtilsTypes /*     */ from "./data/utils/types";
-export * as tfDataUtilsUnify /*     */ from "./data/utils/unify";
-export * as tfFunctionsAddon /*     */ from "./functions/addon";
-export * as tfFunctionsBatch /*     */ from "./functions/batch";
-export * as tfMiscUtilsUnsafe /*    */ from "./misc/utils/unsafe";
+export * as tfAssertionTypes /*     */ from "./data/types/assertion-types";
+export * as tfExtractionTypes /*    */ from "./data/types/extraction-types";
+export * as tfFunctionTypes /*      */ from "./data/types/function-types";
+export * as tfUnionTypes /*         */ from "./data/types/union-types";
+export * as tfUnify /*              */ from "./data/utils/unify";
+export * as tfInterceptors /*       */ from "./functions/interceptors";
+export * as tfBatch /*              */ from "./functions/batch";
+export * as tfUnsafe /*             */ from "./misc/utils/unsafe";
 export * as tfTestDefinitionApi /*  */ from "./misc/test-framework/definition/test-definition-api";
 
 //----------------------------------------------------------------------------------------------------------------------

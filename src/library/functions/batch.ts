@@ -26,6 +26,5 @@ export namespace tfi {
     }
 }
 
-
 /** Run multiple functions in an orchestrated manner */
 export const batch = tfi.Batch;

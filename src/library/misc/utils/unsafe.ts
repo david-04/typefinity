@@ -13,11 +13,8 @@ export namespace unsafe {
     /** Any readonly array of any element type */
     export type AnyReadonlyArray = ReadonlyArray<Any>;
 
-    /** Any type of function that returns the given type */
-    export type AnyFunctionReturning<T> = (...param: Any[]) => T;
-
-    /** Any type of function */
-    export type AnyFunction = AnyFunctionReturning<Any>;
+    /** Any type of function whose return value conforms to "R" */
+    export type AnyFunction<R = Any> = (...param: Any[]) => R;
 
     /**-------------------------------------------------------------------------------------------------------------
      * Cast any value to type "any"

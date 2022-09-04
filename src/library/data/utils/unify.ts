@@ -1,34 +1,25 @@
 import { unsafe } from "../../misc/utils/unsafe";
-import { tft as tft$extraction } from "../types/extraction-types";
-import { tft as tft$assertion } from "../types/assertion-types";
+import { tft as tft$condition } from "../types/conditional-types";
+import { tft as tft$filter } from "../types/filter-types";
 import { Supplier } from "../types/function-types";
 
 export namespace tfi {
 
     /**-----------------------------------------------------------------------------------------------------------------
-     * Unify union type values by unboxing boxed ones or vice versa
+     * Convert union type values to a more narrow type
      *----------------------------------------------------------------------------------------------------------------*/
 
     export namespace Unify {
 
-        export type UnifiedArray<T> = tft$assertion.IfNever<
-            tft$extraction.ExtractReadonlyArrays<T>,
-            tft$extraction.ExtractScalarsAndArrayElements<T>[],
-            readonly tft$extraction.ExtractScalarsAndArrayElements<T>[]
+        /** An array with the union of all scalar types and array element types of "T" */
+        export type UnifiedArray<T> = tft$condition.IfNever<
+            tft$filter.ExtractReadonlyArrays<T>,
+            Array<tft$filter.UnboxArrays<T>>,
+            ReadonlyArray<tft$filter.UnboxArrays<T>>
         >;
 
-        export type UnifiedReadonlyArray<T> = readonly tft$extraction.ExtractScalarsAndArrayElements<T>[];
-
-        /**-------------------------------------------------------------------------------------------------------------
-         * Wrap the given value into a resolved promise if it isn't a promise already
-         *
-         * @param   value A promise or a value to wrap into a promise
-         * @return  The value wrapped into a promise or the value itself if it is a promise already
-         *------------------------------------------------------------------------------------------------------------*/
-
-        export function toPromise<T>(value: T): Promise<T extends Promise<infer R> ? R : T> {
-            return value instanceof Promise ? value : unsafe.asAny(Promise.resolve(value));
-        }
+        /** A read-only array with the union of all scalar and array element types of "T" */
+        export type UnifiedReadonlyArray<T> = ReadonlyArray<tft$filter.UnboxArrays<T>>;
 
         /**-------------------------------------------------------------------------------------------------------------
          * Wrap the given value into an array if it isn't an array already
@@ -53,17 +44,28 @@ export namespace tfi {
         }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * If a function is passed, call it an return its return value. Otherwise, return the the parameter as it is.
+         * If a function is passed, call it and return its return value. Otherwise, return the parameter value as it is.
          *
          * @param   value A function or a non-function value
-         * @param   The function's return value if a function is passed and the value itself otherwise
+         * @return  The function's return value if a function is passed and the value itself otherwise
          *------------------------------------------------------------------------------------------------------------*/
 
         export function toSupplied<T>(value: T extends Function ? never : (T | Supplier<T>)): T {
             return "function" === typeof value ? unsafe.asAny(value)() : value;
         }
+
+        /**-------------------------------------------------------------------------------------------------------------
+         * Wrap the given value into a resolved promise if it isn't a promise already
+         *
+         * @param   value A promise or a value to wrap into a promise
+         * @return  The value wrapped into a promise or the value itself if it is a promise already
+         *------------------------------------------------------------------------------------------------------------*/
+
+        export function toPromise<T>(value: T): Promise<T extends Promise<infer R> ? R : T> {
+            return value instanceof Promise ? value : unsafe.asAny(Promise.resolve(value));
+        }
     }
 }
 
-/** Unify union type values by unboxing boxed ones and vice versa */
+/** Convert union type values to a more narrow type */
 export const unify = tfi.Unify;

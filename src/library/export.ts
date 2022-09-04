@@ -2,8 +2,8 @@
 // Export public modules
 //----------------------------------------------------------------------------------------------------------------------
 
-export * as tfAssertionTypes /*     */ from "./data/types/assertion-types";
-export * as tfExtractionTypes /*    */ from "./data/types/extraction-types";
+export * as tfConditionalTypes /*   */ from "./data/types/conditional-types";
+export * as tfExtractionTypes /*    */ from "./data/types/filter-types";
 export * as tfFunctionTypes /*      */ from "./data/types/function-types";
 export * as tfUnionTypes /*         */ from "./data/types/union-types";
 export * as tfUnify /*              */ from "./data/utils/unify";

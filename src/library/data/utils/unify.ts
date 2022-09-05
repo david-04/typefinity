@@ -1,12 +1,11 @@
 import { unsafe } from "../../misc/utils/unsafe";
 import { tft as tft$condition } from "../types/conditional-types";
 import { tft as tft$filter } from "../types/filter-types";
-import { Supplier } from "../types/function-types";
 
 export namespace tfi {
 
     /**-----------------------------------------------------------------------------------------------------------------
-     * Convert union type values to a more narrow type
+     * Narrow union type values through type conversion, boxing and unboxing
      *----------------------------------------------------------------------------------------------------------------*/
 
     export namespace Unify {
@@ -20,6 +19,12 @@ export namespace tfi {
 
         /** A read-only array with the union of all scalar and array element types of "T" */
         export type UnifiedReadonlyArray<T> = ReadonlyArray<tft$filter.UnboxArrays<T>>;
+
+        /** A promise with the union of all promise and non-promise values */
+        export type UnifiedPromise<T> = Promise<tft$filter.UnboxPromises<T>>;
+
+        /** Union of all non-function types and all functions' return types */
+        export type UnifiedSupplied<T> = tft$filter.UnboxReturnValues<T>;
 
         /**-------------------------------------------------------------------------------------------------------------
          * Wrap the given value into an array if it isn't an array already
@@ -50,8 +55,8 @@ export namespace tfi {
          * @return  The function's return value if a function is passed and the value itself otherwise
          *------------------------------------------------------------------------------------------------------------*/
 
-        export function toSupplied<T>(value: T extends Function ? never : (T | Supplier<T>)): T {
-            return "function" === typeof value ? unsafe.asAny(value)() : value;
+        export function toSupplied<T>(value: T): UnifiedSupplied<T> {
+            return "function" === typeof value ? value() : value;
         }
 
         /**-------------------------------------------------------------------------------------------------------------
@@ -61,11 +66,11 @@ export namespace tfi {
          * @return  The value wrapped into a promise or the value itself if it is a promise already
          *------------------------------------------------------------------------------------------------------------*/
 
-        export function toPromise<T>(value: T): Promise<T extends Promise<infer R> ? R : T> {
+        export function toPromise<T>(value: T): UnifiedPromise<T> {
             return value instanceof Promise ? value : unsafe.asAny(Promise.resolve(value));
         }
     }
 }
 
-/** Convert union type values to a more narrow type */
+/** Narrow union type values through type conversion, boxing and unboxing */
 export const unify = tfi.Unify;

@@ -10,11 +10,14 @@ export namespace unsafe {
     /** An array of any element type */
     export type AnyArray = Any[];
 
-    /** Any readonly array of any element type */
+    /** Any read-only array of any element type */
     export type AnyReadonlyArray = ReadonlyArray<Any>;
 
-    /** Any type of function whose return value conforms to "R" */
-    export type AnyFunction<R = Any> = (...param: Any[]) => R;
+    /** Any function that returns "T" */
+    export type AnyFunction<T = Any> = (...param: Any[]) => T;
+
+    /** Any (potentially asynchronous) function that returns "T" either directly or wrapped in a promise */
+    export type AnyAsyncFunction<T = Any> = (...param: Any[]) => T | Promise<T>;
 
     /**-------------------------------------------------------------------------------------------------------------
      * Cast any value to type "any"

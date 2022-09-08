@@ -1,8 +1,6 @@
+import { Action } from "../../../data/types/function-types";
 import { unify } from "../../../data/utils/unify";
 import { NamedTestComponent, TestCase, TestSuite, TestSuiteBase, UninitializedTestSuite } from "./test-suite";
-
-/** A test suite in the making */
-export class MutableTestSuite extends TestSuiteBase<Array<() => unknown>, Array<UninitializedTestSuite | TestCase>> { }
 
 /**---------------------------------------------------------------------------------------------------------------------
  * A stack of mutable test suites
@@ -10,14 +8,14 @@ export class MutableTestSuite extends TestSuiteBase<Array<() => unknown>, Array<
 
 export namespace testSuiteBuilderStack {
 
-    const stack = new Array<MutableTestSuite>();
+    const stack = new Array<TestSuiteBase<Array<Action>, Array<UninitializedTestSuite | TestCase>>>();
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Create a new empty test suite on top of the stack
      *----------------------------------------------------------------------------------------------------------------*/
 
     export function push(...args: ConstructorParameters<typeof NamedTestComponent>) {
-        stack.push(new MutableTestSuite(...args, [], [], [], [], []));
+        stack.push(new TestSuiteBase(...args, [], [], [], [], []));
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -26,15 +24,7 @@ export namespace testSuiteBuilderStack {
 
     export function pop() {
         const testSuite = assertPresent(stack.pop());
-        return new TestSuite(
-            testSuite.parentName,
-            testSuite.name,
-            testSuite.beforeAll,
-            testSuite.afterAll,
-            testSuite.beforeEach,
-            testSuite.afterEach,
-            testSuite.children
-        );
+        return testSuite as TestSuite;
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -46,10 +36,10 @@ export namespace testSuiteBuilderStack {
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the
+     * Assert that the test suite exists
      *----------------------------------------------------------------------------------------------------------------*/
 
-    function assertPresent(testSuite?: MutableTestSuite) {
+    function assertPresent<T>(testSuite?: T) {
         if (testSuite) {
             return testSuite;
         } else {

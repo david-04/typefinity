@@ -65,25 +65,28 @@ help :
 	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Generated source files
+# Codify file templates
 #-----------------------------------------------------------------------------------------------------------------------
 
 FILE_TEMPLATES_TS=src/core/resources/file-templates.ts
 
 $(FILE_TEMPLATES_TS) : $(call WILDCARD_NESTED, resources/templates, * .??*)
-	echo Updating file templates...
-	echo "export const FILE_TEMPLATES = {" > "$@" \
- 		$(foreach file, $^, && echo '    "$(strip $(file))": `' | sed 's|resources/templates/||g;' >> "$@" \
-							&& sed -E 's/\\|`|\$$/\\\0/g' "$(file)" >> "$@" \
-							&& echo '`.trim() + "\n",' >> "$@" \
-			) \
+	echo Updating file templates... \
+		&& echo "export const FILE_TEMPLATES = {" > "$@" \
+		   $(foreach file, $^, \
+				&& echo '    "$(strip $(file))": `' | sed 's|resources/templates/||g;' >> "$@" \
+				&& sed -E 's/\\|`|\$$/\\\0/g' "$(file)" >> "$@" \
+				&& echo '`.trim() + "\n",' >> "$@" \
+		   ) \
 		&& echo "} as const;" >> "$@"
 
-GENERATED_TS=$(FILE_TEMPLATES_TS)
+#-----------------------------------------------------------------------------------------------------------------------
+# Update embedded metadata
+#-----------------------------------------------------------------------------------------------------------------------
 
-update-typefinity-metadata :
+update-version-number-and-copyright :
 	echo Updating version information... \
-		&& mkdir -p "build/temp" \
+		&& mkdir -p build/temp \
 		&& cat src/core/resources/typefinity-metadata.ts \
 			| sed 's/.*TYPEFINITY_VERSION.*/export const TYPEFINITY_VERSION = "$(TYPEFINITY_VERSION)";/g' \
 			| sed 's/.*COPYRIGHT_YEARS.*/export const COPYRIGHT_YEARS = "$(COPYRIGHT_YEARS)";/g' \
@@ -99,7 +102,6 @@ update-typefinity-metadata :
 			> build/temp/package.json \
 		&& mv -f build/temp/package.json dist/package.json
 
-
 #-----------------------------------------------------------------------------------------------------------------------
 # Compile
 #-----------------------------------------------------------------------------------------------------------------------
@@ -108,10 +110,16 @@ TSC_TIMESTAMP_FILE=build/tsc/timestamp.tmp
 
 compile tsc: $(TSC_TIMESTAMP_FILE);
 
-$(TSC_TIMESTAMP_FILE) : $(call WILDCARD_NESTED, src, *.ts) $(GENERATED_TS)
+$(TSC_TIMESTAMP_FILE) : $(call WILDCARD_NESTED, src, *.ts) $(FILE_TEMPLATES_TS)
 	echo Compiling... \
-		&& tsc -p src/tsconfig.json \
+		&& tsc -b resources/tsconfig/src/tsconfig.composite-projects.json \
 		&& touch $@
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Run the tests
+#-----------------------------------------------------------------------------------------------------------------------
+
+# TODO
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Normalize
@@ -128,7 +136,6 @@ $(SRC_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE)
 		&& ls -la build/\
 		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/src \
 		&& touch $@
-
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Webpack
@@ -243,7 +250,7 @@ uplift :
 # Release
 #-----------------------------------------------------------------------------------------------------------------------
 
-release : clean update-typefinity-metadata package;
+release : clean update-version-number-and-copyright package;
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Cleanup
@@ -260,9 +267,3 @@ clean :
 
 run : $(TSC_TIMESTAMP_FILE)
 	node --enable-source-maps build/tsc/debug.js
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Run the tests
-#-----------------------------------------------------------------------------------------------------------------------
-
-# TODO

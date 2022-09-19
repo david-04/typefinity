@@ -7,8 +7,6 @@
 /src/scripts/package/resources.ts
 
 /src/core/resources/file-templates.ts
-/src/core/export-core.ts
-/src/node/export-node.ts
-/src/web/export-web.ts
 
 /dist
+/temp

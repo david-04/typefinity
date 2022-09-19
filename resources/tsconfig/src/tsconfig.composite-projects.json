@@ -1,0 +1,23 @@
+//----------------------------------------------------------------------------------------------------------------------
+// src
+//----------------------------------------------------------------------------------------------------------------------
+
+{
+    "references": [
+        {
+            "path": "./projects/tsconfig.core.json"
+        },
+        {
+            "path": "./projects/tsconfig.debug.json"
+        },
+        {
+            "path": "./projects/tsconfig.node.json"
+        },
+        {
+            "path": "./projects/tsconfig.scripts.json"
+        },
+        {
+            "path": "./projects/tsconfig.web.json"
+        },
+    ]
+}

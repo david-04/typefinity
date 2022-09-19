@@ -68,15 +68,6 @@ help :
 # Generated source files
 #-----------------------------------------------------------------------------------------------------------------------
 
-EXPORT_TS=$(foreach module, core node web, src/$(module)/export-$(module).ts)
-FILTER_EXPORT=grep -Ev 'export.*from "./($(strip $(2)))/' "$(strip $(1))" | sed 's|from "./|from "../|g' > "$(strip $(3))"
-
-$(EXPORT_TS) : src/export.ts
-	echo Generating exports... \
-		&& $(call FILTER_EXPORT, $^, node|scripts|web, src/core/export-core.ts) \
-		&& $(call FILTER_EXPORT, $^, scripts|web,      src/node/export-node.ts) \
-		&& $(call FILTER_EXPORT, $^, node|scripts,     src/web/export-web.ts)
-
 FILE_TEMPLATES_TS=src/core/resources/file-templates.ts
 
 $(FILE_TEMPLATES_TS) : $(call WILDCARD_NESTED, resources/templates, * .??*)
@@ -88,7 +79,7 @@ $(FILE_TEMPLATES_TS) : $(call WILDCARD_NESTED, resources/templates, * .??*)
 			) \
 		&& echo "} as const;" >> "$@"
 
-GENERATED_TS=$(EXPORT_TS) $(FILE_TEMPLATES_TS)
+GENERATED_TS=$(FILE_TEMPLATES_TS)
 
 update-typefinity-metadata :
 	echo Updating version information... \
@@ -121,6 +112,23 @@ $(TSC_TIMESTAMP_FILE) : $(call WILDCARD_NESTED, src, *.ts) $(GENERATED_TS)
 	echo Compiling... \
 		&& tsc -p src/tsconfig.json \
 		&& touch $@
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Normalize
+#-----------------------------------------------------------------------------------------------------------------------
+
+SRC_TIMESTAMP_FILE=build/src/timestamp.tmp
+
+preprocess : $(SRC_TIMESTAMP_FILE);
+
+$(SRC_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE)
+	echo Normalizing sources... \
+		&& rm -rf build/tsc \
+		&& cp -r src build \
+		&& ls -la build/\
+		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/src \
+		&& touch $@
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Webpack

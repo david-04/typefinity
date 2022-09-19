@@ -6,8 +6,10 @@ import fs from "fs";
 import process from "process";
 import path from "path";
 
-const MAIN_MODULE_DECLARATION = "declare module '@david-04/typefinity'";
-const MAIN_MODULE_DECLARATION_REGEXP = /declare module '@david-04\/typefinity'/g;
+const [_node, _script, moduleParameter, source, ...unusedParameters] = process.argv;
+const subModule = "root" === moduleParameter ? "" : `/${moduleParameter?.trim() || "UNDEFINED"}`;
+const MAIN_MODULE_DECLARATION = `declare module '@david-04/typefinity${subModule}'`;
+const MAIN_MODULE_DECLARATION_REGEXP = new RegExp(MAIN_MODULE_DECLARATION, "g");
 
 main();
 
@@ -16,7 +18,6 @@ main();
 //----------------------------------------------------------------------------------------------------------------------
 
 function main() {
-    const [_node, _script, source, ...unusedParameters] = process.argv;
     if (source && 0 === unusedParameters.length) {
         reformat(source, source.replace(/\.d\.ts$/, "-module.d.ts"), formatModule);
         reformat(source, source.replace(/\.d\.ts$/, "-global.d.ts"), formatGlobal);

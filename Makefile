@@ -36,11 +36,10 @@ WILDCARD_NESTED=$(foreach pattern, $(2), $(wildcard \
 # Phony targets
 #-----------------------------------------------------------------------------------------------------------------------
 
-.PHONY: bundle clean compile doc docs help package preprocess release run tsc test uplift webpack typedoc
+.PHONY: bundle clean compile doc docs help package release run tsc test uplift webpack typedoc
 
 CLEAN_DESCRIPTION=remove the build directory
 PACKAGE_DESCRIPTION=create the NPM package
-PREPROCESS_DESCRIPTION=generate preprocessed/reformatted sources
 RELEASE_DESCRIPTION=create a release
 RUN_DESCRIPTION=run the playground module
 TSC_DESCRIPTION=compile sources via tsc
@@ -58,7 +57,6 @@ help :
 	$(info )
 	$(info $()  clean ........ $(CLEAN_DESCRIPTION))
 	$(info $()  package ...... $(PACKAGE_DESCRIPTION))
-	$(info $()  preprocess ... $(PREPROCESS_DESCRIPTION))
 	$(info $()  release ...... $(RELEASE_DESCRIPTION))
 	$(info $()  run .......... $(RUN_DESCRIPTION))
 	$(info $()  tsc .......... $(TSC_DESCRIPTION))
@@ -67,7 +65,7 @@ help :
 	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Generated sources
+# Generated source files
 #-----------------------------------------------------------------------------------------------------------------------
 
 EXPORT_TS=$(foreach module, core node web, src/$(module)/export-$(module).ts)
@@ -76,22 +74,40 @@ FILTER_EXPORT=grep -Ev 'export.*from "./($(strip $(2)))/' "$(strip $(1))" | sed 
 $(EXPORT_TS) : src/export.ts
 	echo Generating exports... \
 		&& $(call FILTER_EXPORT, $^, node|scripts|web, src/core/export-core.ts) \
-		&& $(call FILTER_EXPORT, $^, scripts|web, src/node/export-node.ts) \
-		&& $(call FILTER_EXPORT, $^, node|scripts, src/web/export-web.ts)
+		&& $(call FILTER_EXPORT, $^, scripts|web,      src/node/export-node.ts) \
+		&& $(call FILTER_EXPORT, $^, node|scripts,     src/web/export-web.ts)
 
-RESOURCES_TS=src/core/resources.ts
-APPEND_RESOURCE=sed -Ev 'export.*from "./($(strip $(2)))/' "$(strip $(1))" | sed 's|from "./|from "../|g' > "$(strip $(3))"
+FILE_TEMPLATES_TS=src/core/resources/file-templates.ts
 
-$(RESOURCES_TS) : $(call WILDCARD_NESTED, resources/templates, * .??*)
-	echo Generating resources...
-	echo "export const RESOURCES = {" > "$@" \
+$(FILE_TEMPLATES_TS) : $(call WILDCARD_NESTED, resources/templates, * .??*)
+	echo Updating file templates...
+	echo "export const FILE_TEMPLATES = {" > "$@" \
  		$(foreach file, $^, && echo '    "$(strip $(file))": `' | sed 's|resources/templates/||g;' >> "$@" \
 							&& sed -E 's/\\|`|\$$/\\\0/g' "$(file)" >> "$@" \
 							&& echo '`.trim() + "\n",' >> "$@" \
 			) \
 		&& echo "} as const;" >> "$@"
 
-GENERATED_TS=$(EXPORT_TS) $(RESOURCES_TS)
+GENERATED_TS=$(EXPORT_TS) $(FILE_TEMPLATES_TS)
+
+update-typefinity-metadata :
+	echo Updating version information... \
+		&& mkdir -p "build/temp" \
+		&& cat src/core/resources/typefinity-metadata.ts \
+			| sed 's/.*TYPEFINITY_VERSION.*/export const TYPEFINITY_VERSION = "$(TYPEFINITY_VERSION)";/g' \
+			| sed 's/.*COPYRIGHT_YEARS.*/export const COPYRIGHT_YEARS = "$(COPYRIGHT_YEARS)";/g' \
+			| sed 's/.*NODE_VERSION.*/export const NODE_VERSION = $(NODE_VERSION);/g' \
+			> build/temp/typefinity-metadata.ts \
+		&& mv -f build/temp/typefinity-metadata.ts src/core/resources/typefinity-metadata.ts \
+		&& cat LICENSE \
+			| sed 's/.*David Hofmann.*/Copyright (c) $(COPYRIGHT_YEARS) David Hofmann/' \
+			> build/temp/LICENSE \
+		&& mv -f build/temp/LICENSE LICENSE \
+		&& cat dist/package.json \
+			| sed 's/"version": "[^"]*"/"version": "$(TYPEFINITY_VERSION)"/g' \
+			> build/temp/package.json \
+		&& mv -f build/temp/package.json dist/package.json
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Compile
@@ -101,26 +117,9 @@ TSC_TIMESTAMP_FILE=build/tsc/timestamp.tmp
 
 compile tsc: $(TSC_TIMESTAMP_FILE);
 
-$(TSC_TIMESTAMP_FILE) : Makefile $(call WILDCARD_NESTED, src, *.ts) $(GENERATED_TS)
+$(TSC_TIMESTAMP_FILE) : $(call WILDCARD_NESTED, src, *.ts) $(GENERATED_TS)
 	echo Compiling... \
 		&& tsc -p src/tsconfig.json \
-		&& touch $@
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Preprocess
-#-----------------------------------------------------------------------------------------------------------------------
-
-PREPROCESS_TIMESTAMP_FILE=build/preprocess/timestamp.tmp
-
-preprocess : $(PREPROCESS_TIMESTAMP_FILE);
-
-$(PREPROCESS_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE)
-	echo Preprocessing... \
-		&& node --enable-source-maps build/tsc/scripts/build/preprocess-sources.js src build/preprocess/src \
-		&& sed 's|"../../build/tsc"|"../build"|g;s|"../../node_modules/@types"|"../../../node_modules/@types"|g' \
-			   build/preprocess/src/tsconfig.json \
-			   > build/preprocess/src/tsconfig.json.tmp \
-		&& mv -f build/preprocess/src/tsconfig.json.tmp build/preprocess/src/tsconfig.json \
 		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -131,41 +130,54 @@ WEBPACK_TIMESTAMP_FILE=build/webpack/timestamp.tmp
 
 webpack bundle : $(WEBPACK_TIMESTAMP_FILE);
 
-$(WEBPACK_TIMESTAMP_FILE) : $(PREPROCESS_TIMESTAMP_FILE) webpack.config.js Makefile
-	echo Bundling declarations... \
-		&& webpack --entry ./build/preprocess/src/library/export.ts --stats errors-only \
-		&& node --enable-source-maps build/tsc/scripts/build/modify-declaration.js build/webpack/index.d.ts \
-		&& echo Bundling sources... \
-		&& webpack --entry ./src/library/export.ts --stats errors-only \
-		&& sed 's|webpack:///./src/library/|./src/|g' build/webpack/index.js.map \
-		   > build/webpack/index.js.map.tmp \
-		&& mv -f build/webpack/index.js.map.tmp build/webpack/index.js.map \
+WEBPACK=&& echo "Bundling $(strip $(1))..." \
+		&& webpack --config "build/tsc/scripts/webpack/webpack.$(strip $(1)).js" \
+				   --entry "$(strip $(2))" \
+				   --stats errors-only \
+		&& sed 's|webpack:///./src/$(strip $(1))/|./src/$(strip $(1))|g' build/webpack/$(strip $(1))/index.js.map \
+		   > "build/webpack/$(strip $(1))/index.js.map.tmp" \
+		&& mv -f "build/webpack/$(strip $(1))/index.js.map.tmp" "build/webpack/$(strip $(1))/index.js.map" \
+		&& node --enable-source-maps \
+				"build/tsc/scripts/build/normalize-module-names.js" \
+				"$(strip $(1))" \
+				"build/webpack/$(strip $(1))/index.d.ts" \
 		&& touch $@
+
+$(WEBPACK_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE) Makefile
+	echo "Normalizing JsDoc comments..." \
+		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/tsc \
+		$(foreach module, core node web, $(call WEBPACK, $(module), ./build/tsc/$(module)/export-$(module).js)) \
+		$(call WEBPACK, root, ./build/tsc/export.js) \
+		$(call WEBPACK, typefinity-cli, ./build/tsc/scripts/typefinity-cli/typefinity-cli.js)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Package
 #-----------------------------------------------------------------------------------------------------------------------
 
-EXCLUDED_SOURCES=*.json playground.ts
+EXCLUDED_SOURCES=*.json debug.ts
 EXCLUDE_OPTIONS=$(foreach pattern, $(EXCLUDED_SOURCES), "--exclude=$(pattern)" )
 
-PACKAGE_TIMESTAMP_FILE=build/package/timestamp.tmp
+PACKAGE_TIMESTAMP_FILE=build/temp/package-timestamp.tmp
 
 package : $(PACKAGE_TIMESTAMP_FILE);
 
 $(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 	echo Packaging... \
-		&& mkdir -p package \
-		&& cp -f build/webpack/index.js package/ \
-		&& cp -f build/webpack/index.js.map package/ \
-		&& cp -f build/webpack/index-module.d.ts package/index.d.ts \
-		&& cp -f build/webpack/index-global.d.ts package/global/index.d.ts \
-		&& rm -rf package/src \
-		&& mkdir -p package/src \
-		&& rsync -r -m -p -A --delete --delete-excluded $(EXCLUDE_OPTIONS) src/library/ package/src \
-		&& rsync -r -m -p -A --delete --delete-excluded --exclude=*.d.ts build/tsc/scripts/package/ package/scripts \
-		&& mkdir -p $@/.. \
-		&& touch $@
+		&& mkdir -p "build/temp" \
+		$(foreach module, core node web, \
+			&& mkdir -p "dist/$(module)" \
+			&& cp -f "build/webpack/$(module)/index.js" "dist/$(module)/index.js" \
+			&& cp -f "build/webpack/$(module)/index.js.map" "dist/$(module)/index.js.map" \
+			&& cp -f "build/webpack/$(module)/index-module.d.ts" "dist/$(module)/index.d.ts" \
+			&& cp -f "build/webpack/$(module)/index-global.d.ts" "dist/$(module)/global/index.d.ts" \
+		) \
+		&& rm -rf "dist/src" \
+		&& find src| grep -vE "^src/debug.ts|^src/tsconfig.json|^src/scripts|\.test\." | zip -@ -9 -q dist/src.zip \
+		&& mkdir -p "dist/scripts" \
+		&& cp -f "build/webpack/typefinity-cli/index.js" "dist/scripts/typefinity-cli.js" \
+		&& cp -f "build/webpack/typefinity-cli/index.js.map" "dist/scripts/typefinity-cli.js.map" \
+		&& mkdir -p "$@/.." \
+		&& touch "$@"
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Documentation
@@ -179,10 +191,10 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 	echo Documenting... \
 		&& rm -rf build/typedoc \
 		&& mkdir -p build/typedoc \
-		&& cp build/preprocess/src/tsconfig.json build/typedoc/ \
-		&& cp build/webpack/index-module.d.ts build/typedoc/typedoc.ts \
+		&& sed 's|"\.\./|"../../|g' src/tsconfig.json > build/typedoc/tsconfig.json \
+		&& cp build/webpack/root/index-module.d.ts build/typedoc/typedoc.ts \
 		&& typedoc --out build/typedoc \
-				   --tsconfig build/preprocess/src/tsconfig.json \
+				   --tsconfig build/typedoc/tsconfig.json \
 				   --name typefinity \
 				   --githubPages false \
 				   --gitRemote https://github.com/david-04/typefinity.git \
@@ -197,7 +209,6 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 				   --logLevel Warn \
 				   --treatWarningsAsErrors \
 				   --cleanOutputDir false \
-				   --tsconfig build/typedoc/tsconfig.json \
 				   build/typedoc/typedoc.ts \
 		&& rm -f build/typedoc/tsconfig.json build/typedoc/typedoc.ts \
 		&& touch $@
@@ -224,25 +235,7 @@ uplift :
 # Release
 #-----------------------------------------------------------------------------------------------------------------------
 
-release : clean update-metadata package;
-
-update-metadata :
-	echo Updating version information... \
-		&& mkdir -p build \
-		&& cat src/scripts/package/version-info.ts \
-			| sed 's/.*TYPEFINITY_VERSION.*/export const TYPEFINITY_VERSION = "$(TYPEFINITY_VERSION)";/g' \
-			| sed 's/.*COPYRIGHT_YEARS.*/export const COPYRIGHT_YEARS = "$(COPYRIGHT_YEARS)";/g' \
-			| sed 's/.*NODE_VERSION.*/export const NODE_VERSION = $(NODE_VERSION);/g' \
-			> build/version-info.ts.tmp \
-		&& mv -f build/version-info.ts.tmp src/scripts/package/version-info.ts \
-		&& cat LICENSE \
-			| sed 's/.*David Hofmann.*/Copyright (c) $(COPYRIGHT_YEARS) David Hofmann/' \
-			> build/LICENSE.tmp \
-		&& mv -f build/LICENSE.tmp LICENSE \
-		&& cat package/package.json \
-			| sed 's/"version": "[^"]*"/"version": "$(TYPEFINITY_VERSION)"/g' \
-			> build/package.json \
-		&& mv -f build/package.json package/package.json
+release : clean update-typefinity-metadata package;
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Cleanup
@@ -258,7 +251,7 @@ clean :
 #-----------------------------------------------------------------------------------------------------------------------
 
 run : $(TSC_TIMESTAMP_FILE)
-	node --enable-source-maps build/tsc/library/debug.js
+	node --enable-source-maps build/tsc/debug.js
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Run the tests

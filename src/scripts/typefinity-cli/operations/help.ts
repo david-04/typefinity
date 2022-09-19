@@ -1,4 +1,4 @@
-import { COPYRIGHT_YEARS, VERSION_NUMBER } from "../resources/version-info";
+import { COPYRIGHT_YEARS, VERSION_NUMBER } from "../../../core/resources/typefinity-metadata";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Supported command line parameters

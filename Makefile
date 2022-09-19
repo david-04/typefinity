@@ -23,6 +23,16 @@ $(error Please update the major version number in CHANGELOG.md to $(NODE_VERSION
 endif
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Utility functions
+#-----------------------------------------------------------------------------------------------------------------------
+
+NESTING=* */* */*/* */*/*/* */*/*/*/* */*/*/*/*/* */*/*/*/*/*/* */*/*/*/*/*/*/* */*/*/*/*/*/*/*/* */*/*/*/*/*/*/*/*/*
+WILDCARD_NESTED=$(foreach pattern, $(2), $(wildcard \
+					$(strip $(1))/$(strip $(pattern)) \
+					$(patsubst %, $(strip $(1))/%/$(strip $(pattern)), $(NESTING)) \
+				))
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Phony targets
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -37,6 +47,10 @@ TSC_DESCRIPTION=compile sources via tsc
 TYPEDOC_DESCRIPTION=create the API documentation
 UPLIFT_DESCRIPTION=upgrade to the lasted Node version
 WEBPACK_DESCRIPTION=bundle library via webpack
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Help
+#-----------------------------------------------------------------------------------------------------------------------
 
 autorun : help;
 
@@ -53,6 +67,33 @@ help :
 	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Generated sources
+#-----------------------------------------------------------------------------------------------------------------------
+
+EXPORT_TS=$(foreach module, core node web, src/$(module)/export-$(module).ts)
+FILTER_EXPORT=grep -Ev 'export.*from "./($(strip $(2)))/' "$(strip $(1))" | sed 's|from "./|from "../|g' > "$(strip $(3))"
+
+$(EXPORT_TS) : src/export.ts
+	echo Generating exports... \
+		&& $(call FILTER_EXPORT, $^, node|scripts|web, src/core/export-core.ts) \
+		&& $(call FILTER_EXPORT, $^, scripts|web, src/node/export-node.ts) \
+		&& $(call FILTER_EXPORT, $^, node|scripts, src/web/export-web.ts)
+
+RESOURCES_TS=src/core/resources.ts
+APPEND_RESOURCE=sed -Ev 'export.*from "./($(strip $(2)))/' "$(strip $(1))" | sed 's|from "./|from "../|g' > "$(strip $(3))"
+
+$(RESOURCES_TS) : $(call WILDCARD_NESTED, resources/templates, * .??*)
+	echo Generating resources...
+	echo "export const RESOURCES = {" > "$@" \
+ 		$(foreach file, $^, && echo '    "$(strip $(file))": `' | sed 's|resources/templates/||g;' >> "$@" \
+							&& sed -E 's/\\|`|\$$/\\\0/g' "$(file)" >> "$@" \
+							&& echo '`.trim() + "\n",' >> "$@" \
+			) \
+		&& echo "} as const;" >> "$@"
+
+GENERATED_TS=$(EXPORT_TS) $(RESOURCES_TS)
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Compile
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -60,7 +101,7 @@ TSC_TIMESTAMP_FILE=build/tsc/timestamp.tmp
 
 compile tsc: $(TSC_TIMESTAMP_FILE);
 
-$(TSC_TIMESTAMP_FILE) : Makefile $(wildcard $(patsubst %,src/%, * */* */*/* */*/*/* */*/*/*/* */*/*/*/*/* */*/*/*/*/*/* */*/*/*/*/*/*/*))
+$(TSC_TIMESTAMP_FILE) : Makefile $(call WILDCARD_NESTED, src, *.ts) $(GENERATED_TS)
 	echo Compiling... \
 		&& tsc -p src/tsconfig.json \
 		&& touch $@

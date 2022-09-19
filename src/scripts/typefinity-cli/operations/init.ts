@@ -3,6 +3,7 @@ import { basename, dirname, join } from "path";
 import { createInterface } from "readline";
 
 const MAIN_MODULE_NAME = "${MAIN_MODULE_NAME}";
+const MAIN_MODULE_NAME_REGEXP = /\$\{MAIN_MODULE_NAME\}/g;
 
 //----------------------------------------------------------------------------------------------------------------------
 // Initialize a new project
@@ -61,7 +62,7 @@ function getFiles(projectName: string) {
     const toJson = (name: string, filename: string) => ({
         name: name,
         exists: existsSync(name),
-        content: filename.replaceAll(MAIN_MODULE_NAME, projectName)
+        content: filename.replace(MAIN_MODULE_NAME_REGEXP, projectName)
     });
     const files = [
         toJson(".vscode/launch.json", loadTemplate("launch.json")),

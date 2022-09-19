@@ -1,0 +1,22 @@
+//----------------------------------------------------------------------------------------------------------------------
+// src/web
+//----------------------------------------------------------------------------------------------------------------------
+{
+    "extends": "./tsconfig.composite.json",
+    "compilerOptions": {
+        "lib": ["es2016", "DOM"], //                            Specify a set of bundled library declaration files that describe the target runtime environment.
+        "outDir": "../build/tsc/web", //                        Specify an output folder for all emitted files.
+        "rootDir": "../src/web", //                             Specify the root folder within your source files.
+        "sourceRoot": "../src/web", //                          Specify the root path for debuggers to find the reference source code.
+        "tsBuildInfoFile": "../build/tsc/web/.tsbuildinfo", //  Specify the folder for .tsbuildinfo incremental compilation files.
+        "types": [], //                                         Specify type package names to be included without being referenced in a source file.
+    },
+    "references": [
+        {
+            "path": "./tsconfig.core.json",
+        }
+    ],
+    "include": [
+        "../src/web/**/*",
+    ],
+}

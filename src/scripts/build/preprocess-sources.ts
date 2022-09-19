@@ -45,9 +45,9 @@ function syncFile(source: string, destination: string, isRoot: boolean) {
 
 function preprocessFileContent(name: string, content: string, isRoot: boolean) {
     if (name.endsWith(".ts")) {
-        return content.replaceAll(/\/\*\*\s*-{20,}/g, "/**").replaceAll(/\**\s*-{20,}\s*\*+\//g, "*/");
+        return content.replace(/\/\*\*\s*-{20,}/g, "/**").replace(/\**\s*-{20,}\s*\*+\//g, "*/");
     } else if (isRoot && name.endsWith("tsconfig.json")) {
-        return content.replaceAll(/"\.\.\//g, '"../../');
+        return content.replace(/"\.\.\//g, '"../../');
     } else {
         return content;
     }

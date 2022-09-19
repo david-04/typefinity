@@ -7,6 +7,7 @@ import process from "process";
 import path from "path";
 
 const MAIN_MODULE_DECLARATION = "declare module '@david-04/typefinity'";
+const MAIN_MODULE_DECLARATION_REGEXP = /declare module '@david-04\/typefinity'/g;
 
 main();
 
@@ -41,10 +42,10 @@ function reformat(source: string, destination: string, formatter: (fileContent: 
 
 function formatModule(fileContent: string) {
     return removeMainModule(fileContent)
-        .replaceAll(/declare module '@david-04\/typefinity\/[^']*'/g, MAIN_MODULE_DECLARATION)
-        .replaceAll(/\n\}\s*declare module '@david-04\/typefinity'\s*\{/g, "\n")
-        .replaceAll(/import\s+\{[^}]*\}\s+from\s+"@david-04\/typefinity[^"]*";/g, "")
-        .replaceAll(/(tft|tfi|tfu)\$[0-9a-z_]+\./gi, "$1.");
+        .replace(/declare module '@david-04\/typefinity\/[^']*'/g, MAIN_MODULE_DECLARATION)
+        .replace(/\n\}\s*declare module '@david-04\/typefinity'\s*\{/g, "\n")
+        .replace(/import\s+\{[^}]*\}\s+from\s+"@david-04\/typefinity[^"]*";/g, "")
+        .replace(/(tft|tfi|tfu)\$[0-9a-z_]+\./gi, "$1.");
 }
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -53,10 +54,10 @@ function formatModule(fileContent: string) {
 
 function formatGlobal(fileContent: string) {
     const withoutMain = formatModule(fileContent);
-    const module = withoutMain.replaceAll(MAIN_MODULE_DECLARATION, "declare module '@david-04/typefinity/global'");
+    const module = withoutMain.replace(MAIN_MODULE_DECLARATION_REGEXP, "declare module '@david-04/typefinity/global'");
     const global = withoutMain
-        .replaceAll(MAIN_MODULE_DECLARATION, "declare global")
-        .replaceAll(/\n[ \t]*export[ \t]/g, "\n");
+        .replace(MAIN_MODULE_DECLARATION_REGEXP, "declare global")
+        .replace(/\n[ \t]*export[ \t]/g, "\n");
     return `export {} ${module}${global}`;
 }
 

@@ -1,4 +1,4 @@
-import { COPYRIGHT_YEARS, VERSION_NUMBER } from "./version-info";
+import { COPYRIGHT_YEARS, VERSION_NUMBER } from "../resources/version-info";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Supported command line parameters

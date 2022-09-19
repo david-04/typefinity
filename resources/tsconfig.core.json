@@ -1,0 +1,15 @@
+//----------------------------------------------------------------------------------------------------------------------
+// src/core
+//----------------------------------------------------------------------------------------------------------------------
+
+{
+    "extends": "./tsconfig.composite.json",
+    "compilerOptions": {
+        "outDir": "../build/tsc/core", //                       Specify an output folder for all emitted files.
+        "rootDir": "../src/core", //                            Specify the root folder within your source files.
+        "sourceRoot": "../src/core", //                         Specify the root path for debuggers to find the reference source code.
+        "tsBuildInfoFile": "../build/tsc/core/.tsbuildinfo", // Specify the folder for .tsbuildinfo incremental compilation files.
+        "types": [], //                                         Specify type package names to be included without being referenced in a source file.
+    },
+    "include": ["../src/core/**/*"],
+}

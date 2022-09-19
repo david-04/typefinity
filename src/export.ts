@@ -2,15 +2,19 @@
 // Export public modules
 //----------------------------------------------------------------------------------------------------------------------
 
-export * as tfConditionalTypes /*   */ from "./data/types/conditional-types";
-export * as tfExtractionTypes /*    */ from "./data/types/filter-types";
-export * as tfFunctionTypes /*      */ from "./data/types/function-types";
-export * as tfUnionTypes /*         */ from "./data/types/union-types";
-export * as tfUnify /*              */ from "./data/utils/unify";
-export * as tfInterceptors /*       */ from "./functions/interceptors";
-export * as tfBatch /*              */ from "./functions/batch";
-export * as tfUnsafe /*             */ from "./misc/utils/unsafe";
-export * as tfTestDefinitionApi /*  */ from "./misc/test-framework/definition/test-definition-api";
+export * as tfConditionalTypes /*   */ from "./core/data/types/conditional-types";
+export * as tfExtractionTypes /*    */ from "./core/data/types/filter-types";
+export * as tfFunctionTypes /*      */ from "./core/data/types/function-types";
+export * as tfUnionTypes /*         */ from "./core/data/types/union-types";
+export * as tfUnify /*              */ from "./core/data/utils/unify";
+export * as tfInterceptors /*       */ from "./core/functions/interceptors";
+export * as tfBatch /*              */ from "./core/functions/batch";
+export * as tfUnsafe /*             */ from "./core/misc/utils/unsafe";
+export * as tfTestDefinitionApi /*  */ from "./core/misc/test-framework/definition/test-definition-api";
+
+export * as x /*  */ from "./node/test";
+export * as y /*  */ from "./web/test";
+export * as z /*  */ from "./scripts/test";
 
 //----------------------------------------------------------------------------------------------------------------------
 // Flatten exports

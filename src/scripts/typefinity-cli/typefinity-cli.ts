@@ -1,6 +1,6 @@
-import { COMMANDS, showHelp, showVersionInfo, showError } from "./cli-help";
-import { init } from "./cli-init";
-import { uplift } from "./cli-uplift";
+import { COMMANDS, showHelp, showVersionInfo, showError } from "./operations/help";
+import { init } from "./operations/init";
+import { uplift } from "./operations/uplift";
 
 const SKIP_PARAMETERS = 2;
 const args = process.argv.slice(SKIP_PARAMETERS);

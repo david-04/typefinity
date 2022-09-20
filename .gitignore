@@ -1,12 +1,13 @@
 /build
+/dist/core
+/dist/internal/typefinity-*.js
+/dist/internal/typefinity-*.js.map
+/dist/internal/typefinity-*.zip
+/dist/internal/src
+/dist/node
+/dist/web
 /node_modules
-/package/src
-/package/scripts
-/package/index.*
-/package/global/index.d.ts
-/src/scripts/package/resources.ts
-
 /src/core/resources/file-templates.ts
 
-/dist
+/dist/include
 /temp

@@ -1,8 +1,7 @@
 {
   "name": "typefinity",
-  "version": "16.0.0",
+  "version": "0.0.1-alpha",
   "description": "A general-purpose TypeScript library for everyday scripts",
-  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/david-04/typefinity.git",
@@ -18,8 +17,8 @@
     "url": "https://github.com/david-04/typefinity/issues"
   },
   "homepage": "https://github.com/david-04/typefinity#readme",
-  "bin": "./cli.js",
-  "peerDependencies": {
+  "bin": "./internal/typefinity-cli.js",
+  "dependencies": {
     "@types/node": "^16"
   }
 }

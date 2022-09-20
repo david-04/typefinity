@@ -193,12 +193,20 @@ $(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 			   && mkdir -p "dist/$(bundle)/global" \
 		       && cp -f "build/webpack/bundles/typefinity-$(bundle)-module.d.ts" "dist/$(bundle)/index.d.ts" \
 		       && cp -f "build/webpack/bundles/typefinity-$(bundle)-global.d.ts" "dist/$(bundle)/global/index.d.ts" \
+			   && node --enable-source-maps \
+					build/tsc/scripts/build/create-import-export-wrapper.js \
+					./dist/internal/typefinity-$(bundle).js \
+					module \
+					./dist/$(bundle)/index.js \
+			   && node --enable-source-maps \
+					build/tsc/scripts/build/create-import-export-wrapper.js \
+					./dist/internal/typefinity-$(bundle).js \
+					global \
+					./dist/$(bundle)/global/index.js \
 		) \
 		&& rm -rf dist/internal/src dist/internal/typefinity-src.zip \
 		&& find src | grep -vE "^src/debug.ts|^src/tsconfig.json|^src/scripts|\.test\." \
 					| zip -@ -9 -q dist/internal/typefinity-src.zip \
-
-unused:
 		&& mkdir -p "$@/.." \
 		&& touch "$@"
 

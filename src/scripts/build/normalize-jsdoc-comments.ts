@@ -45,7 +45,7 @@ function processFile(path: string) {
 //----------------------------------------------------------------------------------------------------------------------
 
 function normalizeJsDocComments(name: string, content: string) {
-    return name.endsWith(".d.ts")
+    return name.endsWith(".ts")
         ? content.replace(/\/\*\*\s*-{20,}/g, "/**").replace(/\**\s*-{20,}\s*\*+\//g, "*/")
         : content;
 }

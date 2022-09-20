@@ -65,7 +65,7 @@ help :
 	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Codify file templates
+# Update file templates
 #-----------------------------------------------------------------------------------------------------------------------
 
 FILE_TEMPLATES_TS=src/core/resources/file-templates.ts
@@ -122,20 +122,31 @@ $(TSC_TIMESTAMP_FILE) : $(call WILDCARD_NESTED, src, *.ts) $(FILE_TEMPLATES_TS)
 # TODO
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Normalize
+# Normalize JsDoc comments
 #-----------------------------------------------------------------------------------------------------------------------
 
-SRC_TIMESTAMP_FILE=build/src/timestamp.tmp
+WEBPACK_SRC_TIMESTAMP_FILE=build/webpack/src/timestamp.tmp
 
-preprocess : $(SRC_TIMESTAMP_FILE);
+APPEND_EXPORT=$(foreach compilation, $(2), \
+	&& echo 'export * as export_$(strip $(1)) from "./$(strip $(1))/export-$(strip $(1))";' \
+	   >> "build/webpack/src/typefinity-$(strip $(compilation)).ts" \
+)
 
-$(SRC_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE)
+normalize : $(WEBPACK_SRC_TIMESTAMP_FILE);
+
+$(WEBPACK_SRC_TIMESTAMP_FILE): $(TSC_TIMESTAMP_FILE)
 	echo Normalizing sources... \
-		&& rm -rf build/tsc \
-		&& cp -r src build \
-		&& ls -la build/\
-		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/src \
-		&& touch $@
+	    && mkdir -p build/webpack/src \
+		&& rsync -r -m -p -A --delete src/ build/webpack/src \
+		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/webpack/src \
+		&& rm -f build/webpack/src/typefinity-*.ts \
+		   $(call APPEND_EXPORT, core, core node web all) \
+		   $(call APPEND_EXPORT, node, node all) \
+		   $(call APPEND_EXPORT, web, web all) \
+		&& echo '{"extends":"../../../resources/tsconfig/webpack/tsconfig.webpack.json"}' > build/webpack/src/tsconfig.json \
+		&& echo Compiling normalized sources... \
+		&& tsc -p build/webpack/src \
+		&& touch "$@"
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Webpack
@@ -145,25 +156,21 @@ WEBPACK_TIMESTAMP_FILE=build/webpack/timestamp.tmp
 
 webpack bundle : $(WEBPACK_TIMESTAMP_FILE);
 
-WEBPACK=&& echo "Bundling $(strip $(1))..." \
-		&& webpack --config "build/tsc/scripts/webpack/webpack.$(strip $(1)).js" \
-				   --entry "$(strip $(2))" \
-				   --stats errors-only \
-		&& sed 's|webpack:///./src/$(strip $(1))/|./src/$(strip $(1))|g' build/webpack/$(strip $(1))/index.js.map \
-		   > "build/webpack/$(strip $(1))/index.js.map.tmp" \
-		&& mv -f "build/webpack/$(strip $(1))/index.js.map.tmp" "build/webpack/$(strip $(1))/index.js.map" \
+WEBPACK=&& echo Bundling $(strip $(1))... \
+		&& webpack --config "build/tsc/scripts/webpack/webpack.$(strip $(1)).js" --stats errors-only \
+		&& sed 's|webpack:///./build/webpack/src/|./src/|g' \
+			   "build/webpack/bundles/typefinity-$(strip $(1)).js.map" \
+		   > "build/webpack/bundles/typefinity-$(strip $(1)).js.map.tmp" \
+		&& mv -f "build/webpack/bundles/typefinity-$(strip $(1)).js.map.tmp" \
+			     "build/webpack/bundles/typefinity-$(strip $(1)).js.map" \
 		&& node --enable-source-maps \
-				"build/tsc/scripts/build/normalize-module-names.js" \
-				"$(strip $(1))" \
-				"build/webpack/$(strip $(1))/index.d.ts" \
-		&& touch $@
+				build/tsc/scripts/build/simplify-module-declarations.js \
+				"build/webpack/bundles/typefinity-$(strip $(1)).d.ts"
 
-$(WEBPACK_TIMESTAMP_FILE) : $(TSC_TIMESTAMP_FILE) Makefile
-	echo "Normalizing JsDoc comments..." \
-		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/tsc \
-		$(foreach module, core node web, $(call WEBPACK, $(module), ./build/tsc/$(module)/export-$(module).js)) \
-		$(call WEBPACK, root, ./build/tsc/export.js) \
-		$(call WEBPACK, typefinity-cli, ./build/tsc/scripts/typefinity-cli/typefinity-cli.js)
+$(WEBPACK_TIMESTAMP_FILE) : $(WEBPACK_SRC_TIMESTAMP_FILE)
+	rm -rf build/webpack/bundles \
+		$(foreach module, core node web all cli, $(call WEBPACK, $(module))) \
+		&& touch "$@"
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Package

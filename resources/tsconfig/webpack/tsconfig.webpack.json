@@ -1,0 +1,13 @@
+//----------------------------------------------------------------------------------------------------------------------
+// build/webpack/src
+//----------------------------------------------------------------------------------------------------------------------
+
+{
+    "extends": "../../../resources/tsconfig/src/tsconfig.single-project.json",
+    "compilerOptions": {
+        "outDir": "../../../build/webpack/tsc", //                       Specify an output folder for all emitted files.
+        "rootDir": "../../../build/webpack/src", //                      Specify the root folder within your source files.
+        "sourceRoot": "../../../build/webpack/src", //                   Specify the root path for debuggers to find the reference source code.
+        "tsBuildInfoFile": "../../../build/webpack/tsc/.tsbuildinfo", // Specify the folder for .tsbuildinfo incremental compilation files.
+    }
+}

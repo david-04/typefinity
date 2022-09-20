@@ -129,7 +129,7 @@ WEBPACK_SRC_TIMESTAMP_FILE=build/webpack/src/timestamp.tmp
 
 APPEND_EXPORT=$(foreach compilation, $(2), \
 	&& echo 'export * as export_$(strip $(1)) from "./$(strip $(1))/export-$(strip $(1))";' \
-	   >> "build/webpack/src/typefinity-$(strip $(compilation)).ts" \
+	   >> "build/webpack/src/bundle-$(strip $(compilation)).ts" \
 )
 
 normalize : $(WEBPACK_SRC_TIMESTAMP_FILE);
@@ -139,7 +139,7 @@ $(WEBPACK_SRC_TIMESTAMP_FILE): $(TSC_TIMESTAMP_FILE)
 	    && mkdir -p build/webpack/src \
 		&& rsync -r -m -p -A --delete src/ build/webpack/src \
 		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/webpack/src \
-		&& rm -f build/webpack/src/typefinity-*.ts \
+		&& rm -f build/webpack/src/bundle-*.ts \
 		   $(call APPEND_EXPORT, core, core node web all) \
 		   $(call APPEND_EXPORT, node, node all) \
 		   $(call APPEND_EXPORT, web, web all) \
@@ -154,23 +154,24 @@ $(WEBPACK_SRC_TIMESTAMP_FILE): $(TSC_TIMESTAMP_FILE)
 
 WEBPACK_TIMESTAMP_FILE=build/webpack/timestamp.tmp
 
-webpack bundle : $(WEBPACK_TIMESTAMP_FILE);
+webpack bundle : $(WEBPACK_TIMESTAMP_FILE)
 
-WEBPACK=&& echo Bundling $(strip $(1))... \
-		&& webpack --config "build/tsc/scripts/webpack/webpack.$(strip $(1)).js" --stats errors-only \
-		&& sed 's|webpack:///./build/webpack/src/|./src/|g' \
-			   "build/webpack/bundles/typefinity-$(strip $(1)).js.map" \
-		   > "build/webpack/bundles/typefinity-$(strip $(1)).js.map.tmp" \
-		&& mv -f "build/webpack/bundles/typefinity-$(strip $(1)).js.map.tmp" \
-			     "build/webpack/bundles/typefinity-$(strip $(1)).js.map" \
-		&& node --enable-source-maps \
-				build/tsc/scripts/build/simplify-module-declarations.js \
-				"build/webpack/bundles/typefinity-$(strip $(1)).d.ts"
+POSTPROCESS_BUNDLE=&& sed 's|webpack:///./build/webpack/src/|./src/|g' \
+			              "build/webpack/bundles/typefinity-$(strip $(1)).js.map" \
+		                  > "build/webpack/bundles/typefinity-$(strip $(1)).js.map.tmp" \
+		           && mv -f "build/webpack/bundles/typefinity-$(strip $(1)).js.map.tmp" \
+			                "build/webpack/bundles/typefinity-$(strip $(1)).js.map" \
+		           && node --enable-source-maps \
+				           build/tsc/scripts/build/simplify-module-declarations.js \
+				           "build/webpack/bundles/typefinity-$(strip $(1)).d.ts"
 
 $(WEBPACK_TIMESTAMP_FILE) : $(WEBPACK_SRC_TIMESTAMP_FILE)
-	rm -rf build/webpack/bundles \
-		$(foreach module, core node web all cli, $(call WEBPACK, $(module))) \
+	echo Bundling... \
+		&& rm -rf build/webpack/bundles \
+		&& webpack --config build/tsc/scripts/build/webpack.js --stats errors-only \
+		$(foreach module, core node web all cli, $(call POSTPROCESS_BUNDLE, $(module))) \
 		&& touch "$@"
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Package

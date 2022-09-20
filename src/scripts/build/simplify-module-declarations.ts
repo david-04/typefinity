@@ -9,10 +9,6 @@ import { join } from "path";
 // Main
 //----------------------------------------------------------------------------------------------------------------------
 
-
-// const MAIN_MODULE_DECLARATION = `declare module '@david-04/typefinity/${bundle}'`;
-// const MAIN_MODULE_DECLARATION_REGEXP = new RegExp(MAIN_MODULE_DECLARATION, "g");
-
 const [_node, _script, source, ...unusedParameters] = process.argv;
 
 if (source && 0 === unusedParameters.length) {

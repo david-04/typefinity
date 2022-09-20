@@ -18,9 +18,9 @@ else
 COPYRIGHT_YEARS=$(COPYRIGHT_FROM)-$(COPYRIGHT_UNITL)
 endif
 NODE_VERSION=$(shell node --version | sed 's|^v||;s|\..*||')
-ifneq "$(NODE_VERSION)" "$(shell grep -E '^## \[[0-9.]+\]' CHANGELOG.md | head -1 | sed 's|^## \[||;s|\..*||;')"
-$(error Please update the major version number in CHANGELOG.md to $(NODE_VERSION) and run "make uplift")
-endif
+# ifneq "$(NODE_VERSION)" "$(shell grep -E '^## \[[0-9.]+\]' CHANGELOG.md | head -1 | sed 's|^## \[||;s|\..*||;')"
+# $(error Please update the major version number in CHANGELOG.md to $(NODE_VERSION) and run "make uplift")
+# endif
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Utility functions
@@ -135,7 +135,7 @@ APPEND_EXPORT=$(foreach compilation, $(2), \
 normalize : $(WEBPACK_SRC_TIMESTAMP_FILE);
 
 $(WEBPACK_SRC_TIMESTAMP_FILE): $(TSC_TIMESTAMP_FILE)
-	echo Normalizing comments... \
+	echo Compiling release... \
 	    && mkdir -p build/webpack/src \
 		&& rsync -r -m -p -A --delete src/ build/webpack/src \
 		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/webpack/src \
@@ -144,7 +144,6 @@ $(WEBPACK_SRC_TIMESTAMP_FILE): $(TSC_TIMESTAMP_FILE)
 		   $(call APPEND_EXPORT, node, node all) \
 		   $(call APPEND_EXPORT, web, web all) \
 		&& echo '{"extends":"../../../resources/tsconfig/webpack/tsconfig.webpack.json"}' > build/webpack/src/tsconfig.json \
-		&& echo Recompiling... \
 		&& tsc -p build/webpack/src \
 		&& touch "$@"
 
@@ -166,7 +165,7 @@ POSTPROCESS_BUNDLE=&& sed 's|webpack:///./build/webpack/src/|./src/|g' \
 				           "build/webpack/bundles/typefinity-$(strip $(1)).d.ts"
 
 $(WEBPACK_TIMESTAMP_FILE) : $(WEBPACK_SRC_TIMESTAMP_FILE)
-	echo Bundling... \
+	echo Running webpack... \
 		&& rm -rf build/webpack/bundles \
 		&& webpack --config build/tsc/scripts/build/webpack.js --stats errors-only \
 		$(foreach bundle, core node web all cli, $(call POSTPROCESS_BUNDLE, $(bundle))) \
@@ -182,7 +181,7 @@ PACKAGE_TIMESTAMP_FILE=build/temp/package-timestamp.tmp
 package : $(PACKAGE_TIMESTAMP_FILE);
 
 $(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
-	echo Packaging... \
+	echo Assembling NPM package... \
 		&& mkdir -p "build/temp" \
 		&& mkdir -p "dist/internal" \
 		$(foreach bundle, core node web cli, \
@@ -214,18 +213,18 @@ $(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 # TypeDoc
 #-----------------------------------------------------------------------------------------------------------------------
 
-TYPEDOC_TIMESTAMP_FILE=build/typedoc/timestamp.tmp
+TYPEDOC_TIMESTAMP_FILE=build/temp/typedoc-timestamp.tmp
 
 typedoc docs doc : $(TYPEDOC_TIMESTAMP_FILE)
 
 $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
-	echo Documenting... \
+	echo Creating API documentation... \
 		&& rm -rf build/typedoc build/temp/typedoc \
 		&& mkdir -p build/typedoc build/temp/typedoc \
 		&& cp -f build/webpack/bundles/typefinity-all-module.d.ts build/temp/typedoc/typefinity.ts \
 		&& typedoc --out build/typedoc \
 				   --tsconfig resources/tsconfig/typedoc/tsconfig.typedoc.json \
-				   --name typefinity \
+				   --name "typefinity $(TYPEFINITY_VERSION)" \
 				   --githubPages false \
 				   --gitRemote https://github.com/david-04/typefinity.git \
 				   --excludePrivate \
@@ -264,7 +263,10 @@ uplift :
 # Release
 #-----------------------------------------------------------------------------------------------------------------------
 
-release : clean update-version-number-and-copyright package;
+release : clean update-version-number-and-copyright package typedoc;
+	rm -rf docs \
+		&& mkdir docs \
+		&& cp -r build/typedoc/* docs/
 
 unrelease :
 	git checkout -- docs dist

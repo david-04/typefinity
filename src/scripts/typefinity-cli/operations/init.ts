@@ -71,7 +71,7 @@ function getFiles(projectName: string) {
         toJson(`src/${projectName}.ts`, createMainModule()),
         toJson("src/debug.ts", createDebugModule()),
         toJson(".gitignore", FILE_TEMPLATES[".gitignore"]),
-        toJson("Makefile", FILE_TEMPLATES["Makefile.template"]),
+        toJson("Makefile", FILE_TEMPLATES["Makefile.template"].replace("${PROJECT_TYPE}", "node")),
         toJson("tsconfig.json", FILE_TEMPLATES["tsconfig.json"]),
     ];
     return {

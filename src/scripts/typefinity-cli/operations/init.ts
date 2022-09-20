@@ -1,6 +1,7 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
-import { basename, dirname, join } from "path";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
+import { basename, dirname } from "path";
 import { createInterface } from "readline";
+import { FILE_TEMPLATES } from "../../../core/resources/file-templates";
 
 const MAIN_MODULE_NAME = "${MAIN_MODULE_NAME}";
 const MAIN_MODULE_NAME_REGEXP = /\$\{MAIN_MODULE_NAME\}/g;
@@ -65,27 +66,18 @@ function getFiles(projectName: string) {
         content: filename.replace(MAIN_MODULE_NAME_REGEXP, projectName)
     });
     const files = [
-        toJson(".vscode/launch.json", loadTemplate("launch.json")),
-        toJson(".vscode/tasks.json", loadTemplate("tasks.json")),
+        toJson(".vscode/launch.json", FILE_TEMPLATES["launch.json"]),
+        toJson(".vscode/tasks.json", FILE_TEMPLATES["tasks.json"]),
         toJson(`src/${projectName}.ts`, createMainModule()),
         toJson("src/debug.ts", createDebugModule()),
-        toJson(".gitignore", loadTemplate(".gitignore")),
-        toJson("Makefile", loadTemplate("Makefile.template")),
-        toJson("tsconfig.json", loadTemplate("tsconfig.json")),
+        toJson(".gitignore", FILE_TEMPLATES[".gitignore"]),
+        toJson("Makefile", FILE_TEMPLATES["Makefile.template"]),
+        toJson("tsconfig.json", FILE_TEMPLATES["tsconfig.json"]),
     ];
     return {
         existing: files.filter(file => file.exists),
         missing: files.filter(file => !file.exists),
     };
-}
-
-
-//----------------------------------------------------------------------------------------------------------------------
-// Load a file from resources/templates
-//----------------------------------------------------------------------------------------------------------------------
-
-function loadTemplate(file: string) {
-    return readFileSync(join(__dirname, "..", "resources", "templates", file)).toString();
 }
 
 //----------------------------------------------------------------------------------------------------------------------

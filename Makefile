@@ -135,7 +135,7 @@ APPEND_EXPORT=$(foreach compilation, $(2), \
 normalize : $(WEBPACK_SRC_TIMESTAMP_FILE);
 
 $(WEBPACK_SRC_TIMESTAMP_FILE): $(TSC_TIMESTAMP_FILE)
-	echo Normalizing sources... \
+	echo Normalizing comments... \
 	    && mkdir -p build/webpack/src \
 		&& rsync -r -m -p -A --delete src/ build/webpack/src \
 		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/webpack/src \
@@ -144,7 +144,7 @@ $(WEBPACK_SRC_TIMESTAMP_FILE): $(TSC_TIMESTAMP_FILE)
 		   $(call APPEND_EXPORT, node, node all) \
 		   $(call APPEND_EXPORT, web, web all) \
 		&& echo '{"extends":"../../../resources/tsconfig/webpack/tsconfig.webpack.json"}' > build/webpack/src/tsconfig.json \
-		&& echo Compiling normalized sources... \
+		&& echo Recompiling... \
 		&& tsc -p build/webpack/src \
 		&& touch "$@"
 
@@ -169,16 +169,13 @@ $(WEBPACK_TIMESTAMP_FILE) : $(WEBPACK_SRC_TIMESTAMP_FILE)
 	echo Bundling... \
 		&& rm -rf build/webpack/bundles \
 		&& webpack --config build/tsc/scripts/build/webpack.js --stats errors-only \
-		$(foreach module, core node web all cli, $(call POSTPROCESS_BUNDLE, $(module))) \
+		$(foreach bundle, core node web all cli, $(call POSTPROCESS_BUNDLE, $(bundle))) \
 		&& touch "$@"
 
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Package
 #-----------------------------------------------------------------------------------------------------------------------
-
-EXCLUDED_SOURCES=*.json debug.ts
-EXCLUDE_OPTIONS=$(foreach pattern, $(EXCLUDED_SOURCES), "--exclude=$(pattern)" )
 
 PACKAGE_TIMESTAMP_FILE=build/temp/package-timestamp.tmp
 
@@ -187,18 +184,21 @@ package : $(PACKAGE_TIMESTAMP_FILE);
 $(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 	echo Packaging... \
 		&& mkdir -p "build/temp" \
-		$(foreach module, core node web, \
-			&& mkdir -p "dist/$(module)" \
-			&& cp -f "build/webpack/$(module)/index.js" "dist/$(module)/index.js" \
-			&& cp -f "build/webpack/$(module)/index.js.map" "dist/$(module)/index.js.map" \
-			&& cp -f "build/webpack/$(module)/index-module.d.ts" "dist/$(module)/index.d.ts" \
-			&& cp -f "build/webpack/$(module)/index-global.d.ts" "dist/$(module)/global/index.d.ts" \
+		&& mkdir -p "dist/internal" \
+		$(foreach bundle, core node web cli, \
+		       &&  cp -f "build/webpack/bundles/typefinity-$(bundle).js" dist/internal/ \
+		       &&  cp -f "build/webpack/bundles/typefinity-$(bundle).js.map" dist/internal/ \
 		) \
-		&& rm -rf "dist/src" \
-		&& find src| grep -vE "^src/debug.ts|^src/tsconfig.json|^src/scripts|\.test\." | zip -@ -9 -q dist/src.zip \
-		&& mkdir -p "dist/scripts" \
-		&& cp -f "build/webpack/typefinity-cli/index.js" "dist/scripts/typefinity-cli.js" \
-		&& cp -f "build/webpack/typefinity-cli/index.js.map" "dist/scripts/typefinity-cli.js.map" \
+		$(foreach bundle, core node web, \
+			   && mkdir -p "dist/$(bundle)/global" \
+		       && cp -f "build/webpack/bundles/typefinity-$(bundle)-module.d.ts" "dist/$(bundle)/index.d.ts" \
+		       && cp -f "build/webpack/bundles/typefinity-$(bundle)-global.d.ts" "dist/$(bundle)/global/index.d.ts" \
+		) \
+		&& rm -rf dist/internal/src dist/internal/typefinity-src.zip \
+		&& find src | grep -vE "^src/debug.ts|^src/tsconfig.json|^src/scripts|\.test\." \
+					| zip -@ -9 -q dist/internal/typefinity-src.zip \
+
+unused:
 		&& mkdir -p "$@/.." \
 		&& touch "$@"
 

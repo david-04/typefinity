@@ -1,0 +1,16 @@
+//----------------------------------------------------------------------------------------------------------------------
+// build/webpack/src
+//----------------------------------------------------------------------------------------------------------------------
+
+{
+    "extends": "../src/tsconfig.single-project.json",
+    "compilerOptions": {
+        "outDir": "../../../build/temp/typedoc/out", //                       Specify an output folder for all emitted files.
+        "rootDir": "../../../build/temp/typedoc", //                          Specify the root folder within your source files.
+        "sourceRoot": "../../../build/temp/typedoc", //                       Specify the root path for debuggers to find the reference source code.
+        "tsBuildInfoFile": "../../../build/temp/typedoc/out/.tsbuildinfo", // Specify the folder for .tsbuildinfo incremental compilation files.
+    },
+    "files": [
+        "../../../build/temp/typedoc/typefinity.ts"
+    ],
+}

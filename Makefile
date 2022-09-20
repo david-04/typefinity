@@ -211,7 +211,7 @@ $(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 		&& touch "$@"
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Documentation
+# TypeDoc
 #-----------------------------------------------------------------------------------------------------------------------
 
 TYPEDOC_TIMESTAMP_FILE=build/typedoc/timestamp.tmp
@@ -220,12 +220,11 @@ typedoc docs doc : $(TYPEDOC_TIMESTAMP_FILE)
 
 $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 	echo Documenting... \
-		&& rm -rf build/typedoc \
-		&& mkdir -p build/typedoc \
-		&& sed 's|"\.\./|"../../|g' src/tsconfig.json > build/typedoc/tsconfig.json \
-		&& cp build/webpack/root/index-module.d.ts build/typedoc/typedoc.ts \
+		&& rm -rf build/typedoc build/temp/typedoc \
+		&& mkdir -p build/typedoc build/temp/typedoc \
+		&& cp -f build/webpack/bundles/typefinity-all-module.d.ts build/temp/typedoc/typefinity.ts \
 		&& typedoc --out build/typedoc \
-				   --tsconfig build/typedoc/tsconfig.json \
+				   --tsconfig resources/tsconfig/typedoc/tsconfig.typedoc.json \
 				   --name typefinity \
 				   --githubPages false \
 				   --gitRemote https://github.com/david-04/typefinity.git \
@@ -240,8 +239,7 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 				   --logLevel Warn \
 				   --treatWarningsAsErrors \
 				   --cleanOutputDir false \
-				   build/typedoc/typedoc.ts \
-		&& rm -f build/typedoc/tsconfig.json build/typedoc/typedoc.ts \
+				   build/temp/typedoc/typefinity.ts \
 		&& touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -260,13 +258,16 @@ uplift :
 			> build.package.json.tmp \
 		&& mv -f build.package.json.tmp package/package.json \
 		&& npm update \
-		&& make --silent --no-print-directory update-metadata
+		&& make --silent --no-print-directory update-version-number-and-copyright
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Release
 #-----------------------------------------------------------------------------------------------------------------------
 
 release : clean update-version-number-and-copyright package;
+
+unrelease :
+	git checkout -- docs dist
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Cleanup

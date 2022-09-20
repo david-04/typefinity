@@ -1,6 +1,6 @@
 {
   "name": "typefinity",
-  "version": "0.0.1-alpha",
+  "version": "16.0.0",
   "description": "A general-purpose TypeScript library for everyday scripts",
   "repository": {
     "type": "git",

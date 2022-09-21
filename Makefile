@@ -36,11 +36,12 @@ WILDCARD_NESTED=$(foreach pattern, $(2), $(wildcard \
 # Phony targets
 #-----------------------------------------------------------------------------------------------------------------------
 
-.PHONY: bundle clean compile doc docs help package release run tsc test uplift webpack typedoc
+.PHONY: bundle clean compile doc docs help package release run tsc test unrelease uplift webpack typedoc
 
 CLEAN_DESCRIPTION=remove the build directory
 PACKAGE_DESCRIPTION=create the NPM package
 RELEASE_DESCRIPTION=create a release
+UNRELEASE_DESCRIPTION=revert dist and docs
 RUN_DESCRIPTION=run the playground module
 TSC_DESCRIPTION=compile sources via tsc
 TYPEDOC_DESCRIPTION=create the API documentation
@@ -61,6 +62,7 @@ help :
 	$(info $()  run .......... $(RUN_DESCRIPTION))
 	$(info $()  tsc .......... $(TSC_DESCRIPTION))
 	$(info $()  typedoc ...... $(TYPEDOC_DESCRIPTION))
+	$(info $()  unrelease .... $(UPLIFT_DESCRIPTION))
 	$(info $()  uplift ....... $(UPLIFT_DESCRIPTION))
 	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
 
@@ -222,9 +224,11 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 		&& rm -rf build/typedoc build/temp/typedoc \
 		&& mkdir -p build/typedoc build/temp/typedoc \
 		&& cp -f build/webpack/bundles/typefinity-all-module.d.ts build/temp/typedoc/typefinity.ts \
+		&& sed -E 's|\$$\{VERSION}|$(TYPEFINITY_VERSION)|' resources/documentation/typedoc.md > build/temp/typedoc/README.md \
 		&& typedoc --out build/typedoc \
 				   --tsconfig resources/tsconfig/typedoc/tsconfig.typedoc.json \
-				   --name "typefinity $(TYPEFINITY_VERSION)" \
+				   --name "typefinity" \
+				   --readme build/temp/typedoc/README.md \
 				   --githubPages false \
 				   --gitRemote https://github.com/david-04/typefinity.git \
 				   --excludePrivate \
@@ -237,7 +241,8 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 				   --hideGenerator \
 				   --logLevel Warn \
 				   --treatWarningsAsErrors \
-				   --cleanOutputDir false \
+				   --cleanOutputDir true \
+				   --favicon resources/documentation/logo.svg \
 				   build/temp/typedoc/typefinity.ts \
 		&& touch $@
 

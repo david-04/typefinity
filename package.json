@@ -4,6 +4,7 @@
         "dts-bundle-webpack": "*",
         "ts-loader": "*",
         "typedoc": "*",
+        "typedoc-plugin-extras": "*",
         "typescript": "*",
         "webpack": "*",
         "webpack-cli": "*"

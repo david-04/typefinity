@@ -1,6 +1,6 @@
 # typefinity
 
-This is a personal project for my own use only. It supersedes the ill-fated [typescripted-awk](https://github.com/david-04/typescripted-awk) project. It's supposed to become a general-purposeTypeScript library to quickly draft everyday scripts.
+This is a personal project for my own use only. It's supposed to become a general-purposeTypeScript library to quickly draft everyday scripts.
 
 So far, my language of choice has been AWK. It's fully geared towards getting the job done quickly. That's perfect for simple scripts that don't have a long maintenance cycle. Setting up a new application takes literally no time at all. The language itself is incredibly simple, but solving problems requires very little code to be written.
 

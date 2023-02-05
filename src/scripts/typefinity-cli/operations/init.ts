@@ -1,7 +1,8 @@
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { basename, dirname } from "path";
-import { createInterface } from "readline";
 import { FILE_TEMPLATES } from "../../../core/resources/file-templates";
+import { parseOptions } from "../utils/argument-parser";
+import { interactivePrompt } from "../utils/interactive-prompt";
 
 const MAIN_MODULE_NAME = "${MAIN_MODULE_NAME}";
 const MAIN_MODULE_NAME_REGEXP = /\$\{MAIN_MODULE_NAME\}/g;
@@ -10,8 +11,21 @@ const MAIN_MODULE_NAME_REGEXP = /\$\{MAIN_MODULE_NAME\}/g;
 // Initialize a new project
 //----------------------------------------------------------------------------------------------------------------------
 
-export async function init(args: string[]) {
-    const projectName = args[0] ?? await promptForProjectName();
+export async function init(args: Iterable<string>) {
+    const parameters = parseOptions(args);
+    const projectName = await getProjectName(parameters.get("projectName"));
+    // project name
+    // type of project: core, node, web
+    // use webpack?
+    // install tsc
+    // install typefinity? or remove version lock to always use the latest version?
+    // install webpack?
+    // install Node typings? bundled with typefinity, install none, install specific version
+    // use npm or yarn
+    // use makefile
+
+    // overwrite gitignore, vscode
+
     const files = getFiles(projectName);
     console.log("");
     if (files.existing.length) {
@@ -36,23 +50,19 @@ export async function init(args: string[]) {
 // Prompt for the
 //----------------------------------------------------------------------------------------------------------------------
 
-async function promptForProjectName() {
-    const defaultName = basename(process.cwd());
-    console.log("Please enter the name of the project/main module.");
-    console.log(`Press ENTER to use the default: ${defaultName}.`);
-    return (await readLine()).trim() || defaultName;
-}
-
-//----------------------------------------------------------------------------------------------------------------------
-// Read a line of user input
-//----------------------------------------------------------------------------------------------------------------------
-
-async function readLine(): Promise<string> {
-    const readlineInterface = createInterface({ input: process.stdin, output: process.stdout });
-    return new Promise(resolve => readlineInterface.question("> ", answer => {
-        readlineInterface.close();
-        resolve(answer);
-    }));
+async function getProjectName(defaultValue?: string) {
+    const directoryName = basename(process.cwd());
+    if (undefined !== defaultValue) {
+        return defaultValue.trim() || directoryName;
+    } else {
+        return interactivePrompt({
+            question: [
+                "Please enter the name of the project/main module.",
+                `Press ENTER to use the default: ${directoryName}.`,
+            ],
+            map: input => input || directoryName
+        });
+    }
 }
 
 //----------------------------------------------------------------------------------------------------------------------

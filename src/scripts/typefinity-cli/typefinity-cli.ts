@@ -17,7 +17,6 @@ if (args.filter(arg => arg.match(/^(-h|-help|--help)/)).length) {
     showError(args.length ? `Invalid operation "${args[0]}"` : "Missing parameter");
 }
 
-
 function matchesCommand(command: string, argument?: string) {
     return 0 < ["", "-", "--"].filter(prefix => `${prefix}${command}` === argument).length;
 }

@@ -169,7 +169,7 @@ POSTPROCESS_BUNDLE=&& sed 's|webpack:///./build/webpack/src/|./src/|g' \
 $(WEBPACK_TIMESTAMP_FILE) : $(WEBPACK_SRC_TIMESTAMP_FILE)
 	echo Running webpack... \
 		&& rm -rf build/webpack/bundles \
-		&& webpack --config build/tsc/scripts/build/webpack.js --stats errors-only \
+		&& yarn webpack --config build/tsc/scripts/build/webpack.js --stats errors-only \
 		$(foreach bundle, core node web all cli, $(call POSTPROCESS_BUNDLE, $(bundle))) \
 		&& touch "$@"
 
@@ -225,7 +225,7 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 		&& mkdir -p build/typedoc build/temp/typedoc \
 		&& cp -f build/webpack/bundles/typefinity-all-module.d.ts build/temp/typedoc/typefinity.ts \
 		&& sed -E 's|\$$\{VERSION}|$(TYPEFINITY_VERSION)|' resources/documentation/typedoc.md > build/temp/typedoc/README.md \
-		&& typedoc --out build/typedoc \
+		&& yarn typedoc --out build/typedoc \
 				   --tsconfig resources/tsconfig/typedoc/tsconfig.typedoc.json \
 				   --name "typefinity" \
 				   --readme build/temp/typedoc/README.md \
@@ -242,6 +242,7 @@ $(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
 				   --logLevel Warn \
 				   --treatWarningsAsErrors \
 				   --cleanOutputDir true \
+				   --plugin typedoc-plugin-extras \
 				   --favicon resources/documentation/logo.svg \
 				   build/temp/typedoc/typefinity.ts \
 		&& touch $@

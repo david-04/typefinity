@@ -5,17 +5,6 @@
 .SILENT :
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Version numbers and copyright years
-#-----------------------------------------------------------------------------------------------------------------------
-
-TYPEFINITY_VERSION=$(shell scripts/get-version-number.sh)
-COPYRIGHT_YEARS=$(shell scripts/get-copyright-years.sh)
-NODE_VERSION=$(shell node --version | sed 's|^v||;s|\..*||')
-# ifneq "$(NODE_VERSION)" "$(shell grep -E '^## \[[0-9.]+\]' CHANGELOG.md | head -1 | sed 's|^## \[||;s|\..*||;')"
-# $(error Please update the major version number in CHANGELOG.md to $(NODE_VERSION) and run "make uplift")
-# endif
-
-#-----------------------------------------------------------------------------------------------------------------------
 # Utility functions
 #-----------------------------------------------------------------------------------------------------------------------
 
@@ -25,248 +14,132 @@ WILDCARD_NESTED=$(foreach pattern, $(2), $(wildcard \
 					$(patsubst %, $(strip $(1))/%/$(strip $(pattern)), $(NESTING)) \
 				))
 
+define DEPENDENCY_TARGET # $(1) phony name $(2) output/timestamp file $(3) prerequisites $(4) sources/dependencies
+.PHONY: $(1)
+$(1) : $(2);
+$(2) : $(3)
+	$(4) && mkdir -p "$(2)/.." && touch $(2)
+endef
+
+define PHONY_TARGET # $(1) phony name $(2) sources/dependencies
+.PHONY: $(1)
+$(1) : ;
+	$(2)
+endef
+
 #-----------------------------------------------------------------------------------------------------------------------
-# Phony targets
+# Target descriptions
 #-----------------------------------------------------------------------------------------------------------------------
 
-.PHONY: bundle clean compile doc docs help package release run tsc test unrelease uplift webpack typedoc
-
-CLEAN_DESCRIPTION=remove the build directory
-PACKAGE_DESCRIPTION=create the NPM package
-RELEASE_DESCRIPTION=create a release
-UNRELEASE_DESCRIPTION=revert dist and docs
-RUN_DESCRIPTION=run the playground module
-TSC_DESCRIPTION=compile sources via tsc
-TYPEDOC_DESCRIPTION=create the API documentation
-UPLIFT_DESCRIPTION=upgrade to the lasted Node version
-WEBPACK_DESCRIPTION=bundle library via webpack
+CLEAN_DESCRIPTION       = remove the build directory
+PACKAGE_DESCRIPTION     = create the NPM package
+RELEASE_DESCRIPTION     = create a release
+UNRELEASE_DESCRIPTION   = revert dist and docs
+RUN_DESCRIPTION         = run the playground module
+TSC_DESCRIPTION         = compile sources via tsc
+TYPEDOC_DESCRIPTION     = create the API documentation
+UPLIFT_DESCRIPTION      = upgrade to the lasted Node version
+WEBPACK_DESCRIPTION     = bundle library via webpack
+TEMPLATES_DESCRIPTION   = update the file templates
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Help
 #-----------------------------------------------------------------------------------------------------------------------
 
-autorun : help;
-
-help :
+help autorun :
 	$(info )
-	$(info $()  clean ........ $(CLEAN_DESCRIPTION))
-	$(info $()  package ...... $(PACKAGE_DESCRIPTION))
-	$(info $()  release ...... $(RELEASE_DESCRIPTION))
-	$(info $()  run .......... $(RUN_DESCRIPTION))
-	$(info $()  tsc .......... $(TSC_DESCRIPTION))
-	$(info $()  typedoc ...... $(TYPEDOC_DESCRIPTION))
-	$(info $()  unrelease .... $(UPLIFT_DESCRIPTION))
-	$(info $()  uplift ....... $(UPLIFT_DESCRIPTION))
-	$(info $()  webpack ...... $(WEBPACK_DESCRIPTION))
+	$(info $()  clean ........ $(strip $(CLEAN_DESCRIPTION)))
+	$(info $()  package ...... $(strip $(PACKAGE_DESCRIPTION)))
+	$(info $()  release ...... $(strip $(RELEASE_DESCRIPTION)))
+	$(info $()  run .......... $(strip $(RUN_DESCRIPTION)))
+	$(info $()  templates .... $(strip $(TEMPLATES_DESCRIPTION)))
+	$(info $()  tsc .......... $(strip $(TSC_DESCRIPTION)))
+	$(info $()  typedoc ...... $(strip $(TYPEDOC_DESCRIPTION)))
+	$(info $()  unrelease .... $(strip $(UPLIFT_DESCRIPTION)))
+	$(info $()  uplift ....... $(strip $(UPLIFT_DESCRIPTION)))
+	$(info $()  webpack ...... $(strip $(WEBPACK_DESCRIPTION)))
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Update file templates
+# Timestamp files
 #-----------------------------------------------------------------------------------------------------------------------
 
-FILE_TEMPLATES_TS=src/core/resources/file-templates.ts
-
-$(FILE_TEMPLATES_TS) : $(call WILDCARD_NESTED, resources/templates, * .??*)
-	echo Updating file templates... \
-		&& echo "export const FILE_TEMPLATES = {" > "$@" \
-		   $(foreach file, $^, \
-				&& echo '    "$(strip $(file))": `' | sed 's|resources/templates/||g;' >> "$@" \
-				&& sed -E 's/\\|`|\$$/\\\0/g' "$(file)" >> "$@" \
-				&& echo '`.trim() + "\n",' >> "$@" \
-		   ) \
-		&& echo "} as const;" >> "$@"
+FILE_TEMPLATES_TS           = src/core/resources/file-templates.ts
+TSC_TIMESTAMP_FILE          = build/tsc/timestamp.tmp
+WEBPACK_SRC_TIMESTAMP_FILE  = build/webpack/src/timestamp.tmp
+WEBPACK_TIMESTAMP_FILE      = build/webpack/timestamp.tmp
+PACKAGE_TIMESTAMP_FILE      = build/temp/package-timestamp.tmp
+TYPEDOC_TIMESTAMP_FILE      = build/temp/typedoc-timestamp.tmp
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Update embedded metadata
+# Targets
 #-----------------------------------------------------------------------------------------------------------------------
 
-update-version-number-and-copyright :
-	echo Updating version information... \
-		&& mkdir -p build/temp \
-		&& cat src/core/resources/typefinity-metadata.ts \
-			| sed 's/.*TYPEFINITY_VERSION.*/export const TYPEFINITY_VERSION = "$(TYPEFINITY_VERSION)";/g' \
-			| sed 's/.*COPYRIGHT_YEARS.*/export const COPYRIGHT_YEARS = "$(COPYRIGHT_YEARS)";/g' \
-			| sed 's/.*NODE_VERSION.*/export const NODE_VERSION = $(NODE_VERSION);/g' \
-			> build/temp/typefinity-metadata.ts \
-		&& mv -f build/temp/typefinity-metadata.ts src/core/resources/typefinity-metadata.ts \
-		&& cat LICENSE \
-			| sed 's/.*David Hofmann.*/Copyright (c) $(COPYRIGHT_YEARS) David Hofmann/' \
-			> build/temp/LICENSE \
-		&& mv -f build/temp/LICENSE LICENSE \
-		&& cat dist/package.json \
-			| sed 's/"version": "[^"]*"/"version": "$(TYPEFINITY_VERSION)"/g' \
-			> build/temp/package.json \
-		&& mv -f build/temp/package.json dist/package.json
+$(eval $(call DEPENDENCY_TARGET, \
+	compile tsc, \
+	$(TSC_TIMESTAMP_FILE), \
+	$(call WILDCARD_NESTED, src, *.ts) $(FILE_TEMPLATES_TS), \
+	scripts/tsc.sh \
+))
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Compile
-#-----------------------------------------------------------------------------------------------------------------------
+$(eval $(call DEPENDENCY_TARGET, \
+	webpack bundle, \
+	$(WEBPACK_TIMESTAMP_FILE), \
+	$(WEBPACK_SRC_TIMESTAMP_FILE), \
+	scripts/webpack.sh \
+))
 
-TSC_TIMESTAMP_FILE=build/tsc/timestamp.tmp
+$(eval $(call DEPENDENCY_TARGET, \
+	package, \
+	$(PACKAGE_TIMESTAMP_FILE), \
+	$(WEBPACK_TIMESTAMP_FILE), \
+	scripts/package.sh \
+))
 
-compile tsc: $(TSC_TIMESTAMP_FILE);
+$(eval $(call DEPENDENCY_TARGET, \
+	normalise normalize, \
+	$(WEBPACK_SRC_TIMESTAMP_FILE), \
+	$(TSC_TIMESTAMP_FILE), \
+	scripts/prepare-webpack-sources.sh \
+))
 
-$(TSC_TIMESTAMP_FILE) : $(call WILDCARD_NESTED, src, *.ts) $(FILE_TEMPLATES_TS)
-	./scripts/compile.sh && touch $@
+$(eval $(call DEPENDENCY_TARGET, \
+	templates, \
+	$(FILE_TEMPLATES_TS), \
+	$(wildcard resources/templates/*), \
+	scripts/update-file-templates.sh \
+))
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Run the tests
-#-----------------------------------------------------------------------------------------------------------------------
+$(eval $(call DEPENDENCY_TARGET, \
+	doc docs typedoc, \
+	$(TYPEDOC_TIMESTAMP_FILE), \
+	$(WEBPACK_SRC_TIMESTAMP_FILE), \
+	scripts/typedoc.sh \
+))
 
-# TODO
+$(eval $(call PHONY_TARGET, \
+	update-version-number-and-copyright, \
+	scripts/update-version-information.sh \
+))
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Normalize JsDoc comments
-#-----------------------------------------------------------------------------------------------------------------------
+$(eval $(call PHONY_TARGET, \
+	uplift, \
+	scripts/uplift.sh \
+))
 
-WEBPACK_SRC_TIMESTAMP_FILE=build/webpack/src/timestamp.tmp
+$(eval $(call PHONY_TARGET, \
+	unrelease, \
+	git checkout -- docs dist \
+))
 
-APPEND_EXPORT=$(foreach compilation, $(2), \
-	&& echo 'export * as export_$(strip $(1)) from "./$(strip $(1))/export-$(strip $(1))";' \
-	   >> "build/webpack/src/bundle-$(strip $(compilation)).ts" \
-)
-
-normalize : $(WEBPACK_SRC_TIMESTAMP_FILE);
-
-$(WEBPACK_SRC_TIMESTAMP_FILE): $(TSC_TIMESTAMP_FILE)
-	echo Compiling release... \
-	    && mkdir -p build/webpack/src \
-		&& rsync -r -m -p -A --delete src/ build/webpack/src \
-		&& node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/webpack/src \
-		&& rm -f build/webpack/src/bundle-*.ts \
-		   $(call APPEND_EXPORT, core, core node web all) \
-		   $(call APPEND_EXPORT, node, node all) \
-		   $(call APPEND_EXPORT, web, web all) \
-		&& echo '{"extends":"../../../resources/tsconfig/webpack/tsconfig.webpack.json"}' > build/webpack/src/tsconfig.json \
-		&& tsc -p build/webpack/src \
-		&& touch "$@"
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Webpack
-#-----------------------------------------------------------------------------------------------------------------------
-
-WEBPACK_TIMESTAMP_FILE=build/webpack/timestamp.tmp
-
-webpack bundle : $(WEBPACK_TIMESTAMP_FILE)
-
-$(WEBPACK_TIMESTAMP_FILE) : $(WEBPACK_SRC_TIMESTAMP_FILE)
-	./scripts/webpack.sh && touch "$@"
-
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Package
-#-----------------------------------------------------------------------------------------------------------------------
-
-PACKAGE_TIMESTAMP_FILE=build/temp/package-timestamp.tmp
-
-package : $(PACKAGE_TIMESTAMP_FILE);
-
-$(PACKAGE_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
-	echo Assembling NPM package... \
-		&& mkdir -p "build/temp" \
-		&& mkdir -p "dist/internal" \
-		$(foreach bundle, core node web cli, \
-		       &&  cp -f "build/webpack/bundles/typefinity-$(bundle).js" dist/internal/ \
-		       &&  cp -f "build/webpack/bundles/typefinity-$(bundle).js.map" dist/internal/ \
-		) \
-		$(foreach bundle, core node web, \
-			   && mkdir -p "dist/$(bundle)/global" \
-		       && cp -f "build/webpack/bundles/typefinity-$(bundle)-module.d.ts" "dist/$(bundle)/index.d.ts" \
-		       && cp -f "build/webpack/bundles/typefinity-$(bundle)-global.d.ts" "dist/$(bundle)/global/index.d.ts" \
-			   && node --enable-source-maps \
-					build/tsc/scripts/build/create-import-export-wrapper.js \
-					./dist/internal/typefinity-$(bundle).js \
-					module \
-					./dist/$(bundle)/index.js \
-			   && node --enable-source-maps \
-					build/tsc/scripts/build/create-import-export-wrapper.js \
-					./dist/internal/typefinity-$(bundle).js \
-					global \
-					./dist/$(bundle)/global/index.js \
-		) \
-		&& rm -rf dist/internal/src dist/internal/typefinity-src.zip \
-		&& find src | grep -vE "^src/debug.ts|^src/tsconfig.json|^src/scripts|\.test\." \
-					| zip -@ -9 -q dist/internal/typefinity-src.zip \
-		&& mkdir -p "$@/.." \
-		&& touch "$@"
-
-#-----------------------------------------------------------------------------------------------------------------------
-# TypeDoc
-#-----------------------------------------------------------------------------------------------------------------------
-
-TYPEDOC_TIMESTAMP_FILE=build/temp/typedoc-timestamp.tmp
-
-typedoc docs doc : $(TYPEDOC_TIMESTAMP_FILE)
-
-$(TYPEDOC_TIMESTAMP_FILE) : $(WEBPACK_TIMESTAMP_FILE)
-	echo Creating API documentation... \
-		&& rm -rf build/typedoc build/temp/typedoc \
-		&& mkdir -p build/typedoc build/temp/typedoc \
-		&& cp -f build/webpack/bundles/typefinity-all-module.d.ts build/temp/typedoc/typefinity.ts \
-		&& sed -E 's|\$$\{VERSION}|$(TYPEFINITY_VERSION)|' resources/documentation/typedoc.md > build/temp/typedoc/README.md \
-		&& yarn typedoc --out build/typedoc \
-				   --tsconfig resources/tsconfig/typedoc/tsconfig.typedoc.json \
-				   --name "typefinity" \
-				   --readme build/temp/typedoc/README.md \
-				   --githubPages false \
-				   --gitRemote https://github.com/david-04/typefinity.git \
-				   --excludePrivate \
-				   --excludeProtected \
-				   --excludeExternals \
-				   --excludeInternal \
-				   --sort static-first \
-				   --sort alphabetical \
-				   --disableSources \
-				   --hideGenerator \
-				   --logLevel Warn \
-				   --treatWarningsAsErrors \
-				   --cleanOutputDir true \
-				   --plugin typedoc-plugin-extras \
-				   --favicon resources/documentation/logo.svg \
-				   build/temp/typedoc/typefinity.ts \
-		&& touch $@
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Uplift
-#-----------------------------------------------------------------------------------------------------------------------
-
-uplift :
-	echo Updating dependencies... \
-		&& mkdir -p build \
-		&& cat package.json \
-			| sed 's|"@types/node": "[^"]*"|"@types/node": "^$(NODE_VERSION)"|' \
-			> build.package.json.tmp \
-		&& mv -f build.package.json.tmp package.json \
-		&& cat package/package.json \
-			| sed 's|"@types/node": "[^"]*"|"@types/node": "^$(NODE_VERSION)"|' \
-			> build.package.json.tmp \
-		&& mv -f build.package.json.tmp package/package.json \
-		&& npm update \
-		&& make --silent --no-print-directory update-version-number-and-copyright
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Release
-#-----------------------------------------------------------------------------------------------------------------------
+$(eval $(call PHONY_TARGET, \
+	run, \
+	node --enable-source-maps build/tsc/debug.js \
+))
 
 release : clean update-version-number-and-copyright package typedoc;
-	rm -rf docs \
-		&& mkdir docs \
-		&& cp -r build/typedoc/* docs/
-
-unrelease :
-	git checkout -- docs dist
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Cleanup
-#-----------------------------------------------------------------------------------------------------------------------
+	rm -rf docs && mkdir docs  && cp -r build/typedoc/* docs/
 
 clean :
     ifneq "$(wildcard build)" ""
 	rm -rf build
     endif
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Run the playground module
-#-----------------------------------------------------------------------------------------------------------------------
-
-run : $(TSC_TIMESTAMP_FILE)
-	node --enable-source-maps build/tsc/debug.js

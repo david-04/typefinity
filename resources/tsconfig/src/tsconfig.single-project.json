@@ -3,7 +3,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 {
-    "extends": "../../../dist/internal/include/tsconfig.base.json",
+    "extends": "../../templates/.typefinity/tsconfig.base.json",
     "compilerOptions": {
         "baseUrl": "../../../node_modules", //                   Specify the base directory to resolve non-relative module names.
         "declaration": true, //                                  Generate .d.ts files from TypeScript and JavaScript files in your project.

@@ -66,9 +66,9 @@ help autorun :
 FILE_TEMPLATES_TS           = src/core/resources/file-templates.ts
 TSC_TIMESTAMP_FILE          = build/tsc/timestamp.tmp
 WEBPACK_SRC_TIMESTAMP_FILE  = build/webpack/src/timestamp.tmp
-WEBPACK_TIMESTAMP_FILE      = build/webpack/timestamp.tmp
-PACKAGE_TIMESTAMP_FILE      = build/temp/package-timestamp.tmp
-TYPEDOC_TIMESTAMP_FILE      = build/temp/typedoc-timestamp.tmp
+WEBPACK_TIMESTAMP_FILE      = build/webpack/bundles/timestamp.tmp
+PACKAGE_TIMESTAMP_FILE      = build/package/package.json
+TYPEDOC_TIMESTAMP_FILE      = build/typedoc/index.html
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Targets

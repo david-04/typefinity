@@ -17,8 +17,5 @@
     "url": "https://github.com/david-04/typefinity/issues"
   },
   "homepage": "https://github.com/david-04/typefinity#readme",
-  "bin": "./internal/typefinity-cli.js",
-  "dependencies": {
-    "@types/node": "^16"
-  }
+  "bin": "./internal/typefinity-cli.js"
 }

@@ -8,7 +8,7 @@ echo Preparing webpack sources...
 mkdir -p build/webpack/src
 rsync -r -m -p -A --delete src/ build/webpack/src
 node --enable-source-maps build/tsc/scripts/build/normalize-jsdoc-comments.js build/webpack/src
-rm -f build/webpack/src/bundle-*.ts \
+rm -f build/webpack/src/bundle-*.ts
 
 for compilation in core node web all
 do

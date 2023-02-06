@@ -4,32 +4,42 @@ set -e
 cd "`dirname "${BASH_SOURCE[0]}"`/.."
 
 echo Packaging...
-mkdir -p "build/temp"
-mkdir -p "dist/internal"
+
+TYPEFINITY_VERSION=$(scripts/get-typefinity-version.sh)
+
+rm -rf "build/package"
+mkdir -p "build/package/internal"
 
 for bundle in core node web cli
 do
-    cp -f "build/webpack/bundles/typefinity-$bundle.js" dist/internal/
-    cp -f "build/webpack/bundles/typefinity-$bundle.js.map" dist/internal/
+    cp -f "build/webpack/bundles/typefinity-$bundle.js" build/package/internal/
+    cp -f "build/webpack/bundles/typefinity-$bundle.js.map" build/package/internal/
 done
 
 for bundle in core node web
 do
-    mkdir -p "dist/$bundle/global"
-    cp -f "build/webpack/bundles/typefinity-$bundle-module.d.ts" "dist/$bundle/index.d.ts"
-    cp -f "build/webpack/bundles/typefinity-$bundle-global.d.ts" "dist/$bundle/global/index.d.ts"
+    mkdir -p "build/package/$bundle/global"
+    cp -f "build/webpack/bundles/typefinity-$bundle-module.d.ts" "build/package/$bundle/index.d.ts"
+    cp -f "build/webpack/bundles/typefinity-$bundle-global.d.ts" "build/package/$bundle/global/index.d.ts"
     node --enable-source-maps \
          build/tsc/scripts/build/create-import-export-wrapper.js \
-         ./dist/internal/typefinity-$bundle.js \
-        module \
-        ./dist/$bundle/index.js \
-    && node --enable-source-maps \
-        build/tsc/scripts/build/create-import-export-wrapper.js \
-        ./dist/internal/typefinity-$bundle.js \
-        global \
-        ./dist/$bundle/global/index.js
+         ./build/package/internal/typefinity-$bundle.js \
+         module \
+         ./build/package/$bundle/index.js
+    node --enable-source-maps \
+         build/tsc/scripts/build/create-import-export-wrapper.js \
+         ./build/package/internal/typefinity-$bundle.js \
+         global \
+         ./build/package/$bundle/global/index.js
 done
 
-rm -rf dist/internal/src
-mkdir -p dist/internal/src
-rsync -r -m -p -A --delete --exclude="*.test.ts" src dist/internal/src
+sed "s|\\\$TYPEFINITY_VERSION|$TYPEFINITY_VERSION|g;" \
+    resources/package/package.json  \
+    > build/package/package.json
+cp resources/package/README.md build/package/README.md
+
+rm -rf build/package/internal/src
+mkdir -p build/package/internal/src
+rsync -r -m -p -A --delete --exclude="*.test.ts" src build/package/internal/src
+
+cd build/package

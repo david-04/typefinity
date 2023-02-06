@@ -76,13 +76,13 @@ function getFiles(projectName: string) {
         content: filename.replace(MAIN_MODULE_NAME_REGEXP, projectName)
     });
     const files = [
-        toJson(".vscode/launch.json", FILE_TEMPLATES["launch.json"]),
-        toJson(".vscode/tasks.json", FILE_TEMPLATES["tasks.json"]),
+        toJson(".vscode/launch.json", FILE_TEMPLATES[".vscode/launch.json"]),
+        toJson(".vscode/tasks.json", FILE_TEMPLATES[".vscode/tasks.json"]),
         toJson(`src/${projectName}.ts`, createMainModule()),
         toJson("src/debug.ts", createDebugModule()),
         toJson(".gitignore", FILE_TEMPLATES[".gitignore"]),
         toJson("Makefile", FILE_TEMPLATES["Makefile.template"].replace("${PROJECT_TYPE}", "node")),
-        toJson("tsconfig.json", FILE_TEMPLATES["tsconfig.json"]),
+        toJson("tsconfig.json", FILE_TEMPLATES[".typefinity/tsconfig.json"]),
     ];
     return {
         existing: files.filter(file => file.exists),

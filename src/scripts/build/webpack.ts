@@ -63,7 +63,7 @@ function configureWebpack(bundleName: string, entryPoint: string) {
             new webpack.SourceMapDevToolPlugin({
                 noSources: true,
                 filename: `typefinity-${bundleName}.js.map`,
-                sourceRoot: `./src`,
+                sourceRoot: `.`,
             }),
         ]
     };

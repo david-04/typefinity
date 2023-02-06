@@ -30,7 +30,6 @@ do
         ./dist/$bundle/global/index.js
 done
 
-rm -rf dist/internal/src dist/internal/typefinity-src.zip
-find src | grep -vE "^src/debug.ts|^src/tsconfig.json|^src/scripts|\.test\." \
-         | zip -@ -9 -q dist/internal/typefinity-src.zip
-mkdir -p "$@/.."
+rm -rf dist/internal/src
+mkdir -p dist/internal/src
+rsync -r -m -p -A --delete --exclude="*.test.ts" src dist/internal/src

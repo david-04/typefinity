@@ -1,4 +1,4 @@
-import { parseOptions } from "./scripts/typefinity-cli/utils/argument-parser";
+// import { parseOptions } from "./scripts/typefinity-cli/utils/argument-parser";
 
 // interactivePrompt.yesNo({
 //     question: "Start?",
@@ -7,11 +7,11 @@ import { parseOptions } from "./scripts/typefinity-cli/utils/argument-parser";
 
 
 
-const result = parseOptions([
-    "--name=david",
-    "--last-name=hofmann",
-    "--middle----name=none",
-    "--x=",
-]);
+// const result = parseOptions([
+//     "--name=david",
+//     "--last-name=hofmann",
+//     "--middle----name=none",
+//     "--x=",
+// ]);
 
-result.forEach((value, key) => console.log(`${key} => ${value}`));
+// result.forEach((value, key) => console.log(`${key} => ${value}`));

@@ -8,15 +8,8 @@
 # Version numbers and copyright years
 #-----------------------------------------------------------------------------------------------------------------------
 
-TYPEFINITY_VERSION=$(shell grep -E "^## \[[0-9.]+\]" CHANGELOG.md | head -1 | sed "s|^\#\# \[||;s|\].*||")
-BRACKET=(
-COPYRIGHT_FROM=$(shell grep -E "^## \[[0-9.]+\]" CHANGELOG.md | tail -1 | sed "s|.*$(BRACKET)||;s|-.*||")
-COPYRIGHT_UNITL=$(shell grep -E "^## \[[0-9.]+\]" CHANGELOG.md | head -1 | sed "s|.*$(BRACKET)||;s|-.*||")
-ifeq "$(COPYRIGHT_FROM)" "$(COPYRIGHT_UNITL)"
-COPYRIGHT_YEARS=$(COPYRIGHT_FROM)
-else
-COPYRIGHT_YEARS=$(COPYRIGHT_FROM)-$(COPYRIGHT_UNITL)
-endif
+TYPEFINITY_VERSION=$(shell scripts/get-version-number.sh)
+COPYRIGHT_YEARS=$(shell scripts/get-copyright-years.sh)
 NODE_VERSION=$(shell node --version | sed 's|^v||;s|\..*||')
 # ifneq "$(NODE_VERSION)" "$(shell grep -E '^## \[[0-9.]+\]' CHANGELOG.md | head -1 | sed 's|^## \[||;s|\..*||;')"
 # $(error Please update the major version number in CHANGELOG.md to $(NODE_VERSION) and run "make uplift")
@@ -113,9 +106,7 @@ TSC_TIMESTAMP_FILE=build/tsc/timestamp.tmp
 compile tsc: $(TSC_TIMESTAMP_FILE);
 
 $(TSC_TIMESTAMP_FILE) : $(call WILDCARD_NESTED, src, *.ts) $(FILE_TEMPLATES_TS)
-	echo Compiling... \
-		&& tsc -b resources/tsconfig/src/tsconfig.composite-projects.json \
-		&& touch $@
+	./scripts/compile.sh && touch $@
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Run the tests
@@ -157,21 +148,8 @@ WEBPACK_TIMESTAMP_FILE=build/webpack/timestamp.tmp
 
 webpack bundle : $(WEBPACK_TIMESTAMP_FILE)
 
-POSTPROCESS_BUNDLE=&& sed 's|webpack:///./build/webpack/src/|./src/|g' \
-			              "build/webpack/bundles/typefinity-$(strip $(1)).js.map" \
-		                  > "build/webpack/bundles/typefinity-$(strip $(1)).js.map.tmp" \
-		           && mv -f "build/webpack/bundles/typefinity-$(strip $(1)).js.map.tmp" \
-			                "build/webpack/bundles/typefinity-$(strip $(1)).js.map" \
-		           && node --enable-source-maps \
-				           build/tsc/scripts/build/simplify-module-declarations.js \
-				           "build/webpack/bundles/typefinity-$(strip $(1)).d.ts"
-
 $(WEBPACK_TIMESTAMP_FILE) : $(WEBPACK_SRC_TIMESTAMP_FILE)
-	echo Running webpack... \
-		&& rm -rf build/webpack/bundles \
-		&& yarn webpack --config build/tsc/scripts/build/webpack.js --stats errors-only \
-		$(foreach bundle, core node web all cli, $(call POSTPROCESS_BUNDLE, $(bundle))) \
-		&& touch "$@"
+	./scripts/webpack.sh && touch "$@"
 
 
 #-----------------------------------------------------------------------------------------------------------------------

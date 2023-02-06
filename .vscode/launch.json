@@ -5,15 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "pwa-node",
+            "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Debug",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "preLaunchTask": "tsc",
             "internalConsoleOptions": "openOnSessionStart",
-            "program": "${workspaceFolder}/src/library/debug.ts",
+            "program": "${workspaceFolder}/src/debug.ts",
+            "runtimeArgs": ["-r", "${workspaceFolder}/.pnp.cjs"],
             "outFiles": [
                 "${workspaceFolder}/build/tsc/**/*.js"
             ],

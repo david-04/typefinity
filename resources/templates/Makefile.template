@@ -1,8 +1,8 @@
 include .typefinity/Makefile.variables
 
-TYPEFINITY_CLEAN= # add files (other than the dist directory) to remove
+TYPEFINITY_CLEAN= # add files (other than the build directory) to remove
 
 autorun : $(TYPEFINITY_COMPILE)
-	node --enable-source-maps dist/${MAIN_MODULE_NAME}.js
+	node --enable-source-maps build/${MAIN_MODULE_NAME}.js
 
 include .typefinity//Makefile.targets

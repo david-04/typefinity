@@ -18,12 +18,5 @@
 #-----------------------------------------------------------------------------------------------------------------------
 
 /build
-/dist/core
-/dist/include
-/dist/internal/typefinity-*.js
-/dist/internal/typefinity-*.js.map
-/dist/internal/typefinity-*.zip
-/dist/internal/src
-/dist/node
-/dist/web
+/dist
 /docs

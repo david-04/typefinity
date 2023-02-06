@@ -5,19 +5,19 @@
 {
     "references": [
         {
-            "path": "./projects/tsconfig.core.json"
+            "path": "./tsconfig.composite.core.json"
         },
         {
-            "path": "./projects/tsconfig.debug.json"
+            "path": "./tsconfig.composite.root.json"
         },
         {
-            "path": "./projects/tsconfig.node.json"
+            "path": "./tsconfig.composite.node.json"
         },
         {
-            "path": "./projects/tsconfig.scripts.json"
+            "path": "./tsconfig.composite.scripts.json"
         },
         {
-            "path": "./projects/tsconfig.web.json"
+            "path": "./tsconfig.composite.web.json"
         },
-    ]
+    ],
 }

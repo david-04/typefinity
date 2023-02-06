@@ -14,6 +14,7 @@
             "preLaunchTask": "tsc",
             "internalConsoleOptions": "openOnSessionStart",
             "program": "${workspaceFolder}/src/debug.ts",
+            "runtimeArgs": ["-r", "${workspaceFolder}/.pnp.cjs"],
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]

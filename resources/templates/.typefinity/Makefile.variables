@@ -1,1 +1,1 @@
-TYPEFINITY_COMPILE := dist/tsconfig.tsbuildinfo
+TYPEFINITY_COMPILE := build/tsconfig.tsbuildinfo

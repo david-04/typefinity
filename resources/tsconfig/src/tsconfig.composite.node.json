@@ -1,0 +1,23 @@
+//----------------------------------------------------------------------------------------------------------------------
+// src/node
+//----------------------------------------------------------------------------------------------------------------------
+
+{
+    "extends": "./tsconfig.single.json",
+    "compilerOptions": {
+        "composite": true, //                                           Enable constraints that allow a TypeScript project to be used with project references.
+        "declarationMap": true, //                                      Create sourcemaps for d.ts files.
+        "outDir": "../../../build/tsc/node", //                         Specify an output folder for all emitted files.
+        "rootDir": "../../../src/node", //                              Specify the root folder within your source files.
+        "tsBuildInfoFile": "../../../build/tsc/.tsbuildinfo.node", //   Specify the folder for .tsbuildinfo incremental compilation files.
+        "types": ["node"], //                                           Specify type package names to be included without being referenced in a source file.
+    },
+    "references": [
+        {
+            "path": "./tsconfig.composite.core.json"
+        }
+    ],
+    "include": [
+        "../../../src/node/**/*.ts"
+    ]
+}

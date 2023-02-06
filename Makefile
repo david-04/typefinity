@@ -18,7 +18,7 @@ define DEPENDENCY_TARGET # $(1) phony name $(2) output/timestamp file $(3) prere
 .PHONY: $(1)
 $(1) : $(2);
 $(2) : $(3)
-	$(4) && mkdir -p "$(2)/.." && touch $(2)
+	$(4) && mkdir -p `dirname "$(2)"` && touch $(2)
 endef
 
 define PHONY_TARGET # $(1) phony name $(2) sources/dependencies
@@ -104,7 +104,7 @@ $(eval $(call DEPENDENCY_TARGET, \
 
 $(eval $(call DEPENDENCY_TARGET, \
 	templates, \
-	$(FILE_TEMPLATES_TS), \
+	$(strip $(FILE_TEMPLATES_TS)), \
 	$(wildcard resources/templates/*), \
 	scripts/update-file-templates.sh \
 ))

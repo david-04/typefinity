@@ -1,0 +1,24 @@
+//----------------------------------------------------------------------------------------------------------------------
+// src/web
+//----------------------------------------------------------------------------------------------------------------------
+
+{
+    "extends": "./tsconfig.single.json",
+    "compilerOptions": {
+        "composite": true, //                                           Enable constraints that allow a TypeScript project to be used with project references.
+        "declarationMap": true, //                                      Create sourcemaps for d.ts files.
+        "outDir": "../../../build/tsc/web", //                          Specify an output folder for all emitted files.
+        "rootDir": "../../../src/web", //                               Specify the root folder within your source files.
+        "tsBuildInfoFile": "../../../build/tsc/.tsbuildinfo.web", //    Specify the folder for .tsbuildinfo incremental compilation files.
+        "types": [], //                                                 Specify type package names to be included without being referenced in a source file.
+        "lib": ["es2016", "DOM"], //                                    Specify a set of bundled library declaration files that describe the target runtime environment.
+    },
+    "references": [
+        {
+            "path": "./tsconfig.composite.core.json",
+        }
+    ],
+    "include": [
+        "../../../src/web/**/*.ts",
+    ],
+}

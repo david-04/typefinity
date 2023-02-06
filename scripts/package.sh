@@ -13,7 +13,6 @@ mkdir -p "build/package/internal"
 for bundle in core node web cli
 do
     cp -f "build/webpack/bundles/typefinity-$bundle.js" build/package/internal/
-    cp -f "build/webpack/bundles/typefinity-$bundle.js.map" build/package/internal/
 done
 
 for bundle in core node web
@@ -33,13 +32,11 @@ do
          ./build/package/$bundle/global/index.js
 done
 
-sed "s|\\\$TYPEFINITY_VERSION|$TYPEFINITY_VERSION|g;" \
-    resources/package/package.json  \
-    > build/package/package.json
+cp resources/package/package.json build/package/package.json
 cp resources/package/README.md build/package/README.md
 
 rm -rf build/package/internal/src
 mkdir -p build/package/internal/src
-rsync -r -m -p -A --delete --exclude="*.test.ts" src build/package/internal/src
+rsync -r -m -p -A --delete --exclude="*.test.ts" --exclude="tsconfig.json" src/* build/package/internal/src
 
 cd build/package

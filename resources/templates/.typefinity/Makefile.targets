@@ -1,7 +1,7 @@
 __TYPEFINITY_GLOBS       = * */* */*/* */*/*/* */*/*/*/* */*/*/*/*/* */*/*/*/*/*/* */*/*/*/*/*/*/* */*/*/*/*/*/*/*/*
 __TYPEFINITY_TS          = $(wildcard $(foreach glob, $(__TYPEFINITY_GLOBS), src/$(glob).ts))
-__TYPEFINITY_JS_REQUIRED = $(patsubst src/%.ts, dist/%.js, $(__TYPEFINITY_TS))
-__TYPEFINITY_JS_EXISTING = $(wildcard $(foreach glob, $(__TYPEFINITY_GLOBS), dist/$(glob).js))
+__TYPEFINITY_JS_REQUIRED = $(patsubst src/%.ts, build/%.js, $(__TYPEFINITY_TS))
+__TYPEFINITY_JS_EXISTING = $(wildcard $(foreach glob, $(__TYPEFINITY_GLOBS), bu/$(glob).js))
 __TYPEFINITY_JS_OBSOLETE = $(filter-out $(__TYPEFINITY_JS_EXISTING), $(__TYPEFINITY_JS_REQUIRED))
 
 $(TYPEFINITY_COMPILE) : $(__TYPEFINITY_TS)
@@ -10,6 +10,6 @@ $(TYPEFINITY_COMPILE) : $(__TYPEFINITY_TS)
 	touch $@
 
 clean :
-    ifneq "$(wildcard dist/* $(TYPEFINITY_CLEAN))" ""
-	rm -rf dist $(TYPEFINITY_CLEAN)
+    ifneq "$(wildcard build $(TYPEFINITY_CLEAN))" ""
+	rm -rf build $(TYPEFINITY_CLEAN)
     endif

@@ -64,6 +64,7 @@ function configureWebpack(bundleName: string, entryPoint: string) {
                 noSources: true,
                 filename: `typefinity-${bundleName}.js.map`,
                 sourceRoot: `.`,
+                append: false
             }),
         ]
     };

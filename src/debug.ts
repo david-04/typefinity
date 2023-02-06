@@ -1,10 +1,14 @@
 // import { parseOptions } from "./scripts/typefinity-cli/utils/argument-parser";
 
+import { unify } from "./core/data/utils/unify";
+
 // interactivePrompt.yesNo({
 //     question: "Start?",
 //     presetAnswer: "true2",
 // }).then(result => console.log(`\nResult: <${result}>`));
 
+
+console.log(unify.toArray(1));
 
 
 // const result = parseOptions([

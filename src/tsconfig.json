@@ -1,3 +1,0 @@
-{
-    "extends": "../resources/tsconfig/src/tsconfig.single-project.json"
-}

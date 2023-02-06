@@ -1,13 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>typefinity</title>
-</head>
-<body>
-    <h1>Typefinity</h1>
-    <p>Nothing to see here yet...</p>
-</body>
-</html>
+<!DOCTYPE html><html class="default" lang="en"><head><meta charSet="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>typefinity</title><meta name="description" content="Documentation for typefinity"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="assets/style.css"/><link rel="stylesheet" href="assets/highlight.css"/><script async src="assets/search.js" id="search-script"></script><link rel="icon" href="logo.svg" />
+</head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os"</script><header class="tsd-page-toolbar">
+<div class="tsd-toolbar-contents container">
+<div class="table-cell" id="tsd-search" data-base=".">
+<div class="field"><label for="tsd-search-field" class="tsd-widget tsd-toolbar-icon search no-caption"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M15.7824 13.833L12.6666 10.7177C12.5259 10.5771 12.3353 10.499 12.1353 10.499H11.6259C12.4884 9.39596 13.001 8.00859 13.001 6.49937C13.001 2.90909 10.0914 0 6.50048 0C2.90959 0 0 2.90909 0 6.49937C0 10.0896 2.90959 12.9987 6.50048 12.9987C8.00996 12.9987 9.39756 12.4863 10.5008 11.6239V12.1332C10.5008 12.3332 10.5789 12.5238 10.7195 12.6644L13.8354 15.7797C14.1292 16.0734 14.6042 16.0734 14.8948 15.7797L15.7793 14.8954C16.0731 14.6017 16.0731 14.1267 15.7824 13.833ZM6.50048 10.499C4.29094 10.499 2.50018 8.71165 2.50018 6.49937C2.50018 4.29021 4.28781 2.49976 6.50048 2.49976C8.71001 2.49976 10.5008 4.28708 10.5008 6.49937C10.5008 8.70852 8.71314 10.499 6.50048 10.499Z" fill="var(--color-text)"></path></svg></label><input type="text" id="tsd-search-field" aria-label="Search"/></div>
+<div class="field">
+<div id="tsd-toolbar-links"></div></div>
+<ul class="results">
+<li class="state loading">Preparing search index...</li>
+<li class="state failure">The search index is not available</li></ul><a href="index.html" class="title">typefinity</a></div>
+<div class="table-cell" id="tsd-widgets"><a href="#" class="tsd-widget tsd-toolbar-icon menu no-caption" data-toggle="menu" aria-label="Menu"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="7" width="14" height="2" fill="var(--color-text)"></rect><rect x="1" y="11" width="14" height="2" fill="var(--color-text)"></rect></svg></a></div></div></header>
+<div class="container container-main">
+<div class="col-8 col-content">
+<div class="tsd-page-title">
+<h2>typefinity</h2></div>
+<div class="tsd-panel tsd-typography">
+<a href="#typefinity-001" id="typefinity-001" style="color: inherit; text-decoration: none;">
+  <h1>typefinity 0.0.1</h1>
+</a>
+<p>This is a personal project for my own use only. It supersedes the ill-fated <a href="https://github.com/david-04/typescripted-awk">typescripted-awk</a> project. It&#39;s supposed to become a general-purposeTypeScript library to quickly draft everyday scripts.</p>
+<p>So far, my language of choice has been AWK. It&#39;s fully geared towards getting the job done quickly. That&#39;s perfect for simple scripts that don&#39;t have a long maintenance cycle. Setting up a new application takes literally no time at all. The language itself is incredibly simple, but solving problems requires very little code to be written.</p>
+<p>While AWK is great for rapid development, it lacks some features and pretty much all amenities of modern development. Tooling support is almost non-existent, there are no type checks, and AWK doesn&#39;t even have objects (let alone classes). This limits the manageable complexity of applications, wastes time hunting down runtime errors, and requires ugly hacks to simulate any kind of data structure beyond the built-in hash tables.</p>
+<p>Moving forward, I want to switch to TypeScript. It has great tooling support and superior type inference. This allows writing scripts in a typesafe way with minimal boilerplate code. But JavaScript lacks some AWK features like automatic input parsing, which make prototyping in AWK so efficient. It also comes with a significantly higher setup cost. It&#39;s easy to spend an hour tweaking the <code>tsconfig.json</code>, setting up dependencies, and configuring build scripts.</p>
+<p>typefinity is supposed to combine the best of both worlds. It&#39;s a TypeScript library with AWK-inspired features and a wizard to quickly set up new projects. The final goal is to require no manual setup at all and have a new (empty) script and build pipeline up and running in less than a minute.</p>
+</div></div>
+<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+<div class="tsd-navigation settings">
+<details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Settings</h3></summary>
+<div class="tsd-accordion-details">
+<div class="tsd-filter-visibility">
+<h4 class="uppercase">Member Visibility</h4><form>
+<ul id="tsd-filter-options">
+<li class="tsd-filter-item"><label class="tsd-filter-input"><input type="checkbox" id="tsd-filter-inherited" name="inherited" checked/><svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true"><rect class="tsd-checkbox-background" width="30" height="30" x="1" y="1" rx="6" fill="none"></rect><path class="tsd-checkbox-checkmark" d="M8.35422 16.8214L13.2143 21.75L24.6458 10.25" stroke="none" stroke-width="3.5" stroke-linejoin="round" fill="none"></path></svg><span>Inherited</span></label></li></ul></form></div>
+<div class="tsd-theme-toggle">
+<h4 class="uppercase">Theme</h4><select id="theme"><option value="os">OS</option><option value="light">Light</option><option value="dark">Dark</option></select></div></div></details></div>
+<nav class="tsd-navigation primary">
+<details class="tsd-index-accordion" open><summary class="tsd-accordion-summary">
+<h3><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4.93896 8.531L12 15.591L19.061 8.531L16.939 6.409L12 11.349L7.06098 6.409L4.93896 8.531Z" fill="var(--color-text)"></path></svg> Modules</h3></summary>
+<div class="tsd-accordion-details">
+<ul>
+<li class="current selected"><a href="modules.html">typefinity</a>
+<ul>
+<li class="tsd-kind-namespace"><a href="modules/tfi.html">tfi</a>
+<ul>
+<li class="tsd-kind-namespace tsd-parent-kind-namespace"><a href="modules/tfi.AddInterceptor.html">Add<wbr/>Interceptor</a></li>
+<li class="tsd-kind-namespace tsd-parent-kind-namespace"><a href="modules/tfi.Batch.html">Batch</a></li>
+<li class="tsd-kind-namespace tsd-parent-kind-namespace"><a href="modules/tfi.Unify.html">Unify</a></li></ul></li>
+<li class="tsd-kind-namespace"><a href="modules/tft.html">tft</a></li>
+<li class="tsd-kind-namespace"><a href="modules/unsafe.html">unsafe</a></li></ul></li></ul></div></details></nav>
+<nav class="tsd-navigation secondary menu-sticky">
+<ul>
+<li class="tsd-kind-type-alias"><a href="types/Action.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-4194304-path"></rect><path d="M11.31 16V8.224H8.91V7.24H14.79V8.224H12.39V16H11.31Z" fill="var(--color-text)" id="icon-4194304-text"></path></svg>Action</a></li>
+<li class="tsd-kind-type-alias"><a href="types/AsyncAction.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Async<wbr/>Action</a></li>
+<li class="tsd-kind-type-alias"><a href="types/AsyncSupplier.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Async<wbr/>Supplier</a></li>
+<li class="tsd-kind-type-alias"><a href="types/Supplier.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Supplier</a></li>
+<li class="tsd-kind-variable"><a href="variables/TEST_NODE.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-variable)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-32-path"></rect><path d="M11.106 16L8.85 7.24H9.966L11.454 13.192C11.558 13.608 11.646 13.996 11.718 14.356C11.79 14.708 11.842 14.976 11.874 15.16C11.906 14.976 11.954 14.708 12.018 14.356C12.09 13.996 12.178 13.608 12.282 13.192L13.758 7.24H14.85L12.582 16H11.106Z" fill="var(--color-text)" id="icon-32-text"></path></svg>TEST_<wbr/>NODE</a></li>
+<li class="tsd-kind-variable"><a href="variables/TEST_WEB.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>TEST_<wbr/>WEB</a></li>
+<li class="tsd-kind-type-alias"><a href="types/UnknownAsyncFunction.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Unknown<wbr/>Async<wbr/>Function</a></li>
+<li class="tsd-kind-type-alias"><a href="types/UnknownFunction.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Unknown<wbr/>Function</a></li>
+<li class="tsd-kind-type-alias"><a href="types/ValueArrayOrSupplier.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Value<wbr/>Array<wbr/>Or<wbr/>Supplier</a></li>
+<li class="tsd-kind-type-alias"><a href="types/ValueOrArray.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Value<wbr/>Or<wbr/>Array</a></li>
+<li class="tsd-kind-type-alias"><a href="types/ValueOrReadonlyArray.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Value<wbr/>Or<wbr/>Readonly<wbr/>Array</a></li>
+<li class="tsd-kind-type-alias"><a href="types/ValueOrSupplier.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Value<wbr/>Or<wbr/>Supplier</a></li>
+<li class="tsd-kind-type-alias"><a href="types/ValueOrWritableArray.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Value<wbr/>Or<wbr/>Writable<wbr/>Array</a></li>
+<li class="tsd-kind-type-alias"><a href="types/ValueReadonlyArrayOrSupplier.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Value<wbr/>Readonly<wbr/>Array<wbr/>Or<wbr/>Supplier</a></li>
+<li class="tsd-kind-type-alias"><a href="types/ValueWritableArrayOrSupplier.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-4194304-path"></use><use href="#icon-4194304-text"></use></svg>Value<wbr/>Writable<wbr/>Array<wbr/>Or<wbr/>Supplier</a></li>
+<li class="tsd-kind-variable"><a href="variables/addInterceptor.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>add<wbr/>Interceptor</a></li>
+<li class="tsd-kind-function"><a href="functions/afterAll.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-function)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-64-path"></rect><path d="M9.39 16V7.24H14.55V8.224H10.446V11.128H14.238V12.112H10.47V16H9.39Z" fill="var(--color-text)" id="icon-64-text"></path></svg>after<wbr/>All</a></li>
+<li class="tsd-kind-function"><a href="functions/afterEach.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>after<wbr/>Each</a></li>
+<li class="tsd-kind-variable"><a href="variables/batch.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>batch</a></li>
+<li class="tsd-kind-function"><a href="functions/beforeAll.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>before<wbr/>All</a></li>
+<li class="tsd-kind-function"><a href="functions/beforeEach.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>before<wbr/>Each</a></li>
+<li class="tsd-kind-function"><a href="functions/testCase.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>test<wbr/>Case</a></li>
+<li class="tsd-kind-function"><a href="functions/testSuite.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-64-path"></use><use href="#icon-64-text"></use></svg>test<wbr/>Suite</a></li>
+<li class="tsd-kind-variable"><a href="variables/unify.html" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-32-path"></use><use href="#icon-32-text"></use></svg>unify</a></li></ul></nav></div></div>
+<div class="overlay"></div><script src="assets/main.js"></script></body></html>

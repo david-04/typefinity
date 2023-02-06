@@ -71,7 +71,7 @@ function removeCarriageReturn(content: string) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// } declare module '@david-04/typefinity/core/core/misc/utils/unsafe' {
+// } declare module 'typefinity/core/core/misc/utils/unsafe' {
 //----------------------------------------------------------------------------------------------------------------------
 
 function mergeAllModulesIntoOne(content: string) {
@@ -79,7 +79,7 @@ function mergeAllModulesIntoOne(content: string) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// export * as tfBatch from "@david-04/typefinity/core/core/functions/batch";
+// export * as tfBatch from "typefinity/core/core/functions/batch";
 //----------------------------------------------------------------------------------------------------------------------
 
 function removeReExports(content: string) {
@@ -87,7 +87,7 @@ function removeReExports(content: string) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// import { unsafe } from "@david-04/typefinity/core/core/misc/utils/unsafe";
+// import { unsafe } from "typefinity/core/core/misc/utils/unsafe";
 //----------------------------------------------------------------------------------------------------------------------
 
 function removeImports(content: string) {
@@ -111,7 +111,7 @@ function removeDtsBundleHeader(content: string) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// declare module '@david-04/typefinity/core' => declare module '@david-04/typefinity/core/global'
+// declare module 'typefinity/core' => declare module 'typefinity/core/global'
 //----------------------------------------------------------------------------------------------------------------------
 
 function appendGlobalToModuleName(content: string) {
@@ -119,7 +119,7 @@ function appendGlobalToModuleName(content: string) {
 }
 
 //----------------------------------------------------------------------------------------------------------------------
-// declare module '@david-04/typefinity/core' => declare global
+// declare module 'typefinity/core' => declare global
 //----------------------------------------------------------------------------------------------------------------------
 
 function moveDeclarationsToGlobalNamespace(content: string) {

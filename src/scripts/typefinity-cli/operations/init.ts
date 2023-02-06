@@ -82,7 +82,7 @@ function getFiles(projectName: string) {
         toJson("src/debug.ts", createDebugModule()),
         toJson(".gitignore", FILE_TEMPLATES[".gitignore"]),
         toJson("Makefile", FILE_TEMPLATES["Makefile.template"].replace("${PROJECT_TYPE}", "node")),
-        toJson("tsconfig.json", FILE_TEMPLATES[".typefinity/tsconfig.json"]),
+        toJson("tsconfig.json", FILE_TEMPLATES["tsconfig.template.json"]),
     ];
     return {
         existing: files.filter(file => file.exists),
@@ -106,7 +106,7 @@ function saveFile(name: string, content: string) {
 
 function createMainModule() {
     return [
-        'import "@david-04/typefinity/global";',
+        'import "typefinity/node/global";',
         "",
         "console.log(add(1, 2));",
     ].join("\n");

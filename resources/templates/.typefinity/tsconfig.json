@@ -1,3 +1,0 @@
-{
-    "extends": "./node_modules/@david-04/typefinity/internal/include/tsconfig.${PROJECT_TYPE}.json"
-}

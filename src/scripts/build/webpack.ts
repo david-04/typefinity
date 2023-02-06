@@ -54,7 +54,7 @@ function configureWebpack(bundleName: string, entryPoint: string) {
         },
         plugins: [
             new DtsBundleWebpack({
-                name: "all" === bundleName ? "@david-04/typefinity" : `@david-04/typefinity/${bundleName}`,
+                name: "all" === bundleName ? "typefinity" : `typefinity/${bundleName}`,
                 main: `${webpackRoot}/tsc/${entryPoint}.d.ts`,
                 out: `${webpackRoot}/bundles/typefinity-${bundleName}.d.ts`,
                 externals: false,

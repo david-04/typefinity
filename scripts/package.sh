@@ -35,8 +35,9 @@ done
 cp resources/package/package.json build/package/package.json
 cp resources/package/README.md build/package/README.md
 
-rm -rf build/package/internal/src
-mkdir -p build/package/internal/src
-rsync -r -m -p -A --delete --exclude="*.test.ts" --exclude="tsconfig.json" src/* build/package/internal/src
+# Debugging into sources does not work with Yarn PnP
+# rm -rf build/package/internal/src
+# mkdir -p build/package/internal/src
+# rsync -r -m -p -A --delete --exclude="*.test.ts" --exclude="tsconfig.json" src/* build/package/internal/src
 
 cd build/package

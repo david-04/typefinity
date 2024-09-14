@@ -1,0 +1,10 @@
+/** This is a cli interface */
+export interface CliInterface {
+    /** property */
+    property: string;
+}
+
+/** This is a cli function */
+export function cliFunction(data: CliInterface) {
+    return JSON.stringify(data);
+}

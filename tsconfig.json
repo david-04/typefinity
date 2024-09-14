@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "composite": true,
+        "tsBuildInfoFile": "build/.tsbuildinfo"
+    },
+    "references": [
+        { "path": "resources/tsconfig/tsconfig.core.json" },
+        { "path": "resources/tsconfig/tsconfig.cli.json" },
+        { "path": "resources/tsconfig/tsconfig.web.json" }
+    ]
+}

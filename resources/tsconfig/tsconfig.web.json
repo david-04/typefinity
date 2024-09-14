@@ -1,0 +1,22 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "allowArbitraryExtensions": true,
+        "jsx": "react",
+        "jsxFactory": "React.createElement",
+        "lib": ["DOM"],
+        "outDir": "../../build/web",
+        "rootDir": "../../src/web",
+        "tsBuildInfoFile": "../../build/.tsbuildinfo.web",
+        "target": "ES6"
+    },
+    "references": [
+        {
+            "path": "./tsconfig.core.json"
+        }
+    ],
+    "include": [
+        "../../src/web/**.ts",
+        "../../src/web/**.tsx"
+    ]
+}

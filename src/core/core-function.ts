@@ -1,0 +1,10 @@
+/** This is a core interface */
+export interface CoreInterface {
+    /** property */
+    property: string;
+}
+
+/** This is a core function */
+export function coreFunction(data: CoreInterface) {
+    return JSON.stringify(data);
+}

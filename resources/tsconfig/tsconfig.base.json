@@ -1,0 +1,6 @@
+{
+    "extends": "../../.launchpad/tsconfig.default.json",
+    "compilerOptions": {
+        "composite": true
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "dependencies": {
+        "@types/node": "*"
+    },
+    "name": "typefinity",
+    "version": "0.0.0",
+    "private": true,
+    "license": "UNLICENSED",
+    "type": "module",
+    "swpm": "npm"
+}

@@ -1,0 +1,11 @@
+{
+    "extends": "../../.launchpad/tsconfig.default.json",
+    "compilerOptions": {
+        "composite": true,
+        "allowArbitraryExtensions": true,
+        "jsx": "react",
+        "jsxFactory": "React.createElement",
+        "lib": ["ES2022", "DOM"],
+        "target": "ES2022"
+    }
+}

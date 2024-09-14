@@ -1,0 +1,16 @@
+{
+    "extends": "./resources/tsconfig/tsconfig.base.cli.json",
+    "compilerOptions": {
+        "outDir": "build/tsc",
+        "rootDir": "src",
+        "tsBuildInfoFile": "build/tsc/.tsbuildinfo"
+    },
+    "references": [
+        { "path": "./resources/tsconfig/tsconfig.test.json" },
+        { "path": "./resources/tsconfig/tsconfig.core.json" },
+        { "path": "./resources/tsconfig/tsconfig.cli.json" },
+        { "path": "./resources/tsconfig/tsconfig.web.json" },
+        { "path": "./resources/tsconfig/tsconfig.bundles.json" }
+    ],
+    "include": ["src/debug.ts"]
+}

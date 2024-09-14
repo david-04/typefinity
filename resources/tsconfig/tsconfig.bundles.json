@@ -1,0 +1,20 @@
+{
+    "extends": "./tsconfig.base.web.json",
+    "compilerOptions": {
+        "outDir": "../../build/tsc/bundles",
+        "rootDir": "../../src/bundles",
+        "tsBuildInfoFile": "../../build/tsc/.tsbuildinfo.bundles"
+    },
+    "references": [
+        //
+        { "path": "./tsconfig.test.json" },
+        { "path": "./tsconfig.core.json" },
+        { "path": "./tsconfig.cli.json" },
+        { "path": "./tsconfig.web.json" }
+    ],
+    "include": [
+        //
+        "../../src/bundles/*.ts",
+        "../../src/bundles/**/*.ts"
+    ]
+}

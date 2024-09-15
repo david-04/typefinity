@@ -18,5 +18,5 @@
     "[typescriptreact]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
-    "@david-04.insertCommentBlockAsJavaDoc": false
+    "@david-04.insertCommentBlockAsJavaDoc": true
 }

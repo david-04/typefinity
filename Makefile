@@ -11,9 +11,14 @@ autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISIT
 # Bundling
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.bundle.add, src/core/core.ts, build/bundle/core.js, cli dts)
-$(call lp.bundle.add, src/cli/cli.ts,   build/bundle/cli.js,  cli dts)
-$(call lp.bundle.add, src/web/web.ts,   build/bundle/web.js,  web dts)
+NORMALIZE_JAVADOC=. bin/normalize-javadoc-comments.sh
+
+$(call lp.bundle.add, src/core/core.ts, build/bundle/core.js, cli dts, , $(NORMALIZE_JAVADOC) build/bundle/core.d.ts)
+$(call lp.bundle.add, src/cli/cli.ts,   build/bundle/cli.js,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/cli.d.ts)
+$(call lp.bundle.add, src/web/web.ts,   build/bundle/web.js,  web dts, , $(NORMALIZE_JAVADOC) build/bundle/web.d.ts)
+
+
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean

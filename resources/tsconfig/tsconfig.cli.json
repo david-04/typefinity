@@ -1,13 +1,13 @@
 {
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
-        "outDir": "../../build/cli",
+        "outDir": "../../build/tsc/cli",
         "rootDir": "../../src/cli",
-        "tsBuildInfoFile": "../../build/.tsbuildinfo.cli"
+        "tsBuildInfoFile": "../../build/tsc/.tsbuildinfo.cli"
     },
     "references": [
         {
-            "path": "./tsconfig.core.json"
+            "path": "tsconfig.core.json"
         }
     ],
     "include": [

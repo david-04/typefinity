@@ -44,7 +44,7 @@
         "noUncheckedIndexedAccess": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "outDir": "../build",
+        "outDir": "../build/tsc",
         "preserveConstEnums": true,
         "preserveSymlinks": false,
         "removeComments": true,
@@ -60,7 +60,7 @@
         "strictPropertyInitialization": true,
         "stripInternal": true,
         "target": "es2022",
-        "tsBuildInfoFile": "../build/.tsbuildinfo",
+        "tsBuildInfoFile": "../build/tsc/.tsbuildinfo",
         "useDefineForClassFields": true,
         "useUnknownInCatchVariables": true,
         "verbatimModuleSyntax": false,
@@ -76,4 +76,3 @@
         "esm": true
     }
 }
-

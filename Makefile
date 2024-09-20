@@ -5,7 +5,7 @@ include .launchpad/Makefile.header # see .launchpad/Makefile.documentation
 #-----------------------------------------------------------------------------------------------------------------------
 
 autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISITE_BUNDLE_JS) + $(LP_PREREQUISITE_BUNDLE_DTS)
-	$(call lp.run, build/tsc/cli/cli.js)
+	$(call lp.run, build/tsc/cli/debug.js)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Bundling
@@ -17,12 +17,11 @@ $(call lp.bundle.add, src/core/core.ts, build/bundle/typefinity-core.mjs, cli dt
 $(call lp.bundle.add, src/cli/cli.ts,   build/bundle/typefinity-cli.mjs,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-cli.d.ts)
 $(call lp.bundle.add, src/web/web.ts,   build/bundle/typefinity-web.mjs,  web dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-web.d.ts)
 
-
 #-----------------------------------------------------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.help.add-phony-target , typedoc, ............ create API documentation)
+$(call lp.help.add-phony-target, typedoc, ............ create API documentation)
 
 .PHONY: doc docs documentation
 
@@ -38,26 +37,32 @@ build/typedoc/%/index.html : build/bundle/typefinity-%.d.ts bin/create-api-docum
 # Release
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.help.add-phony-target , release, ............ create the release)
+$(call lp.help.add-phony-target, release, ............ create the release)
 
 release : $(foreach TYPE, core cli web, build/bundle/typefinity-$(TYPE).mjs build/bundle/typefinity-$(TYPE).d.ts build/typedoc/$(TYPE)/index.html)
 	. bin/release.sh
 
-$(call lp.help.add-phony-target , unrelease, .......... git-revert the release)
+$(call lp.help.add-phony-target , unrelease, .......... (git-) revert the release)
 
 unrelease : ;
 	git clean --force -d --quiet dist docs && git checkout -- dist docs
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Install
+#-----------------------------------------------------------------------------------------------------------------------
+
+$(call lp.help.add-phony-target, install, ............ install the cli package for testing purposes)
+
+install : build/bundle/typefinity-cli.mjs build/bundle/typefinity-cli.d.ts dist/typefinity-cli/package.json
+	   echo Copying cli package to playground... \
+	&& mkdir -p ../typefinity-playground/node_modules/@david-04/typefinity-cli \
+	&& cp $^ ../typefinity-playground/node_modules/@david-04/typefinity-cli/
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean
 #-----------------------------------------------------------------------------------------------------------------------
 
 $(call lp.clean.files, build)
-
-
-
-
 
 #-----------------------------------------------------------------------------------------------------------------------
 include .launchpad/Makefile.footer

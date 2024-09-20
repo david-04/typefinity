@@ -14,6 +14,6 @@
   },
   "homepage": "https://github.com/david-04/typefinity#readme",
   "main": "./typefinity-core.mjs",
-  "module": "",
+  "types": "./typefinity-core.d.ts",
   "type": "module"
 }

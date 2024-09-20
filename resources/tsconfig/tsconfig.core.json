@@ -1,11 +1,13 @@
 {
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
+        "lib": ["ES2022"],
         "outDir": "../../build/tsc/core",
         "rootDir": "../../src/core",
         "tsBuildInfoFile": "../../build/tsc/.tsbuildinfo.core"
     },
     "include": [
-        "../../src/core/**.ts"
+        "../../src/core/*.ts",
+        "../../src/core/**/*.ts"
     ]
 }

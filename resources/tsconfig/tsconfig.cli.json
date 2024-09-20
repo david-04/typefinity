@@ -1,6 +1,7 @@
 {
     "extends": "./tsconfig.base.json",
     "compilerOptions": {
+        "lib": ["ES2022"],
         "outDir": "../../build/tsc/cli",
         "rootDir": "../../src/cli",
         "tsBuildInfoFile": "../../build/tsc/.tsbuildinfo.cli"
@@ -11,6 +12,7 @@
         }
     ],
     "include": [
-        "../../src/cli/**.ts"
+        "../../src/cli/*.ts",
+        "../../src/cli/*/**.ts"
     ]
 }

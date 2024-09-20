@@ -1,1 +1,1 @@
-export { coreFunction } from "./core-function.js";
+export * from "./core-function.js";

@@ -1,3 +1,2 @@
 export * from "../core/core.js";
-
-export { webFunction } from "./web-function.js";
+export * from "./web-function.js";

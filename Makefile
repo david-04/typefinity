@@ -4,8 +4,16 @@ include .launchpad/Makefile.header # see .launchpad/Makefile.documentation
 # Default target
 #-----------------------------------------------------------------------------------------------------------------------
 
-autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISITE_BUNDLE_JS) + $(LP_PREREQUISITE_BUNDLE_DTS)
-	$(call lp.run, build/tsc/cli/debug.js)
+autorun : test; # $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISITE_BUNDLE_JS) + $(LP_PREREQUISITE_BUNDLE_DTS)
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Test
+#-----------------------------------------------------------------------------------------------------------------------
+
+$(call lp.help.add-phony-target, test, ............... run the unit tests)
+
+test tests : $(LP_PREREQUISITE_TSC)
+	. ./bin/run-tests.sh
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Bundling

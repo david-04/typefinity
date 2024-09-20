@@ -1,23 +1,34 @@
 /**---------------------------------------------------------------------------------------------------------------------
- * This is a core interface
+ * Error thrown when attempting to divide by zero
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export interface CoreInterface {
-    /** property description */
-    property: string;
+export class DivisionByZeroError extends Error {
+    public constructor(a: number) {
+        super(`Can't divide ${a} by 0`);
+    }
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
- * This is a core function.
- *
- * It does this and that.
- *
- * @return Returns some more data
+ * Parameters for the sum function
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function coreFunction(
-    /** data passed to the function */
-    data: CoreInterface
-) {
-    return JSON.stringify(data);
+export interface Divide {
+    /** The first number */
+    a: number;
+    /** The second number */
+    b: number;
+}
+
+/**---------------------------------------------------------------------------------------------------------------------
+ * Divide two numbers
+ *
+ * @param parameters The values to divide
+ * @return a divided by b
+ *--------------------------------------------------------------------------------------------------------------------*/
+
+export function divide({ a, b }: Divide) {
+    if (0 === b) {
+        throw new DivisionByZeroError(a);
+    }
+    return a / b;
 }

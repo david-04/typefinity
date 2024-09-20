@@ -11,8 +11,8 @@ fi
 
 [[ -f "bin/create-api-documentation.sh" ]] && cd "bin"
 
-if [[ ! -f "../build/bundle/${1?}.d.ts" ]]; then
-    echo "ERROR: File build/bundle/${1?}.d.ts does not exist" >&2
+if [[ ! -f "../build/bundle/typefinity-${1?}.d.ts" ]]; then
+    echo "ERROR: File build/bundle/typefinity-${1?}.d.ts does not exist" >&2
     return 1 || exit 1
 fi
 
@@ -46,4 +46,4 @@ echo "Creating API documentation for $1..."
     --sort static-first \
     --treatWarningsAsErrors \
     --tsconfig ../resources/tsconfig/tsconfig.typedoc.json \
-    "../build/bundle/${1?}.d.ts"
+    "../build/bundle/typefinity-${1?}.d.ts"

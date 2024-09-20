@@ -5,7 +5,7 @@ include .launchpad/Makefile.header # see .launchpad/Makefile.documentation
 #-----------------------------------------------------------------------------------------------------------------------
 
 autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISITE_BUNDLE_JS) + $(LP_PREREQUISITE_BUNDLE_DTS)
-	$(call lp.run, build/cli/cli.js)
+	$(call lp.run, build/tsc/cli/cli.js)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Bundling
@@ -13,35 +13,47 @@ autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISIT
 
 NORMALIZE_JAVADOC=. bin/normalize-javadoc-comments.sh
 
-$(call lp.bundle.add, src/core/core.ts, build/bundle/core.js, cli dts, , $(NORMALIZE_JAVADOC) build/bundle/core.d.ts)
-$(call lp.bundle.add, src/cli/cli.ts,   build/bundle/cli.js,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/cli.d.ts)
-$(call lp.bundle.add, src/web/web.ts,   build/bundle/web.js,  web dts, , $(NORMALIZE_JAVADOC) build/bundle/web.d.ts)
+$(call lp.bundle.add, src/core/core.ts, build/bundle/typefinity-core.mjs, cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-core.d.ts)
+$(call lp.bundle.add, src/cli/cli.ts,   build/bundle/typefinity-cli.mjs,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-cli.d.ts)
+$(call lp.bundle.add, src/web/web.ts,   build/bundle/typefinity-web.mjs,  web dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-web.d.ts)
 
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Documentation
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.help.add-phony-target , typedoc, ............ create API documentation ) # register a target and make it .PHONY
+$(call lp.help.add-phony-target , typedoc, ............ create API documentation)
 
 .PHONY: doc docs documentation
 
 doc docs documentation typedoc : build/typedoc/index.html;
 
-build/typedoc/index.html : $(foreach CORE_CLI_WEB, core cli web, build/typedoc/$(CORE_CLI_WEB)/index.html)
+build/typedoc/index.html : $(foreach TYPE, core cli web, build/typedoc/$(TYPE)/index.html)
 	sed 's|<head>|<head><base href="./cli/"/>|' build/typedoc/cli/index.html > $@
 
-build/typedoc/%/index.html : build/bundle/%.d.ts bin/create-api-documentation.sh Makefile resources/typedoc/typedoc.css
+build/typedoc/%/index.html : build/bundle/typefinity-%.d.ts bin/create-api-documentation.sh Makefile resources/typedoc/typedoc.css
 	. bin/create-api-documentation.sh "$*"
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Release
+#-----------------------------------------------------------------------------------------------------------------------
+
+$(call lp.help.add-phony-target , release, ............ create the release)
+
+release : $(foreach TYPE, core cli web, build/bundle/typefinity-$(TYPE).mjs build/bundle/typefinity-$(TYPE).d.ts build/typedoc/$(TYPE)/index.html)
+	. bin/release.sh
+
+$(call lp.help.add-phony-target , unrelease, .......... git-revert the release)
+
+unrelease : ;
+	git clean --force -d --quiet dist docs && git checkout -- dist docs
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.clean.tsc-output)
-# $(call lp.clean.bundles)
-# $(call lp.clean.npm-packages)
-# $(call lp.clean.files, list files here...)
+$(call lp.clean.files, build)
 
 
 

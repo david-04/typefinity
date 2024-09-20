@@ -3,14 +3,21 @@
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export interface CoreInterface {
-    /** property */
+    /** property description */
     property: string;
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
- * This is a core function
+ * This is a core function.
+ *
+ * It does this and that.
+ *
+ * @return Returns some more data
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function coreFunction(data: CoreInterface) {
+export function coreFunction(
+    /** data passed to the function */
+    data: CoreInterface
+) {
     return JSON.stringify(data);
 }

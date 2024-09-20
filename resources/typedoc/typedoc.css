@@ -1,0 +1,17 @@
+.tsd-navigation.settings,
+summary.tsd-accordion-summary,
+nav.tsd-navigation>a,
+nav.tsd-navigation>ul>li>a>svg,
+div.tsd-page-title+div.tsd-panel.tsd-typography>h1 {
+    display: none;
+}
+
+nav.tsd-navigation>ul {
+    margin-left: 0;
+}
+
+nav.tsd-navigation>ul>li>a::before {
+    content: "▸";
+    color: initial;
+    margin-right: 0.25em;
+}

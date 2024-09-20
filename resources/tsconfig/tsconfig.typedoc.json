@@ -1,5 +1,5 @@
 {
     "include": [
-        "../../dist/**.d.ts"
+        "../../build/bundle/**.d.ts"
     ]
 }

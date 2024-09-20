@@ -18,7 +18,21 @@ $(call lp.bundle.add, src/cli/cli.ts,   build/bundle/cli.js,  cli dts, , $(NORMA
 $(call lp.bundle.add, src/web/web.ts,   build/bundle/web.js,  web dts, , $(NORMALIZE_JAVADOC) build/bundle/web.d.ts)
 
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Documentation
+#-----------------------------------------------------------------------------------------------------------------------
 
+$(call lp.help.add-phony-target , typedoc, ............ create API documentation ) # register a target and make it .PHONY
+
+.PHONY: doc docs documentation
+
+doc docs documentation typedoc : build/typedoc/index.html;
+
+build/typedoc/index.html : $(foreach CORE_CLI_WEB, core cli web, build/typedoc/$(CORE_CLI_WEB)/index.html)
+	sed 's|<head>|<head><base href="./cli/"/>|' build/typedoc/cli/index.html > $@
+
+build/typedoc/%/index.html : build/bundle/%.d.ts bin/create-api-documentation.sh Makefile resources/typedoc/typedoc.css
+	. bin/create-api-documentation.sh "$*"
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean

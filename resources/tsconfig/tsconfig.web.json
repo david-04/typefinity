@@ -10,15 +10,6 @@
         "tsBuildInfoFile": "../../build/tsc/.tsbuildinfo.web",
         "target": "ES6"
     },
-    "references": [
-        {
-            "path": "tsconfig.core.json"
-        }
-    ],
-    "include": [
-        "../../src/web/*.ts",
-        "../../src/web/*.tsx",
-        "../../src/web/**/*.ts",
-        "../../src/web/**/*.tsx"
-    ]
+    "references": [{ "path": "tsconfig.dev.json" }, { "path": "tsconfig.core.json" }],
+    "include": ["../../src/web/*.ts", "../../src/web/*.tsx", "../../src/web/**/*.ts", "../../src/web/**/*.tsx"]
 }

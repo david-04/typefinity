@@ -23,6 +23,7 @@ NORMALIZE_JAVADOC=. bin/normalize-javadoc-comments.sh
 
 $(call lp.bundle.add, src/core/core.ts, build/bundle/typefinity-core.mjs, cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-core.d.ts)
 $(call lp.bundle.add, src/cli/cli.ts,   build/bundle/typefinity-cli.mjs,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-cli.d.ts)
+$(call lp.bundle.add, src/dev/dev.ts,   build/bundle/typefinity-dev.mjs,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-dev.d.ts)
 $(call lp.bundle.add, src/web/web.ts,   build/bundle/typefinity-web.mjs,  web dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-web.d.ts)
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -35,7 +36,7 @@ $(call lp.help.add-phony-target, typedoc, ............ create API documentation)
 
 doc docs documentation typedoc : build/typedoc/index.html;
 
-build/typedoc/index.html : $(foreach TYPE, core cli web, build/typedoc/$(TYPE)/index.html)
+build/typedoc/index.html : $(foreach TYPE, core cli dev web, build/typedoc/$(TYPE)/index.html)
 	sed 's|<head>|<head><base href="./cli/"/>|' build/typedoc/cli/index.html > $@
 
 build/typedoc/%/index.html : build/bundle/typefinity-%.d.ts bin/create-api-documentation.sh Makefile resources/typedoc/typedoc.css
@@ -47,7 +48,7 @@ build/typedoc/%/index.html : build/bundle/typefinity-%.d.ts bin/create-api-docum
 
 $(call lp.help.add-phony-target, release, ............ create the release)
 
-release : $(foreach TYPE, core cli web, build/bundle/typefinity-$(TYPE).mjs build/bundle/typefinity-$(TYPE).d.ts build/typedoc/$(TYPE)/index.html)
+release : $(foreach TYPE, core cli dev web, build/bundle/typefinity-$(TYPE).mjs build/bundle/typefinity-$(TYPE).d.ts build/typedoc/$(TYPE)/index.html)
 	. bin/release.sh
 
 $(call lp.help.add-phony-target , unrelease, .......... (git-) revert the release)

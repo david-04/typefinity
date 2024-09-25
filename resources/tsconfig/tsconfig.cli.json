@@ -6,13 +6,6 @@
         "rootDir": "../../src/cli",
         "tsBuildInfoFile": "../../build/tsc/.tsbuildinfo.cli"
     },
-    "references": [
-        {
-            "path": "tsconfig.core.json"
-        }
-    ],
-    "include": [
-        "../../src/cli/*.ts",
-        "../../src/cli/*/**.ts"
-    ]
+    "references": [{ "path": "tsconfig.dev.json" }, { "path": "tsconfig.core.json" }],
+    "include": ["../../src/cli/*.ts", "../../src/cli/*/**.ts"]
 }

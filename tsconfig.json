@@ -8,6 +8,7 @@
         "tsBuildInfoFile": "build/tsc/.tsbuildinfo"
     },
     "references": [
+        { "path": "resources/tsconfig/tsconfig.dev.json" },
         { "path": "resources/tsconfig/tsconfig.core.json" },
         { "path": "resources/tsconfig/tsconfig.cli.json" },
         { "path": "resources/tsconfig/tsconfig.web.json" }

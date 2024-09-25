@@ -5,7 +5,7 @@
 
 echo "Running tests..."
 
-if ! node --test --test-reporter=spec --test-reporter-destination=../build/test-runner.spec --test-reporter=tap --test-reporter-destination=../build/test-runner.tap ../build/tsc; then
+if ! node --test --test-concurrency=true --test-reporter=spec --test-reporter-destination=../build/test-runner.spec --test-reporter=tap --test-reporter-destination=../build/test-runner.tap ../build/tsc; then
     echo
     cat ../build/test-runner.spec
     echo

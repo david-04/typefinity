@@ -1,1 +1,1 @@
-export * from "./core-function.js";
+export { Optional } from "./data/containers/optional.js";

@@ -1,14 +1,3 @@
 {
-    "compilerOptions": {
-        "composite": true,
-        "tsBuildInfoFile": "build/tsc/.tsbuildinfo"
-    },
-    "references": [
-        { "path": "resources/tsconfig/tsconfig.bundles.json" },
-        { "path": "resources/tsconfig/tsconfig.cli.json" },
-        { "path": "resources/tsconfig/tsconfig.core.json" },
-        { "path": "resources/tsconfig/tsconfig.debug.json" },
-        { "path": "resources/tsconfig/tsconfig.web.json" }
-    ],
-    "include": []
+    "extends": "./resources/tsconfig/vscode/tsconfig.vscode.json"
 }

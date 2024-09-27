@@ -1,0 +1,18 @@
+{
+    "extends": "../release/tsconfig.release.json",
+    "references": [
+        { "path": "tsconfig.vscoded.bundles.json" },
+        { "path": "tsconfig.vscode.cli.json" },
+        { "path": "tsconfig.vscode.core.json" },
+        { "path": "tsconfig.vscode.debug.json" },
+        { "path": "tsconfig.vscode.web.json" }
+    ],
+    "include": [
+        //
+        "../../../src/**/*"
+    ],
+    "exclude": [
+        //
+        "../../../src/archive/**"
+    ]
+}

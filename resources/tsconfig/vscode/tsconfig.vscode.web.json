@@ -1,0 +1,14 @@
+{
+    "extends": "../release/tsconfig.release.web.json",
+    "references": [
+        { "path": "tsconfig.vscode.core.json" }
+    ],
+    "include": [
+        "../../../src/core/*.ts",
+        "../../../src/core/**/*.ts",
+        "../../../src/web/*.ts",
+        "../../../src/web/*.tsx",
+        "../../../src/web/**/*.ts",
+        "../../../src/web/**/*.tsx"
+    ]
+}

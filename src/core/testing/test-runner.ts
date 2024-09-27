@@ -88,7 +88,7 @@ export namespace describe {
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function it(description: string, implementation: () => unknown): void {
-    return nodeTest.it(description, filterReturnValue(implementation));
+    nodeTest.it(description, filterReturnValue(implementation));
 }
 
 export namespace it {
@@ -99,7 +99,7 @@ export namespace it {
      * @param implementation Implementation of the test case
      *----------------------------------------------------------------------------------------------------------------*/
     export function skip(description: string, implementation: () => unknown): void {
-        return nodeTest.it(description, { skip: true }, filterReturnValue(implementation));
+        nodeTest.it(description, { skip: true }, filterReturnValue(implementation));
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ export namespace it {
      * @param implementation Implementation of the test case
      *----------------------------------------------------------------------------------------------------------------*/
     export function todo(description: string, implementation: () => unknown): void {
-        return nodeTest.it(description, { todo: true }, filterReturnValue(implementation));
+        nodeTest.it(description, { todo: true }, filterReturnValue(implementation));
     }
 }
 

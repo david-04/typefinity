@@ -64,7 +64,7 @@ export namespace describe {
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
-     * Define a TODO test suite to be implemented later
+     * Define a test placeholder suite to be implemented later
      *
      * @param description The test suite's description
      * @param implementation Implementation of the test suite
@@ -103,7 +103,7 @@ export namespace it {
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
-     * Define a TODO test case to be implemented later
+     * Define a test case placeholder to be implemented later
      *
      * @param description The test case's description
      * @param implementation Implementation of the test case

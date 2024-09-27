@@ -1,4 +1,10 @@
 {
     "extends": "./.launchpad/tsconfig.default.json",
-    "exclude": ["./src/archive/**"]
+    "exclude": ["./src/archive/**"],
+    "include": [
+        "./src/*.ts",
+        "./src/*.tsx",
+        "./src/**/*.ts",
+        "./src/**/*.tsx"
+    ]
 }

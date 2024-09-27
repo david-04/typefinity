@@ -1,11 +1,10 @@
 {
-  "name": "@david-04/typefinity-core",
+  "name": "@david-04/typefinity",
   "version": "0.0.0",
   "description": "A general-purpose TypeScript library",
   "repository": {
     "type": "git",
-    "url": "https://github.com/david-04/typefinity.git",
-    "directory": "dist/typefinity-core"
+    "url": "https://github.com/david-04/typefinity.git"
   },
   "author": "David Hofmann",
   "license": "MIT",
@@ -13,7 +12,7 @@
     "url": "https://github.com/david-04/typefinity/issues"
   },
   "homepage": "https://github.com/david-04/typefinity#readme",
-  "main": "./typefinity-core.mjs",
-  "types": "./typefinity-core.d.ts",
+  "main": "./typefinity.mjs",
+  "types": "./typefinity.d.ts",
   "type": "module"
 }

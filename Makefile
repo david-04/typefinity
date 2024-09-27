@@ -30,26 +30,20 @@ test tests : $(LP_PREREQUISITE_TSC)
 
 NORMALIZE_JAVADOC=. bin/normalize-javadoc-comments.sh
 
-$(call lp.bundle.add, src/bundles/typefinity-cli.ts,  build/bundle/typefinity-cli.mjs,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-cli.d.ts)
-$(call lp.bundle.add, src/bundles/typefinity-core.ts, build/bundle/typefinity-core.mjs, cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-core.d.ts)
-$(call lp.bundle.add, src/bundles/typefinity-test.ts, build/bundle/typefinity-test.mjs, cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-test.d.ts)
-$(call lp.bundle.add, src/bundles/typefinity-web.ts,  build/bundle/typefinity-web.mjs,  web dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-web.d.ts)
+$(call lp.bundle.add, src/typefinity.ts,  build/bundle/typefinity.mjs,  cli dts minify, , $(NORMALIZE_JAVADOC) build/bundle/typefinity.d.ts)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # TypeDoc
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.help.add-phony-target, typedoc, ............ create API documentation)
+$(call lp.help.add-phony-target, doc, ................ create API documentation)
 
 .PHONY: doc docs documentation
 
 doc docs documentation typedoc : build/typedoc/index.html;
 
-build/typedoc/index.html : $(foreach TYPE, cli core test web, build/typedoc/$(TYPE)/index.html)
-	sed 's|<head>|<head><base href="./cli/"/>|' build/typedoc/cli/index.html > $@
-
-build/typedoc/%/index.html : build/bundle/typefinity-%.d.ts bin/create-api-documentation.sh Makefile resources/typedoc/typedoc.css
-	. bin/create-api-documentation.sh "$*"
+build/typedoc/index.html : $(LP_PREREQUISITE_TSC)
+	. bin/create-api-documentation.sh
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Release
@@ -57,13 +51,13 @@ build/typedoc/%/index.html : build/bundle/typefinity-%.d.ts bin/create-api-docum
 
 $(call lp.help.add-phony-target, release, ............ create the release)
 
-release : $(foreach TYPE, core cli web, build/bundle/typefinity-$(TYPE).mjs build/bundle/typefinity-$(TYPE).d.ts build/typedoc/$(TYPE)/index.html)
-	. bin/release.sh
+release : build/typedoc/index.html $(LP_PREREQUISITE_BUNDLE)
+	. bin/assemble-release.sh
 
 $(call lp.help.add-phony-target , unrelease, .......... (git-) revert the release)
 
 unrelease : ;
-	git clean --force -d --quiet dist docs && git checkout -- dist docs
+	git clean --force -d --quiet docs && git checkout -- docs
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Install
@@ -71,10 +65,10 @@ unrelease : ;
 
 $(call lp.help.add-phony-target, install, ............ install the cli package for testing purposes)
 
-install : build/bundle/typefinity-cli.mjs build/bundle/typefinity-cli.d.ts dist/typefinity-cli/package.json
-	   echo Copying cli package to playground... \
-	&& mkdir -p ../typefinity-playground/node_modules/@david-04/typefinity-cli \
-	&& cp $^ ../typefinity-playground/node_modules/@david-04/typefinity-cli/
+install : build/bundle/typefinity.mjs build/bundle/typefinity.d.ts README.md resources/package.json
+	   echo Copying package to playground... \
+	&& mkdir -p ../typefinity-playground/node_modules/@david-04/typefinity \
+	&& cp $^ ../typefinity-playground/node_modules/@david-04/typefinity/
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean

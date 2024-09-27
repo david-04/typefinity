@@ -4,26 +4,16 @@
 
 set -e
 
-if [[ $# -ne 1 ]]; then
-    echo "Syntax: create-api-documentation.sh [cli|core|web]" >&2
-    return 1 || exit 1
-fi
-
 [[ -f "bin/create-api-documentation.sh" ]] && cd "bin"
 
-if [[ ! -f "../build/bundle/typefinity-${1?}.d.ts" ]]; then
-    echo "ERROR: File build/bundle/typefinity-${1?}.d.ts does not exist" >&2
-    return 1 || exit 1
-fi
-
-echo "Creating API documentation for $1..."
+echo "Creating API documentation..."
 
 [[ -d "../build/typedoc" ]] || mkdir -p "../build/typedoc"
 
 ../node_modules/.bin/typedoc \
     --categorizeByGroup \
     --cleanOutputDir true \
-    --customCss ../resources/typedoc/typedoc.css \
+    --customCss ../resources/typedoc.css \
     --disableGit \
     --disableSources \
     --excludeExternals \
@@ -35,15 +25,14 @@ echo "Creating API documentation for $1..."
     --gitRemote https://github.com/david-04/typefinity.git \
     --hideGenerator \
     --logLevel Warn \
-    --name "typefinity-${1?}" \
+    --name "typefinity" \
     --navigation.includeCategories false \
     --navigation.includeGroups false \
-    --out "../build/typedoc/${1?}" \
+    --out "../build/typedoc" \
     --plugin typedoc-plugin-extras \
     --readme ../README.md \
     --searchInComments \
     --sort alphabetical \
     --sort static-first \
     --treatWarningsAsErrors \
-    --tsconfig ../resources/typedoc/tsconfig.typedoc.json \
-    "../build/bundle/typefinity-${1?}.d.ts"
+    "../src/typefinity.ts"

@@ -1,16 +1,57 @@
-.tsd-navigation.settings,
-summary.tsd-accordion-summary,
-nav.tsd-navigation>a,
-nav.tsd-navigation>ul>li>a>svg,
-div.tsd-page-title+div.tsd-panel.tsd-typography>h1 {
+/* ------------------------------------------------------------------------------------------------------------------ */
+/* Left navigation pane                                                                                               */
+/* ------------------------------------------------------------------------------------------------------------------ */
+
+/* hide module name header (e.g. "typefinity-cli") */
+.site-menu nav.tsd-navigation>a {
     display: none;
 }
 
-nav.tsd-navigation>ul {
-    margin-left: 0;
+/* hide icons */
+.site-menu a>svg {
+    display: none;
 }
 
-nav.tsd-navigation>ul>li>a::before {
+
+/* ------------------------------------------------------------------------------------------------------------------ */
+/* Page content                                                                                                       */
+/* ------------------------------------------------------------------------------------------------------------------ */
+
+/* hide icons */
+.container-main>.col-content svg {
+    display: none;
+}
+
+/* display "▸" in front of each link in a list */
+.container-main>.col-content .tsd-index-list>a::before {
+    content: "▸";
+    color: initial;
+    margin-right: 0.25em;
+}
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------ */
+/* Right navigation pane                                                                                              */
+/* ------------------------------------------------------------------------------------------------------------------ */
+
+/* hide the "Settings" section */
+.page-menu .settings {
+    display: none;
+}
+
+/* hide the "On this page" header */
+.page-menu summary {
+    display: none;
+}
+
+/* hide icons */
+.page-menu svg {
+    display: none;
+}
+
+/* display "▸" in front of each link in a list */
+.page-menu a::before {
     content: "▸";
     color: initial;
     margin-right: 0.25em;

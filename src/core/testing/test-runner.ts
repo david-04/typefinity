@@ -59,8 +59,8 @@ export namespace describe {
      * @param implementation Implementation of the test suite
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function skip(name: string, implementation: () => unknown): Promise<void> {
-        return nodeTest.describe(name, { skip: true }, filterReturnValue(implementation));
+    export function skip(description: string, implementation: () => unknown): Promise<void> {
+        return nodeTest.describe(description, { skip: true }, filterReturnValue(implementation));
     }
 }
 
@@ -71,8 +71,8 @@ export namespace describe {
  * @param implementation Implementation of the test case
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function it(name: string, implementation: () => unknown): Promise<void> {
-    return nodeTest.it(name, filterReturnValue(implementation));
+export function it(description: string, implementation: () => unknown): Promise<void> {
+    return nodeTest.it(description, filterReturnValue(implementation));
 }
 
 export namespace it {
@@ -82,8 +82,8 @@ export namespace it {
      * @param description The test case's description
      * @param implementation Implementation of the test case
      *----------------------------------------------------------------------------------------------------------------*/
-    export function skip(name: string, implementation: () => unknown): Promise<void> {
-        return nodeTest.it(name, { skip: true }, filterReturnValue(implementation));
+    export function skip(description: string, implementation: () => unknown): Promise<void> {
+        return nodeTest.it(description, { skip: true }, filterReturnValue(implementation));
     }
 }
 

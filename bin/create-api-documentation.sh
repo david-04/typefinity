@@ -45,5 +45,5 @@ echo "Creating API documentation for $1..."
     --sort alphabetical \
     --sort static-first \
     --treatWarningsAsErrors \
-    --tsconfig ../resources/tsconfig/tsconfig.typedoc.json \
+    --tsconfig ../resources/typedoc/tsconfig.typedoc.json \
     "../build/bundle/typefinity-${1?}.d.ts"

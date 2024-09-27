@@ -4,7 +4,16 @@ include .launchpad/Makefile.header # see .launchpad/Makefile.documentation
 # Default target
 #-----------------------------------------------------------------------------------------------------------------------
 
-autorun : test; # $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISITE_BUNDLE_JS) + $(LP_PREREQUISITE_BUNDLE_DTS)
+autorun : test;
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Run
+#-----------------------------------------------------------------------------------------------------------------------
+
+$(call lp.help.add-phony-target, run, ................ run debug.ts)
+
+run : $(LP_PREREQUISITE_TSC)
+	$(call lp.run, build/tsc/debug.js)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Test
@@ -16,18 +25,18 @@ test tests : $(LP_PREREQUISITE_TSC)
 	. ./bin/run-tests.sh
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Bundling
+# Bundle
 #-----------------------------------------------------------------------------------------------------------------------
 
 NORMALIZE_JAVADOC=. bin/normalize-javadoc-comments.sh
 
 $(call lp.bundle.add, src/bundles/typefinity-cli.ts,  build/bundle/typefinity-cli.mjs,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-cli.d.ts)
 $(call lp.bundle.add, src/bundles/typefinity-core.ts, build/bundle/typefinity-core.mjs, cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-core.d.ts)
-$(call lp.bundle.add, src/bundles/typefinity-dev.ts,  build/bundle/typefinity-dev.mjs,  cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-dev.d.ts)
+$(call lp.bundle.add, src/bundles/typefinity-test.ts, build/bundle/typefinity-test.mjs, cli dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-test.d.ts)
 $(call lp.bundle.add, src/bundles/typefinity-web.ts,  build/bundle/typefinity-web.mjs,  web dts, , $(NORMALIZE_JAVADOC) build/bundle/typefinity-web.d.ts)
 
 #-----------------------------------------------------------------------------------------------------------------------
-# Documentation
+# TypeDoc
 #-----------------------------------------------------------------------------------------------------------------------
 
 $(call lp.help.add-phony-target, typedoc, ............ create API documentation)
@@ -36,7 +45,7 @@ $(call lp.help.add-phony-target, typedoc, ............ create API documentation)
 
 doc docs documentation typedoc : build/typedoc/index.html;
 
-build/typedoc/index.html : $(foreach TYPE, cli core web, build/typedoc/$(TYPE)/index.html)
+build/typedoc/index.html : $(foreach TYPE, cli core test web, build/typedoc/$(TYPE)/index.html)
 	sed 's|<head>|<head><base href="./cli/"/>|' build/typedoc/cli/index.html > $@
 
 build/typedoc/%/index.html : build/bundle/typefinity-%.d.ts bin/create-api-documentation.sh Makefile resources/typedoc/typedoc.css
@@ -72,6 +81,11 @@ install : build/bundle/typefinity-cli.mjs build/bundle/typefinity-cli.d.ts dist/
 #-----------------------------------------------------------------------------------------------------------------------
 
 $(call lp.clean.files, build)
+
+
+
+
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 include .launchpad/Makefile.footer

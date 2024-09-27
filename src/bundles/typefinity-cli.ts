@@ -1,2 +1,2 @@
 export * from "./typefinity-core.js";
-export * from "./typefinity-dev.js";
+export * from "./typefinity-test.js";

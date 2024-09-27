@@ -1,7 +1,0 @@
-{
-    "extends": "../release/tsconfig.release.core.json",
-    "include": [
-        "../../../src/core/*.ts",
-        "../../../src/core/**/*.ts"
-    ]
-}

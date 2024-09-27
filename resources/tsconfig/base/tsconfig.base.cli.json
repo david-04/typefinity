@@ -1,8 +1,0 @@
-{
-    "extends": "../../../.launchpad/tsconfig.default.json",
-    "compilerOptions": {
-        //
-        "composite": true,
-        "lib": ["ES2022"]
-    }
-}

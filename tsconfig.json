@@ -1,3 +1,4 @@
 {
-    "extends": "./resources/tsconfig/vscode/tsconfig.vscode.json"
+    "extends": "./.launchpad/tsconfig.default.json",
+    "exclude": ["./src/archive/**"]
 }

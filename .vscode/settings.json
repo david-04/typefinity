@@ -18,5 +18,13 @@
     "[typescriptreact]": {
         "editor.defaultFormatter": "biomejs.biome"
     },
-    "@david-04.insertCommentBlockAsJavaDoc": true
+    "@david-04.insertCommentBlockAsJavaDoc": true,
+    "typescript.preferences.autoImportFileExcludePatterns": [
+        "node_modules/@types/hast/**",
+        "node_modules/@types/mdast/**",
+        "node_modules/@types/unist/**",
+        "node_modules/typedoc/**",
+        "src/bundles/typefinity-*.ts"
+    ],
+    "typescript.preferences.preferTypeOnlyAutoImports": true
 }

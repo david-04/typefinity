@@ -9,15 +9,16 @@
     "references": [
         //
         { "path": "tsconfig.cli.json" },
+        { "path": "tsconfig.core.json" },
         { "path": "tsconfig.web.json" }
     ],
     "include": [
         "../../src/bundles/*.ts",
         "../../src/bundles/**/*.ts",
-        "../../src/core/*.ts",
-        "../../src/core/**/*.ts",
         "../../src/cli/*.ts",
         "../../src/cli/**/*.ts",
+        "../../src/core/*.ts",
+        "../../src/core/**/*.ts",
         "../../src/web/*.ts",
         "../../src/web/**/*.ts"
     ]

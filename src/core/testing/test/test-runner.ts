@@ -1,6 +1,6 @@
 import * as assert from "node:assert";
 import { describe, it } from "node:test";
-import * as testFramework from "../test-framework.js";
+import * as testRunner from "../test-runner.js";
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Test data
@@ -28,19 +28,20 @@ const IT_3 = "it-3";
  * Before and after hooks
  *--------------------------------------------------------------------------------------------------------------------*/
 
-testFramework.describe("hooks [setup]", () => {
-    testFramework.beforeEach(() => log.hooks.push(BEFORE_EACH_1));
-    testFramework.beforeAll(() => log.hooks.push(BEFORE_ALL_1));
-    testFramework.afterAll(() => log.hooks.push(AFTER_ALL_1));
-    testFramework.afterEach(() => log.hooks.push(AFTER_EACH_1));
-
-    testFramework.it("1", () => log.hooks.push(IT_1));
-    testFramework.it("2", () => log.hooks.push(IT_2));
-
-    testFramework.afterEach(() => log.hooks.push(AFTER_EACH_2));
-    testFramework.afterAll(() => log.hooks.push(AFTER_ALL_2));
-    testFramework.beforeAll(() => log.hooks.push(BEFORE_ALL_2));
-    testFramework.beforeEach(() => log.hooks.push(BEFORE_EACH_2));
+testRunner.describe("hooks [setup]", () => {
+    // setup
+    testRunner.beforeEach(() => log.hooks.push(BEFORE_EACH_1));
+    testRunner.beforeAll(() => log.hooks.push(BEFORE_ALL_1));
+    testRunner.afterAll(() => log.hooks.push(AFTER_ALL_1));
+    testRunner.afterEach(() => log.hooks.push(AFTER_EACH_1));
+    // tests
+    testRunner.it("1", () => log.hooks.push(IT_1));
+    testRunner.it("2", () => log.hooks.push(IT_2));
+    // teardown
+    testRunner.afterEach(() => log.hooks.push(AFTER_EACH_2));
+    testRunner.afterAll(() => log.hooks.push(AFTER_ALL_2));
+    testRunner.beforeAll(() => log.hooks.push(BEFORE_ALL_2));
+    testRunner.beforeEach(() => log.hooks.push(BEFORE_EACH_2));
 });
 
 describe("hooks [verification]", () => {
@@ -72,13 +73,13 @@ describe("hooks [verification]", () => {
  * describe.skip and it.skip
  *--------------------------------------------------------------------------------------------------------------------*/
 
-testFramework.describe("skip [setup]", () => {
-    testFramework.describe.skip("skipped", () => {
-        testFramework.it("not skipped", () => log.skip.push(IT_1));
+testRunner.describe("skip [setup]", () => {
+    testRunner.describe.skip("skipped", () => {
+        testRunner.it("not skipped", () => log.skip.push(IT_1));
     });
-    testFramework.describe("not skipped", () => {
-        testFramework.it.skip("skipped", () => log.skip.push(IT_2));
-        testFramework.it("not skipped", () => log.skip.push(IT_3));
+    testRunner.describe("not skipped", () => {
+        testRunner.it.skip("skipped", () => log.skip.push(IT_2));
+        testRunner.it("not skipped", () => log.skip.push(IT_3));
     });
 });
 

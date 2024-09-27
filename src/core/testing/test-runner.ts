@@ -1,27 +1,4 @@
-/**---------------------------------------------------------------------------------------------------------------------
- * Load the test framework
- *--------------------------------------------------------------------------------------------------------------------*/
-
-const loadTestFramework = async () => {
-    try {
-        const { after, afterEach, before, beforeEach, describe, it } = await import("node:test");
-        return { afterAll: after, afterEach, beforeAll: before, beforeEach, describe, it };
-    } catch (error) {
-        const fail = () => {
-            throw error;
-        };
-        return {
-            afterAll: fail,
-            afterEach: fail,
-            beforeAll: fail,
-            beforeEach: fail,
-            describe: fail,
-            it: fail,
-        };
-    }
-};
-
-const testFramework = await loadTestFramework();
+import * as nodeTest from "node:test";
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Perform the given action at the end of the test suite (after running all tests)
@@ -30,7 +7,7 @@ const testFramework = await loadTestFramework();
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function afterAll(action: () => unknown): void {
-    testFramework.afterAll(action);
+    nodeTest.after(action);
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
@@ -40,7 +17,7 @@ export function afterAll(action: () => unknown): void {
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function afterEach(action: () => unknown): void {
-    testFramework.afterEach(action);
+    nodeTest.afterEach(action);
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
@@ -50,7 +27,7 @@ export function afterEach(action: () => unknown): void {
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function beforeAll(action: () => unknown): void {
-    testFramework.beforeAll(action);
+    nodeTest.before(action);
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
@@ -60,7 +37,7 @@ export function beforeAll(action: () => unknown): void {
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function beforeEach(action: () => unknown): void {
-    testFramework.beforeEach(action);
+    nodeTest.beforeEach(action);
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
@@ -71,7 +48,7 @@ export function beforeEach(action: () => unknown): void {
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function describe(description: string, implementation: () => unknown): Promise<void> {
-    return testFramework.describe(description, filterReturnValue(implementation));
+    return nodeTest.describe(description, filterReturnValue(implementation));
 }
 
 export namespace describe {
@@ -83,7 +60,7 @@ export namespace describe {
      *----------------------------------------------------------------------------------------------------------------*/
 
     export function skip(name: string, implementation: () => unknown): Promise<void> {
-        return testFramework.describe(name, { skip: true }, filterReturnValue(implementation));
+        return nodeTest.describe(name, { skip: true }, filterReturnValue(implementation));
     }
 }
 
@@ -95,7 +72,7 @@ export namespace describe {
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function it(name: string, implementation: () => unknown): Promise<void> {
-    return testFramework.it(name, filterReturnValue(implementation));
+    return nodeTest.it(name, filterReturnValue(implementation));
 }
 
 export namespace it {
@@ -106,7 +83,7 @@ export namespace it {
      * @param implementation Implementation of the test case
      *----------------------------------------------------------------------------------------------------------------*/
     export function skip(name: string, implementation: () => unknown): Promise<void> {
-        return testFramework.it(name, { skip: true }, filterReturnValue(implementation));
+        return nodeTest.it(name, { skip: true }, filterReturnValue(implementation));
     }
 }
 

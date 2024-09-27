@@ -1,0 +1,25 @@
+{
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "lib": ["ES2022"],
+        "outDir": "../../build/tsc",
+        "rootDir": "../../src",
+        "tsBuildInfoFile": "../../build/tsc/.tsbuildinfo.debug"
+    },
+    "references": [
+        //
+        { "path": "tsconfig.core.json" },
+        { "path": "tsconfig.cli.json" },
+        { "path": "tsconfig.web.json" }
+    ],
+    "include": [
+        //
+        "../../src/*.ts",
+        "../../src/**/*.ts"
+    ],
+    "exclude": [
+        //
+        "../../src/archive/**",
+        "../../src/bundles/**"
+    ]
+}

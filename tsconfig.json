@@ -1,17 +1,14 @@
 {
-    "extends": "./.launchpad/tsconfig.default.json",
     "compilerOptions": {
         "composite": true,
-        "lib": ["ES2022"],
-        "outDir": "build/tsc",
-        "rootDir": "src",
         "tsBuildInfoFile": "build/tsc/.tsbuildinfo"
     },
     "references": [
-        { "path": "resources/tsconfig/tsconfig.dev.json" },
-        { "path": "resources/tsconfig/tsconfig.core.json" },
+        { "path": "resources/tsconfig/tsconfig.bundles.json" },
         { "path": "resources/tsconfig/tsconfig.cli.json" },
+        { "path": "resources/tsconfig/tsconfig.core.json" },
+        { "path": "resources/tsconfig/tsconfig.debug.json" },
         { "path": "resources/tsconfig/tsconfig.web.json" }
     ],
-    "include": ["src/*.ts"]
+    "include": []
 }

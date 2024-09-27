@@ -25,23 +25,27 @@ const IT_2 = "it-2";
 const IT_3 = "it-3";
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Before and after hooks
+ * describe + it + before + after
  *--------------------------------------------------------------------------------------------------------------------*/
 
 testRunner.describe("hooks [setup]", () => {
-    // setup
-    testRunner.beforeEach(() => log.hooks.push(BEFORE_EACH_1));
-    testRunner.beforeAll(() => log.hooks.push(BEFORE_ALL_1));
-    testRunner.afterAll(() => log.hooks.push(AFTER_ALL_1));
-    testRunner.afterEach(() => log.hooks.push(AFTER_EACH_1));
-    // tests
-    testRunner.it("1", () => log.hooks.push(IT_1));
-    testRunner.it("2", () => log.hooks.push(IT_2));
+    // test 1
+    testRunner.describe("1 + 2", () => {
+        testRunner.it("1", () => log.hooks.push(IT_1));
+        testRunner.it("2", () => log.hooks.push(IT_2));
+    });
     // teardown
     testRunner.afterEach(() => log.hooks.push(AFTER_EACH_2));
     testRunner.afterAll(() => log.hooks.push(AFTER_ALL_2));
     testRunner.beforeAll(() => log.hooks.push(BEFORE_ALL_2));
     testRunner.beforeEach(() => log.hooks.push(BEFORE_EACH_2));
+    // setup
+    testRunner.beforeEach(() => log.hooks.push(BEFORE_EACH_1));
+    testRunner.beforeAll(() => log.hooks.push(BEFORE_ALL_1));
+    testRunner.afterAll(() => log.hooks.push(AFTER_ALL_1));
+    testRunner.afterEach(() => log.hooks.push(AFTER_EACH_1));
+    // test 2
+    testRunner.it("3", () => log.hooks.push(IT_2));
 });
 
 describe("hooks [verification]", () => {
@@ -60,6 +64,12 @@ describe("hooks [verification]", () => {
             BEFORE_EACH_1,
             BEFORE_EACH_2,
             IT_2,
+            AFTER_EACH_1,
+            AFTER_EACH_2,
+            // test 3
+            BEFORE_EACH_1,
+            BEFORE_EACH_2,
+            IT_3,
             AFTER_EACH_1,
             AFTER_EACH_2,
             // teardown

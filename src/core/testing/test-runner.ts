@@ -47,8 +47,8 @@ export function beforeEach(action: () => unknown): void {
  * @param implementation Implementation of the test suite
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function describe(description: string, implementation: () => unknown): Promise<void> {
-    return nodeTest.describe(description, filterReturnValue(implementation));
+export function describe(description: string, implementation: () => unknown): void {
+    nodeTest.describe(description, filterReturnValue(implementation));
 }
 
 export namespace describe {
@@ -59,8 +59,24 @@ export namespace describe {
      * @param implementation Implementation of the test suite
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function skip(description: string, implementation: () => unknown): Promise<void> {
-        return nodeTest.describe(description, { skip: true }, filterReturnValue(implementation));
+    export function skip(description: string, implementation: () => unknown): void {
+        nodeTest.describe(description, { skip: true }, filterReturnValue(implementation));
+    }
+
+    /**-----------------------------------------------------------------------------------------------------------------
+     * Define a TODO test suite to be implemented later
+     *
+     * @param description The test suite's description
+     * @param implementation Implementation of the test suite
+     *----------------------------------------------------------------------------------------------------------------*/
+
+    export function todo(description: string, implementation?: () => unknown): void {
+        return describe(description, () => {
+            it.todo("TODO", () => {});
+            if (implementation) {
+                implementation();
+            }
+        });
     }
 }
 
@@ -71,7 +87,7 @@ export namespace describe {
  * @param implementation Implementation of the test case
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function it(description: string, implementation: () => unknown): Promise<void> {
+export function it(description: string, implementation: () => unknown): void {
     return nodeTest.it(description, filterReturnValue(implementation));
 }
 
@@ -82,8 +98,18 @@ export namespace it {
      * @param description The test case's description
      * @param implementation Implementation of the test case
      *----------------------------------------------------------------------------------------------------------------*/
-    export function skip(description: string, implementation: () => unknown): Promise<void> {
+    export function skip(description: string, implementation: () => unknown): void {
         return nodeTest.it(description, { skip: true }, filterReturnValue(implementation));
+    }
+
+    /**-----------------------------------------------------------------------------------------------------------------
+     * Define a TODO test case to be implemented later
+     *
+     * @param description The test case's description
+     * @param implementation Implementation of the test case
+     *----------------------------------------------------------------------------------------------------------------*/
+    export function todo(description: string, implementation: () => unknown): void {
+        return nodeTest.it(description, { todo: true }, filterReturnValue(implementation));
     }
 }
 

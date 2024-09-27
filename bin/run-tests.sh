@@ -5,13 +5,22 @@
 
 echo "Running tests..."
 
-if ! node --test --test-concurrency=true --enable-source-maps --test-reporter=spec --test-reporter-destination=../build/test-runner.spec --test-reporter=tap --test-reporter-destination=../build/test-runner.tap ../build/tsc; then
+mkdir -p ../build/test
+
+if ! node --test \
+    --test-concurrency=true \
+    --enable-source-maps \
+    --test-reporter=spec \
+    --test-reporter-destination=../build/test/test-results.spec \
+    --test-reporter=tap \
+    --test-reporter-destination=../build/test/test-results.tap \
+    ../build/tsc; then
     echo
-    cat ../build/test-runner.spec
+    cat ../build/test/test-results.spec
     echo
-    awk '/^# (pass|fail) [0-9]+$/ { if ($3) print $3 " test cases " $2 "ed" }' ../build/test-runner.tap
+    awk -f print-test-statistics.awk ../build/test/test-results.tap
     # shellcheck disable=SC2317
     return 1 || exit 1
 else
-    awk '/^# (pass|fail) [0-9]+$/ { if ($3) print $3 " test cases " $2 "ed" }' ../build/test-runner.tap
+    awk -f print-test-statistics.awk ../build/test/test-results.tap
 fi

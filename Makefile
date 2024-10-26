@@ -4,8 +4,10 @@ include .launchpad/Makefile.header # see .launchpad/Makefile.documentation
 # Default target
 #-----------------------------------------------------------------------------------------------------------------------
 
+autorun.editor: test;
+
 autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISITE_BUNDLE_JS) + $(LP_PREREQUISITE_BUNDLE_DTS)
-	$(call lp.run, build/cli/cli.js)
+	#$(call lp.run, build/cli/cli.js)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Bundling

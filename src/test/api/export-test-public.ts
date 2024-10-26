@@ -1,1 +1,1 @@
-export { publicTestFunction } from "../lib/test-function.js";
+export { afterAll, afterEach, beforeAll, beforeEach, describe, it } from "../lib/test-runner.js";

@@ -1,8 +1,5 @@
-import { privateCoreFunction, privateTestFunction, publicCoreFunction, publicTestFunction } from "./api/import-cli.js";
+import { privateCoreFunction, publicCoreFunction } from "./api/import-cli.js";
 import { privateCliFunction, publicCliFunction } from "./lib/cli-function.js";
-
-publicTestFunction();
-privateTestFunction();
 
 publicCoreFunction();
 privateCoreFunction();

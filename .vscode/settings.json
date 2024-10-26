@@ -21,5 +21,7 @@
         "editor.defaultFormatter": "biomejs.biome"
     },
     "@david-04.insertCommentBlockAsJavaDoc": true,
-    "typescript.preferences.autoImportSpecifierExcludeRegexes": ["src/[^/]+/export[^/]*\\.ts"]
+    "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+        "src/[^/]+/export[^/]*\\.ts"
+    ]
 }

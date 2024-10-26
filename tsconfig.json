@@ -12,5 +12,8 @@
         { "path": "./resources/tsconfig/tsconfig.web.json" },
         { "path": "./resources/tsconfig/tsconfig.bundles.json" }
     ],
-    "include": ["src/debug.ts"]
+    "include": [
+        //
+        "src/debug.ts"
+    ]
 }

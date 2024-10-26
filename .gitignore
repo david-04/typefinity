@@ -1,3 +1,8 @@
 /build
 /dist
 /node_modules
+/build/tsc/**/*.js
+/build/tsc/**/*.d.js
+/build/tsc/**/*.js.map
+/build/tsc/.tsbuildinfo
+/build/tsc/.timestamp.*

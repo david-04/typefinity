@@ -15,6 +15,7 @@ $(if $(call lp.clean.is-enabled      ), $(call lp.help.add-builtin-target, clean
 $(if $(call lp.tsc.is-enabled        ), $(call lp.help.add-builtin-target, compile ............, tsc   ))
 $(if $(call lp.format.is-enabled     ), $(call lp.help.add-builtin-target, format ............., format))
 $(if $(call lp.help.is-enabled       ), $(call lp.help.add-builtin-target, help ..............., help  ))
+$(if $(call lp.test.is-enabled       ), $(call lp.help.add-builtin-target, test ..............., test   ))
 $(if $(call lp.tsc.is-enabled        ), $(call lp.help.add-builtin-target, tsc ................, tsc   ))
 $(if $(call lp.uplift.is-enabled     ), $(call lp.help.add-builtin-target, uplift ............., uplift))
 $(if $(call lp.diagnostics.is-enabled), $(call lp.help.add-target        , <target>.help ......, show diagnostic information (aliases: $(sort $(call lp.diagnostics.get-target-names)))))
@@ -38,7 +39,7 @@ endif
 #
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(foreach feature, tsc bundle format uplift clean, \
+$(foreach feature, tsc test bundle format uplift clean, \
 	$(foreach target, $(call lp.$(feature).get-phony-targets), \
         $(foreach shortcut, $(call lp.diagnostics.get-target-names), \
 		        $(eval $(call lp.fn.create-diagnostics-target,$(strip $(target)),$(strip $(shortcut)))) \
@@ -80,6 +81,41 @@ endif
 
 #-----------------------------------------------------------------------------------------------------------------------
 #
+#   ######## ########  ######  ########
+#      ##    ##       ##    ##    ##
+#      ##    ##       ##          ##
+#      ##    ######    ######     ##
+#      ##    ##             ##    ##
+#      ##    ##       ##    ##    ##
+#      ##    ########  ######     ##
+#
+#-----------------------------------------------------------------------------------------------------------------------
+
+ifeq "$(call lp.test.is-enabled)" "true" # ............................................................ test are enabled
+
+.PHONY: $(foreach name, $(call lp.test.get-phony-targets), lp.$(name) $(name))
+
+$(foreach name, $(call lp.test.get-phony-targets), lp.$(name) $(name)) : | $$(call lp.test.get-prerequisites);
+	$(call lp.test.get-command-with-hooks, Running tests...)
+
+$(call lp.test.get-targets) : $$(call lp.test.get-prerequisites)
+	$(call lp.test.get-command-with-hooks, Running tests...)
+
+else # .............................................................................................. tests are disabled
+
+.PHONY: $(foreach name, $(call lp.test.get-phony-targets), lp.$(name))
+
+$(foreach name, $(call lp.test.get-phony-targets), lp.$(name)) : | $$(call lp.test.get-prerequisites);
+    ifeq "$(strip $(call lp.test.get-command-with-hooks))" ""
+		$(error Testing is disabled)
+    else
+		$(call lp.test.get-command-with-hooks, Running tests...)
+    endif
+
+endif
+
+#-----------------------------------------------------------------------------------------------------------------------
+#
 #    ########  ##     ## ##    ## ########  ##       ########
 #    ##     ## ##     ## ###   ## ##     ## ##       ##
 #    ##     ## ##     ## ####  ## ##     ## ##       ##
@@ -95,7 +131,7 @@ ifeq "$(call lp.bundle.is-enabled)" "" # .......................................
 .PHONY: lp.bundle
 
 lp.bundle : ;
-		$(error Bundling is disabled)
+	$(error Bundling is disabled)
 
 else ifeq "$(call lp.bundle.get-targets)" "" # .............................................. no bundles have been added
 

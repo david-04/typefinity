@@ -13,10 +13,10 @@ autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISIT
 # Bundling
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.bundle.add, src/bundles/bundle-cli.ts,    build/bundle/bundle-cli.js, cli dts)
-$(call lp.bundle.add, src/bundles/bundle-core.ts,   build/bundle/bundle-core.js, cli dts)
-$(call lp.bundle.add, src/bundles/bundle-test.ts,   build/bundle/bundle-test.js, cli dts)
-$(call lp.bundle.add, src/bundles/bundle-web.ts,    build/bundle/bundle-web.js, cli dts)
+$(call lp.bundle.add, src/bundles/bundle-cli.ts,    build/bundle/bundle-cli.js, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/bundle-core.ts,   build/bundle/bundle-core.js, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/bundle-test.ts,   build/bundle/bundle-test.js, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/bundle-web.ts,    build/bundle/bundle-web.js, cli dts minify sourcemap)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "../../api/import-core.js";
-import { DescriptiveError } from "../../errors/descriptive-error.js";
+import { DescriptiveError } from "../../error/descriptive-error.js";
 import { normalizeErrorMessage, stringify } from "../stringify.js";
 
 describe("stringify", () => {

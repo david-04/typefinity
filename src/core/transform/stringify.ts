@@ -1,4 +1,4 @@
-import { DescriptiveError } from "../errors/descriptive-error.js";
+import { DescriptiveError } from "../error/descriptive-error.js";
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Stringify objects

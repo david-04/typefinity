@@ -1,3 +1,3 @@
-export { ANSI_ESC_CODES } from "../print/ansi-escape-codes.js";
+export { ansi } from "../output/ansi-escape-codes.js";
 
 import "../error/inject-global-error-handler.js";

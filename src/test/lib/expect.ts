@@ -98,7 +98,7 @@ export namespace expect {
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual and expected values are equal (even if they are different instances)
          *
-         * @parm expected The expected value
+         * @param expected The expected value
          * @throws If the actual and expected values are not equal
          *------------------------------------------------------------------------------------------------------------*/
 
@@ -125,7 +125,7 @@ export namespace expect {
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the code block throws an error matching the expected one (if given)
          *
-         * @param errorOrMessage The expected error or error message
+         * @param expectedError The expected error or error message
          * @throws If the code block does not raise an error or if it raises an error other than the expected one (if
          * given)
          *------------------------------------------------------------------------------------------------------------*/
@@ -179,7 +179,7 @@ export namespace expect {
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual and unexpected values are not equal (i.e. don't have the same content)
          *
-         * @parm unexpected The unexpected value
+         * @param unexpected The unexpected value
          * @throws If the actual and expected values are equal (have the same content)
          *------------------------------------------------------------------------------------------------------------*/
 

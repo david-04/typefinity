@@ -18,6 +18,21 @@ $(call lp.bundle.add, src/bundles/typefinity-core.ts,   build/bundle/typefinity-
 $(call lp.bundle.add, src/bundles/typefinity-test.ts,   build/bundle/typefinity-test.js, cli dts minify sourcemap)
 $(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-web.js, cli dts minify sourcemap)
 
+
+#-----------------------------------------------------------------------------------------------------------------------
+# TypeDoc
+#-----------------------------------------------------------------------------------------------------------------------
+
+$(call lp.help.add-target , docs, ............... create API documentation)
+
+.PHONY: doc docs documentation typedoc
+
+doc docs documentation typedoc : build/typedoc/index.html;
+
+build/typedoc/index.html : $(LP_PREREQUISITE_TSC)
+	. bin/create-api-documentation.sh
+
+
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean
 #-----------------------------------------------------------------------------------------------------------------------

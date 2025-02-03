@@ -1,0 +1,4 @@
+{
+    "extends": "../../.launchpad/tsconfig.default.json",
+    "include": ["../../build/typedoc-src/**/*.ts"]
+}

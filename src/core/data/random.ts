@@ -9,6 +9,27 @@ export function randomBoolean() {
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
+ * Generate a random falsy value
+ *
+ * @returns A random falsy value (undefined, null, false, 0 or "")
+ *--------------------------------------------------------------------------------------------------------------------*/
+
+export function randomFalsyValue() {
+    return randomItem([undefined, null, false, 0, ""]);
+}
+
+/**---------------------------------------------------------------------------------------------------------------------
+ * Select a random item from an array
+ *
+ * @param array The array to select an item from
+ * @returns A randomly selected item from the array
+ *--------------------------------------------------------------------------------------------------------------------*/
+
+export function randomItem<const T extends ReadonlyArray<unknown>>(array: T): T[number] {
+    return array[randomNumber(0, array.length - 1)];
+}
+
+/**---------------------------------------------------------------------------------------------------------------------
  * Generate a random integer
  *
  * @param min The minimum value
@@ -38,12 +59,11 @@ export function randomNumberWithPrefix(prefix: string, min = 0, max = 999) {
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Select a random item from an array
+ * Generate a random truthy value
  *
- * @param array The array to select an item from
- * @returns A randomly selected item from the array
+ * @returns A random truthy value (true, 10, "abc", /regexp/ or {key: "value"})
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function randomItem<const T extends ReadonlyArray<unknown>>(array: T): T[number] {
-    return array[randomNumber(0, array.length - 1)];
+export function randomTruthyValue() {
+    return randomItem([true, 10, "abc", /regexp/, { key: "value" }]);
 }

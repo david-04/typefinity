@@ -13,10 +13,10 @@ autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISIT
 # Bundling
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.bundle.add, src/bundles/bundle-cli.ts,    build/bundle/bundle-cli.js, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/bundle-core.ts,   build/bundle/bundle-core.js, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/bundle-test.ts,   build/bundle/bundle-test.js, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/bundle-web.ts,    build/bundle/bundle-web.js, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-cli.ts,    build/bundle/typefinity-cli.js, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-core.ts,   build/bundle/typefinity-core.js, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-test.ts,   build/bundle/typefinity-test.js, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-web.js, cli dts minify sourcemap)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean

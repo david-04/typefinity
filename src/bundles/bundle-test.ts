@@ -1,1 +1,1 @@
-export * from "../test/api/export-test-public.js";
+export * from "../test/api/test-api-public.js";

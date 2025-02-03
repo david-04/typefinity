@@ -1,4 +1,5 @@
-import { describe, expect, it } from "../../api/import-cli.js";
+import { expect } from "../../../test/lib/expect.js";
+import { describe, it } from "../../../test/lib/test-runner.js";
 import { ansi, ANSI_ESC_CODES, enableAnsiEscapeCodes } from "../ansi-escape-codes.js";
 
 describe("ansi", () => {

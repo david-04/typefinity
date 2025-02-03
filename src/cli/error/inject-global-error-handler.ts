@@ -1,4 +1,4 @@
-import { stringify } from "../api/import-cli.js";
+import { stringify } from "../../core/transform/stringify.js";
 import { ansi } from "../output/ansi-escape-codes.js";
 
 /**---------------------------------------------------------------------------------------------------------------------

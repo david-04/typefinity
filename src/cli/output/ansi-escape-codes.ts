@@ -72,15 +72,16 @@ export function enableAnsiEscapeCodes(value: boolean | undefined = undefined) {
 }
 
 function ifEnabled(code: string) {
-    try {
-        if (
-            false === USE_ANSI_ESCAPE_CODES ||
-            (undefined === USE_ANSI_ESCAPE_CODES && undefined !== process.env["VSCODE_CWD"])
-        ) {
-            return "";
-        }
-    } catch (_) {}
-    return code;
+    if (undefined !== USE_ANSI_ESCAPE_CODES) {
+        return USE_ANSI_ESCAPE_CODES ? code : "";
+    } else {
+        try {
+            if (undefined !== process.env["VSCODE_CWD"]) {
+                return "";
+            }
+        } catch (_) {}
+        return code;
+    }
 }
 
 /**---------------------------------------------------------------------------------------------------------------------

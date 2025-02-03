@@ -1,4 +1,5 @@
-import { describe, expect, it } from "../../api/import-core.js";
+import { expect } from "../../../test/lib/expect.js";
+import { describe, it } from "../../../test/lib/test-runner.js";
 import { crash } from "../crash.js";
 
 describe("crash", () => {

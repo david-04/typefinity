@@ -1,2 +1,2 @@
-export * from "../cli/api/export-cli-public.js";
+export * from "../cli/api/cli-api-public.js";
 export * from "./bundle-core.js";

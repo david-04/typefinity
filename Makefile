@@ -37,7 +37,7 @@ build/typedoc/index.html : $(LP_PREREQUISITE_TSC)
 
 $(call lp.help.add-phony-target , release, ............ assemble the release)
 
-release : bundle typedoc;
+release : bundle typedoc test;
 	. ./bin/assemble-release.sh
 
 #-----------------------------------------------------------------------------------------------------------------------

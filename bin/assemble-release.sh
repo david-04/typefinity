@@ -20,9 +20,9 @@ for BUNDLE in cli web; do
     [[ -d "../dist/${BUNDLE?}" ]] && rm -rf "../dist/${BUNDLE??}"
     mkdir -p "../dist/${BUNDLE?}"
 
-    for FILE in README.md LICENSE CHANGELOG.md; do
-        cp "../${FILE?}" "../dist/${BUNDLE?}/"
-    done
+    cp "../CHANGELOG.md" "../dist/${BUNDLE?}/"
+    cp "../LICENSE" "../dist/${BUNDLE?}/"
+    grep -v "^# typefinity" "../README.md" >"../dist/${BUNDLE?}/README.md"
 
     sed "s|0\\.0\\.0|${VERSION_NUMBER?}|" "../resources/packages/package.${BUNDLE?}.json" >"../dist/${BUNDLE?}/package.json"
 

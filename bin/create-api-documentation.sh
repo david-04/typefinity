@@ -10,6 +10,8 @@ echo "Creating API documentation..."
 cp -r "../src" "../build/typedoc-src/"
 find "../build/typedoc-src" -type f -name "*.ts" -exec sed -i -E 's|^[ \t]*/\*{2}-{20,}|/**|g;s|-{20,}\*/|*/|' {} \;
 
+grep -v "^# typefinity" "../README.md" >"../build/typedoc-src/README.md"
+
 if [[ -d "../build/typedoc" ]]; then
     rm -rf "../build/typedoc/*"
 else
@@ -35,7 +37,7 @@ fi
     --navigation.includeCategories false \
     --navigation.includeGroups false \
     --out "../build/typedoc" \
-    --readme ../README.md \
+    --readme ../build/typedoc-src/README.md \
     --searchInComments \
     --sort alphabetical \
     --sort static-first \

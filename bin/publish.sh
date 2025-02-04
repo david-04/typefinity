@@ -8,7 +8,7 @@ set -e
 # Check if we're logged in
 #-----------------------------------------------------------------------------------------------------------------------
 
-if ! npm whoami >/dev/null; then
+if ! npm whoami 2>/dev/null; then
     npm login --scope=@david-04
 fi
 
@@ -30,7 +30,7 @@ cd ../bin
 
 for BUNDLE in cli web; do
     echo "Publishing ${BUNDLE?}..."
-    cd "../dist/${BUNDLE?}"
-    npm publish
-    cd "../bin"
+    # cd "../dist/${BUNDLE?}"
+    # npm publish
+    # cd "../bin"
 done

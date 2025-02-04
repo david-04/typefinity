@@ -22,7 +22,7 @@ $(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-
 # TypeDoc
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.help.add-target , docs, ............... create API documentation)
+$(call lp.help.add-target, docs, ............... create API documentation)
 
 .PHONY: doc docs documentation typedoc
 
@@ -41,14 +41,19 @@ release : bundle typedoc;
 	. ./bin/assemble-release.sh
 
 #-----------------------------------------------------------------------------------------------------------------------
+# Publish
+#-----------------------------------------------------------------------------------------------------------------------
+
+$(call lp.help.add-phony-target, publish, ............ publish the npm package and the API documentation)
+
+publish : release;
+	. ./bin/publish.sh
+
+#-----------------------------------------------------------------------------------------------------------------------
 # Clean
 #-----------------------------------------------------------------------------------------------------------------------
 
 $(call lp.clean.files, build dist)
-
-
-
-
 
 #-----------------------------------------------------------------------------------------------------------------------
 include .launchpad/Makefile.footer

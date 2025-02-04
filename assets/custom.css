@@ -1,0 +1,58 @@
+/* ------------------------------------------------------------------------------------------------------------------ */
+/* Left navigation pane                                                                                               */
+/* ------------------------------------------------------------------------------------------------------------------ */
+
+/* hide module name header (e.g. "typefinity-cli") */
+.site-menu nav.tsd-navigation>a {
+    display: none;
+}
+
+/* hide icons */
+.site-menu a>svg {
+    display: none;
+}
+
+
+/* ------------------------------------------------------------------------------------------------------------------ */
+/* Page content                                                                                                       */
+/* ------------------------------------------------------------------------------------------------------------------ */
+
+/* hide icons */
+.container-main>.col-content svg {
+    display: none;
+}
+
+/* display "▸" in front of each link in a list */
+.container-main>.col-content .tsd-index-list>a::before {
+    content: "▸";
+    color: initial;
+    margin-right: 0.25em;
+}
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------ */
+/* Right navigation pane                                                                                              */
+/* ------------------------------------------------------------------------------------------------------------------ */
+
+/* hide the "Settings" section */
+.page-menu .settings {
+    display: none;
+}
+
+/* hide the "On this page" header */
+.page-menu summary {
+    display: none;
+}
+
+/* hide icons */
+.page-menu svg {
+    display: none;
+}
+
+/* display "▸" in front of each link in a list */
+.page-menu a::before {
+    content: "▸";
+    color: initial;
+    margin-right: 0.25em;
+}

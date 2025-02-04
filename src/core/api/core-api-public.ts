@@ -1,3 +1,5 @@
+export { type Json, type ReadonlyJson } from "../types/json-types.js";
+
 export { Optional, optional } from "../data/optional.js";
 export {
     randomBoolean,

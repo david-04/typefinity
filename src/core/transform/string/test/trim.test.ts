@@ -1,0 +1,23 @@
+import { expect } from "../../../../test/lib/expect.js";
+import { describe, it } from "../../../../test/lib/test-runner.js";
+import { trim, trimEnd, trimStart } from "../trim.js";
+
+const text = ` \t\r\n text \t\r\n message \t\r\n`;
+
+describe("trim", () => {
+    it("behaves like string.trim()", () => {
+        expect(trim(text)).toEqual(text.trim());
+    });
+});
+
+describe("trimStart", () => {
+    it("behaves like string.trimStart()", () => {
+        expect(trimStart(text)).toEqual(text.trimStart());
+    });
+});
+
+describe("trimEnd", () => {
+    it("behaves like string.trimEnd()", () => {
+        expect(trimEnd(text)).toEqual(text.trimEnd());
+    });
+});

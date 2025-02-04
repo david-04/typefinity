@@ -1,5 +1,5 @@
 /**---------------------------------------------------------------------------------------------------------------------
- * Synonym for throw new Error(...)
+ * Alias for `throw new Error(...)`
  *
  * @param message The error message
  * @param cause The underlying error that triggered this crash

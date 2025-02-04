@@ -1,5 +1,3 @@
-export { type Json, type ReadonlyJson } from "../types/json-types.js";
-
 export { Optional, optional } from "../data/optional.js";
 export {
     randomBoolean,
@@ -12,4 +10,6 @@ export {
 export { crash } from "../error/crash.js";
 export { DescriptiveError } from "../error/descriptive-error.js";
 export { fail } from "../error/fail.js";
+export { trim, trimEnd, trimStart } from "../transform/string/trim.js";
 export { stringifyErrorMessage } from "../transform/stringify/stringify-error-message.js";
+export { type Json, type ReadonlyJson } from "../types/json-types.js";

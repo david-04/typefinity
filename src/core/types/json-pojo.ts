@@ -33,7 +33,7 @@ export namespace Json {
      * A JSON array
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export type Array = (Primitive | Object | Json.Array)[]; // NOSONAR
+    export type Array = (Exclude<Primitive, undefined> | Object | Json.Array)[]; // NOSONAR
 
     /**-----------------------------------------------------------------------------------------------------------------
      * A JSON readonly object
@@ -47,5 +47,5 @@ export namespace Json {
      * A JSON readonly array
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export type ReadonlyArray = (Primitive | Object | Json.ReadonlyArray)[];
+    export type ReadonlyArray = readonly (Exclude<Primitive, undefined> | Object | Json.ReadonlyArray)[];
 }

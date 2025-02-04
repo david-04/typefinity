@@ -12,4 +12,5 @@ export { DescriptiveError } from "../error/descriptive-error.js";
 export { fail } from "../error/fail.js";
 export { trim, trimEnd, trimStart } from "../transform/string/trim.js";
 export { stringifyErrorMessage } from "../transform/stringify/stringify-error-message.js";
-export { type Json, type ReadonlyJson } from "../types/json-types.js";
+export { type Json, type ReadonlyJson } from "../types/json-pojo.js";
+export { isFalsy, isTruthy } from "../types/type-guards.js";

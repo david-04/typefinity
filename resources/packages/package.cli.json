@@ -1,0 +1,21 @@
+{
+    "author": "David Hofmann",
+    "bugs": "https://github.com/david-04/typefinity/issues",
+    "description": "A general-purpose library for TypeScript command-line applications",
+    "exports": {
+        ".": {
+            "import": {
+                "default": "./index.mjs",
+                "types": "./index.d.ts"
+            }
+        }
+    },
+    "homepage": "https://github.com/david-04/typefinity#readme",
+    "keywords": [],
+    "license": "MIT",
+    "main": "./index.mjs",
+    "name": "@david-04/typefinity-cli",
+    "repository": "github:david-04/typefinity",
+    "type": "module",
+    "version": "0.0.0"
+}

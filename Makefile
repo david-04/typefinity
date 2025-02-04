@@ -13,11 +13,10 @@ autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISIT
 # Bundling
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.bundle.add, src/bundles/typefinity-cli.ts,    build/bundle/typefinity-cli.js, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-core.ts,   build/bundle/typefinity-core.js, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-test.ts,   build/bundle/typefinity-test.js, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-web.js, cli dts minify sourcemap)
-
+$(call lp.bundle.add, src/bundles/typefinity-cli.ts,    build/bundle/typefinity-cli.mjs, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-core.ts,   build/bundle/typefinity-core.mjs, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-test.ts,   build/bundle/typefinity-test.mjs, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-web.mjs, cli dts minify sourcemap)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # TypeDoc
@@ -32,15 +31,20 @@ doc docs documentation typedoc : build/typedoc/index.html;
 build/typedoc/index.html : $(LP_PREREQUISITE_TSC)
 	. bin/create-api-documentation.sh
 
+#-----------------------------------------------------------------------------------------------------------------------
+# Release
+#-----------------------------------------------------------------------------------------------------------------------
+
+$(call lp.help.add-phony-target , release, ............ assemble the release)
+
+release : bundle typedoc;
+	. ./bin/assemble-release.sh
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Clean
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.clean.tsc-output)
-# $(call lp.clean.bundles)
-# $(call lp.clean.npm-packages)
-# $(call lp.clean.files, list files here...)
+$(call lp.clean.files, build dist)
 
 
 

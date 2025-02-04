@@ -1,0 +1,28 @@
+{
+    "author": "David Hofmann",
+    "bugs": "https://github.com/david-04/typefinity/issues",
+    "description": "A general-purpose library for TypeScript web applications",
+    "exports": {
+        ".": {
+            "import": {
+                "default": "./index.mjs",
+                "types": "./index.d.ts"
+            }
+        },
+        "./test": {
+            "import": {
+                "default": "./test/index.mjs",
+                "types": "./test/index.d.ts"
+            }
+        }
+    },
+    "homepage": "https://github.com/david-04/typefinity#readme",
+    "keywords": [],
+    "license": "MIT",
+    "module": "./index.mjs",
+    "name": "@david-04/typefinity-web",
+    "repository": "github:david-04/typefinity",
+    "type": "module",
+    "types": "./index.d.ts",
+    "version": "0.0.0"
+}

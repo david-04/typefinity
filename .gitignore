@@ -6,3 +6,4 @@
 /build/tsc/**/*.js.map
 /build/tsc/.tsbuildinfo
 /build/tsc/.timestamp.*
+/docs

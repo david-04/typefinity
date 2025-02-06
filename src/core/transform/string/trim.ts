@@ -1,5 +1,5 @@
 /**---------------------------------------------------------------------------------------------------------------------
- * Alias for `string.trim()`
+ * Alias for `String.trim()`
  *
  * @param text The text to trim
  * @returns The trimmed text
@@ -10,23 +10,29 @@ export function trim(text: string) {
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Alias for `string.trimStart()`
- *
- * @param text The text to trim
- * @returns The trimmed text
+ * @mergeModuleWith trim
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function trimStart(text: string) {
-    return text.trimStart();
-}
+export namespace trim {
+    /**-----------------------------------------------------------------------------------------------------------------
+     * Alias for `String.trimStart()`
+     *
+     * @param text The text to trim
+     * @returns The trimmed text
+     *----------------------------------------------------------------------------------------------------------------*/
 
-/**---------------------------------------------------------------------------------------------------------------------
- * Alias for `string.trimEnd()`
- *
- * @param text The text to trim
- * @returns The trimmed text
- *--------------------------------------------------------------------------------------------------------------------*/
+    export function start(text: string) {
+        return text.trimStart();
+    }
 
-export function trimEnd(text: string) {
-    return text.trimEnd();
+    /**-----------------------------------------------------------------------------------------------------------------
+     * Alias for `String.trimEnd()`
+     *
+     * @param text The text to trim
+     * @returns The trimmed text
+     *----------------------------------------------------------------------------------------------------------------*/
+
+    export function end(text: string) {
+        return text.trimEnd();
+    }
 }

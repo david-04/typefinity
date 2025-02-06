@@ -1,6 +1,6 @@
 import { expect } from "../../../../test/lib/expect.js";
 import { describe, it } from "../../../../test/lib/test-runner.js";
-import { trim, trimEnd, trimStart } from "../trim.js";
+import { trim } from "../trim.js";
 
 const text = ` \t\r\n text \t\r\n message \t\r\n`;
 
@@ -12,12 +12,12 @@ describe("trim", () => {
 
 describe("trimStart", () => {
     it("behaves like string.trimStart()", () => {
-        expect(trimStart(text)).toEqual(text.trimStart());
+        expect(trim.start(text)).toEqual(text.trimStart());
     });
 });
 
 describe("trimEnd", () => {
     it("behaves like string.trimEnd()", () => {
-        expect(trimEnd(text)).toEqual(text.trimEnd());
+        expect(trim.end(text)).toEqual(text.trimEnd());
     });
 });

@@ -28,7 +28,7 @@ $(call lp.help.add-target, docs, ............... create API documentation)
 
 doc docs documentation typedoc : build/typedoc/index.html;
 
-build/typedoc/index.html : $(LP_PREREQUISITE_TSC)
+build/typedoc/index.html : $(LP_PREREQUISITE_TSC) $(wildcard resources/typedoc/*)
 	. bin/create-api-documentation.sh
 
 #-----------------------------------------------------------------------------------------------------------------------

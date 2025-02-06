@@ -46,3 +46,5 @@ fi
     "../build/typedoc-src/bundles/bundle-all.ts"
 
 rm -rf "../build/typedoc-src"
+
+. ./validate-changelog-links.sh

@@ -51,6 +51,7 @@ export function describe(description: string, implementation: () => unknown): vo
     nodeTest.describe(description, filterReturnValue(implementation));
 }
 
+/** @mergeModuleWith describe */
 export namespace describe {
     /**-----------------------------------------------------------------------------------------------------------------
      * Define a test suite but exclude it from test runs
@@ -91,6 +92,7 @@ export function it(description: string, implementation: () => unknown): void {
     nodeTest.it(description, filterReturnValue(implementation));
 }
 
+/** @mergeModuleWith it */
 export namespace it {
     /**-----------------------------------------------------------------------------------------------------------------
      * Define a test case but exclude it from test runs

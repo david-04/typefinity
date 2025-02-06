@@ -88,7 +88,7 @@ function ifEnabled(code: string) {
  * Wrap text into ANSI escape codes
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export namespace ansi {
+export const ansi = {
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground black" ANSI escape codes
      *
@@ -96,9 +96,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "foreground black" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgBlack(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgBlack)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgBlack: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgBlack)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground red" ANSI escape codes
@@ -107,9 +105,8 @@ export namespace ansi {
      * @return Returns the given text wrapped into "foreground red" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgRed(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgRed)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgRed: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgRed)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
+
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground green" ANSI escape codes
      *
@@ -117,9 +114,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "foreground green" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgGreen(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgGreen)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgGreen: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgGreen)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground yellow" ANSI escape codes
@@ -128,9 +123,8 @@ export namespace ansi {
      * @return Returns the given text wrapped into "foreground yellow" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgYellow(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgYellow)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgYellow: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgYellow)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
+
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground blue" ANSI escape codes
      *
@@ -138,9 +132,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "foreground blu" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgBlue(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgBlue)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgBlue: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgBlue)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground magenta" ANSI escape codes
@@ -149,9 +141,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "foreground magenta" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgMagenta(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgMagenta)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgMagenta: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgMagenta)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground cyan" ANSI escape codes
@@ -160,9 +150,7 @@ export namespace ansi {
      * @return Returns the given text wrapped cyan "foreground red" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgCyan(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgCyan)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgCyan: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgCyan)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground white" ANSI escape codes
@@ -171,9 +159,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "foreground white" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgWhite(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgWhite)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgWhite: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgWhite)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "foreground gray" ANSI escape codes
@@ -182,9 +168,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "foreground gray" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function fgGray(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.fgGray)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`;
-    }
+    fgGray: (text: string) => `${ifEnabled(ANSI_ESC_CODES.fgGray)}${text}${ifEnabled(ANSI_ESC_CODES.fgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background black" ANSI escape codes
@@ -193,9 +177,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background black" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgBlack(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgBlack)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgBlack: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgBlack)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background red" ANSI escape codes
@@ -204,9 +186,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background red" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgRed(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgRed)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgRed: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgRed)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background green" ANSI escape codes
@@ -215,9 +195,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background green" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgGreen(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgGreen)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgGreen: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgGreen)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background yellow" ANSI escape codes
@@ -226,9 +204,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background yellow" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgYellow(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgYellow)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgYellow: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgYellow)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background blue" ANSI escape codes
@@ -237,9 +213,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background blue" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgBlue(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgBlue)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgBlue: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgBlue)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background magenta" ANSI escape codes
@@ -248,9 +222,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background magenta" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgMagenta(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgMagenta)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgMagenta: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgMagenta)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background cyan" ANSI escape codes
@@ -259,9 +231,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background cyan" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgCyan(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgCyan)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgCyan: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgCyan)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background white" ANSI escape codes
@@ -270,9 +240,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background white" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgWhite(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgWhite)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgWhite: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgWhite)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "background gray" ANSI escape codes
@@ -281,9 +249,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "background gray" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bgGray(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bgGray)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`;
-    }
+    bgGray: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bgGray)}${text}${ifEnabled(ANSI_ESC_CODES.bgDefault)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "bright" ANSI escape codes
@@ -292,9 +258,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "bright" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function bright(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.bright)}${text}${ifEnabled(ANSI_ESC_CODES.normal)}`;
-    }
+    bright: (text: string) => `${ifEnabled(ANSI_ESC_CODES.bright)}${text}${ifEnabled(ANSI_ESC_CODES.normal)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "dim(med)" ANSI escape codes
@@ -303,9 +267,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "dim(med)" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function dim(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.dim)}${text}${ifEnabled(ANSI_ESC_CODES.normal)}`;
-    }
+    dim: (text: string) => `${ifEnabled(ANSI_ESC_CODES.dim)}${text}${ifEnabled(ANSI_ESC_CODES.normal)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "underline" ANSI escape codes
@@ -314,9 +276,8 @@ export namespace ansi {
      * @return Returns the given text wrapped into "underline" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function underline(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.underline)}${text}${ifEnabled(ANSI_ESC_CODES.noUnderline)}`;
-    }
+    underline: (text: string) =>
+        `${ifEnabled(ANSI_ESC_CODES.underline)}${text}${ifEnabled(ANSI_ESC_CODES.noUnderline)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "overline" ANSI escape codes
@@ -325,9 +286,7 @@ export namespace ansi {
      * @return Returns the given text wrapped into "overline" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function overline(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.overline)}${text}${ifEnabled(ANSI_ESC_CODES.noOverline)}`;
-    }
+    overline: (text: string) => `${ifEnabled(ANSI_ESC_CODES.overline)}${text}${ifEnabled(ANSI_ESC_CODES.noOverline)}`,
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Wrap the given text into "under- and overline" ANSI escape codes
@@ -336,7 +295,5 @@ export namespace ansi {
      * @return Returns the given text wrapped into "under- and overline" ANSI escape codes
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export function doubleLine(text: string) {
-        return `${ifEnabled(ANSI_ESC_CODES.doubleLine)}${text}${ifEnabled(ANSI_ESC_CODES.noLine)}`;
-    }
-}
+    doubleLine: (text: string) => `${ifEnabled(ANSI_ESC_CODES.doubleLine)}${text}${ifEnabled(ANSI_ESC_CODES.noLine)}`,
+} as const;

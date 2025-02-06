@@ -43,6 +43,7 @@ export function expect<T>(actual: T): unknown {
     return new Assertions(actual);
 }
 
+/** @mergeModuleWith expect */
 export namespace expect {
     /**-----------------------------------------------------------------------------------------------------------------
      * Assertions

@@ -11,12 +11,12 @@ export type Json = Json.Primitive | Json.Object | Json.Array;
 export type ReadonlyJson = Json.Primitive | Json.ReadonlyObject | Json.ReadonlyArray;
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Nested types for JSON objects
+ * @mergeModuleWith Json
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export namespace Json {
     /**-----------------------------------------------------------------------------------------------------------------
-     * Primitive JSON data types
+     * A primitive JSON data type
      *----------------------------------------------------------------------------------------------------------------*/
 
     export type Primitive = undefined | null | boolean | number | string;

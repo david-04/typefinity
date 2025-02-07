@@ -8,16 +8,16 @@ describe("trim", () => {
     it("behaves like string.trim()", () => {
         expect(trim(text)).toEqual(text.trim());
     });
-});
 
-describe("trimStart", () => {
-    it("behaves like string.trimStart()", () => {
-        expect(trim.start(text)).toEqual(text.trimStart());
+    describe("start", () => {
+        it("behaves like string.trimStart()", () => {
+            expect(trim.start(text)).toEqual(text.trimStart());
+        });
     });
-});
 
-describe("trimEnd", () => {
-    it("behaves like string.trimEnd()", () => {
-        expect(trim.end(text)).toEqual(text.trimEnd());
+    describe("end", () => {
+        it("behaves like string.trimEnd()", () => {
+            expect(trim.end(text)).toEqual(text.trimEnd());
+        });
     });
 });

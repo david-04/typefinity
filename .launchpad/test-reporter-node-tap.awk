@@ -6,9 +6,11 @@ BEGIN {
     DIVIDER = "------------------------------------------------------------------------------------------------------------------------";
     section = "";
     indent = 0;
-    foundErrors = 0;
     foundStats = 0
     consoleLog = ""
+    describe["length"] = 0
+    qualifiedName = ""
+    hasErrors = 0
 }
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -21,6 +23,33 @@ BEGIN {
 1 == NR, !/^[ \t]*#/ {
     next
 }
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Capture the stack of describe blocks
+#-----------------------------------------------------------------------------------------------------------------------
+#    # Subtest:
+#-----------------------------------------------------------------------------------------------------------------------
+
+/^[ \t]*# Subtest:/ {
+    updateDescribe($0)
+}
+
+function updateDescribe(line,   leadingWhitespace, description, idx) {
+    leadingWhitespace = line
+    sub(/[^ \t].*$/, "", leadingWhitespace)
+    leadingWhitespace = int(length(leadingWhitespace) / 4) #/
+    description = line
+    gsub(/^[ \t]*# Subtest:[ \t]*|[ \t]+$/, "", description)
+    describe["length"] = leadingWhitespace + 1
+    describe[describe["length"] - 1] = description
+    qualifiedName = ""
+    for (idx = 0; idx < describe["length"]; idx++) {
+        if (describe[idx] != "") {
+            qualifiedName = qualifiedName (qualifiedName ? " > " : "") describe[idx]
+        }
+    }
+}
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 # Collect counters (at the end of the input)
@@ -59,18 +88,19 @@ foundStats {
 #-----------------------------------------------------------------------------------------------------------------------
 
 /^[ \t]*not ok/ {
+    sub(/[^ \t].*$/, "  " qualifiedName "\n" DIVIDER "\n")
     if (section) {
         print section;
-        foundErrors = 1;
+        hasErrors = 1
     }
-    section = DIVIDER;
+    section = "\n" DIVIDER;
     indent = match($0, /[^ ]/);
 }
 
 /^[ \t]*#/ {
     if (section) {
         print section;
-        foundErrors = 1;
+        hasErrors = 1
     }
     section = "";
 }
@@ -109,12 +139,11 @@ END {
         duration = counters["duration_ms"] ? sprintf(" in %.1fs", counters["duration_ms"] * 0.001 + 0.05) : "";
         output = "✓ " counters["pass"] " test" (1 == counters["pass"] ? "" : "s")  " passed" duration;
     }
-    if (foundErrors || consoleLog) {
-        print DIVIDER;
-    }
     if (consoleLog) {
-        print consoleLog;
-        print DIVIDER;
+        print "\n" DIVIDER "\nstdout\n" DIVIDER "\n\n" consoleLog;
+    }
+    if (hasErrors || consoleLog) {
+        print ""
     }
     print output;
     if (exitCode) {

@@ -1,13 +1,13 @@
 # typefinity
 
-A general-purpose TypeScript library.
+A general-purpose TypeScript library with small tools and utilities that I use in my personal projects. It comes in two variants:
 
-npm packages:
-
-- [@david-04/typefinity-cli](https://www.npmjs.com/package/@david-04/typefinity-cli) (for command-line applications)
-- [@david-04/typefinity-web](https://www.npmjs.com/package/@david-04/typefinity-web) (for web applications)
+- [@david-04/typefinity-cli](https://www.npmjs.com/package/@david-04/typefinity-cli)
+  (for command-line applications that run in NodeJS-compatible runtime engines)
+- [@david-04/typefinity-web](https://www.npmjs.com/package/@david-04/typefinity-web)
+  (for web applications that run in the browser)
 
 Other resources:
 
 - [API documentation](https://david-04.github.io/typefinity/index.html)
-- [Change log](https://github.com/david-04/typefinity/blob/main/CHANGLOG.md)
+- [Changelog](https://github.com/david-04/typefinity/blob/main/CHANGLOG.md)

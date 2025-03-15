@@ -55,10 +55,9 @@ export function randomItem(...items: ReadonlyArray<unknown>) {
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Generate a random integer with the parameters in {@link randomNumber.DEFAULT_OPTIONS}
+ * Generate a random integer
  *
- * @returns A random number between {@link randomNumber.DEFAULT_OPTIONS.min | DEFAULT_OPTIONS.min} and
- *         {@link randomNumber.DEFAULT_OPTIONS.max | DEFAULT_OPTIONS.max}
+ * @returns A random integer
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function randomNumber(): number;
@@ -84,7 +83,7 @@ export function randomNumber(options: randomNumber.Options): number;
 
 export function randomNumber(minOrOptions?: number | randomNumber.Options | undefined, max?: number): number {
     if (undefined === minOrOptions) {
-        return randomNumber(randomNumber.DEFAULT_OPTIONS);
+        return randomNumber(RANDOM_NUMBER_DEFAULT_OPTIONS);
     } else if ("number" === typeof minOrOptions) {
         if ("number" === typeof max) {
             return randomNumber({ min: minOrOptions, max });
@@ -97,7 +96,7 @@ export function randomNumber(minOrOptions?: number | randomNumber.Options | unde
 }
 
 function generateRandomNumber(options: randomNumber.Options) {
-    let { min, max, decimalPlaces } = { ...randomNumber.DEFAULT_OPTIONS, ...options };
+    let { min, max, decimalPlaces } = { ...RANDOM_NUMBER_DEFAULT_OPTIONS, ...options };
     [min, max] = [Math.min(min, max), Math.max(min, max)];
     const result = min + (max - min + 1) * Math.random();
     return 0 === decimalPlaces
@@ -121,21 +120,19 @@ export namespace randomNumber {
               /** The number of decimal places */
               readonly decimalPlaces: number;
           };
-
-    /** Default options for {@link randomNumber} */
-    export const DEFAULT_OPTIONS = {
-        decimalPlaces: 0,
-        min: 10,
-        max: 99,
-    } as const satisfies Options;
 }
+
+const RANDOM_NUMBER_DEFAULT_OPTIONS = {
+    decimalPlaces: 0,
+    min: 10,
+    max: 99,
+} as const satisfies randomNumber.Options;
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Generate a random integer with a prefix
  *
  * @param   prefix The prefix to prepend
- * @returns A random integer between {@link randomNumber.DEFAULT_OPTIONS.min | DEFAULT_OPTIONS.min} and
- *          {@link randomNumber.DEFAULT_OPTIONS.max | DEFAULT_OPTIONS.max} (inclusive) with the `prefix` prepended
+ * @returns A random integer with the `prefix` prepended
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function randomNumberWithPrefix(prefix: string): string;

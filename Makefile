@@ -9,14 +9,21 @@ autorun.editor: test;
 autorun : $(LP_PREREQUISITE_TSC) # $(LP_PREREQUISITE_BUNDLE) or $(LP_PREREQUISITE_BUNDLE_JS) + $(LP_PREREQUISITE_BUNDLE_DTS)
 	#$(call lp.run, build/cli/cli.js)
 
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Compiling
+#-----------------------------------------------------------------------------------------------------------------------
+
+$(call lp.tsc.add-after-hook, node bin/normalize-javadoc.mjs $(LP_CFG_TSC_OUT_DIR))
+
 #-----------------------------------------------------------------------------------------------------------------------
 # Bundling
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.bundle.add, src/bundles/typefinity-cli.ts,    build/bundle/typefinity-cli.mjs, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-core.ts,   build/bundle/typefinity-core.mjs, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-test.ts,   build/bundle/typefinity-test.mjs, cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-web.mjs, cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-cli.ts,    build/bundle/typefinity-cli.mjs,    cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-core.ts,   build/bundle/typefinity-core.mjs,   cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-test.ts,   build/bundle/typefinity-test.mjs,   cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-web.mjs,    cli dts minify sourcemap)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # TypeDoc

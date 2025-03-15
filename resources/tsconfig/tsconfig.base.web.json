@@ -6,6 +6,7 @@
         "jsx": "react",
         "jsxFactory": "React.createElement",
         "lib": ["ES2022", "DOM"],
+        "removeComments": false,
         "target": "ES2022"
     }
 }

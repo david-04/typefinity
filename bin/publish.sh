@@ -8,7 +8,7 @@ set -e
 # Check if we're logged in
 #-----------------------------------------------------------------------------------------------------------------------
 
-if ! npm whoami 2>/dev/null; then
+if ! npm whoami >/dev/null 2>&1; then
     npm login --scope=@david-04
 fi
 
@@ -16,11 +16,15 @@ fi
 # API documentation
 #-----------------------------------------------------------------------------------------------------------------------
 
+echo ""
+echo "------------------------------------------------------------------------------------------------------------------------"
 echo "Publishing the API documentation..."
+echo "------------------------------------------------------------------------------------------------------------------------"
+echo ""
 cd ../docs
 git checkout -q docs
 git add --all
-git commit --amend -m "Update API documentation"
+git commit --amend -m "Update API documentation" --quiet
 git push --force origin HEAD
 cd ../bin
 
@@ -29,8 +33,12 @@ cd ../bin
 #-----------------------------------------------------------------------------------------------------------------------
 
 for BUNDLE in cli web; do
-    echo "Publishing ${BUNDLE?}..."
-    cd "../dist/${BUNDLE?}"
-    npm publish
+    echo ""
+    echo "------------------------------------------------------------------------------------------------------------------------"
+    echo "Publishing @david-04/typefinity-${BUNDLE?}..."
+    echo "------------------------------------------------------------------------------------------------------------------------"
+    echo ""
+    cd "../dist/typefinity-${BUNDLE?}"
+    npm publish --access=public
     cd "../bin"
 done

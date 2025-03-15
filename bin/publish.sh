@@ -19,9 +19,9 @@ fi
 echo "Publishing the API documentation..."
 cd ../docs
 git checkout -q docs
-git add .
+git add --all
 git commit --amend -m "Update API documentation"
-git push --force
+git push --force origin HEAD
 cd ../bin
 
 #-----------------------------------------------------------------------------------------------------------------------

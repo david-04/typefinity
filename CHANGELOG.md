@@ -1,12 +1,11 @@
 # Change Log
 
-## [0.0.1](https://github.com/david-04/typefinity/releases/tag/v0.0.1) (2025-02-07)
+## [0.0.1](https://github.com/david-04/typefinity/releases/tag/v0.0.1) (2025-03-16)
 
 New features
 
 - [afterAll](https://david-04.github.io/typefinity/functions/afterAll.html)
 - [afterEach](https://david-04.github.io/typefinity/functions/afterEach.html)
-- [ansi](https://david-04.github.io/typefinity/variables/ansi.html)
 - [beforeAll](https://david-04.github.io/typefinity/functions/beforeAll.html)
 - [beforeEach](https://david-04.github.io/typefinity/functions/beforeEach.html)
 - [crash](https://david-04.github.io/typefinity/functions/crash.html)
@@ -27,5 +26,3 @@ New features
 - [randomTruthyValue](https://david-04.github.io/typefinity/functions/randomTruthyValue.html)
 - [ReadonlyJson](https://david-04.github.io/typefinity/types/ReadonlyJson.html)
 - [trim](https://david-04.github.io/typefinity/functions/trim.html)
-
-Unreleased

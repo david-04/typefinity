@@ -1,5 +1,4 @@
 import { stringifyError } from "../../core/transform/stringify/stringify-error.js";
-import { ansi } from "../output/ansi-escape-codes.js";
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Inject an error handler
@@ -19,7 +18,8 @@ try {
 
 function printErrorAndExit(error: unknown, messagePrefix = "ERROR:") {
     for (const line of `${messagePrefix} ${stringifyError(error)}`.trim().split(/\r?\n/)) {
-        console.error(/^\s+at\s+/.exec(line) ? line : ansi.fgRed(line));
+        //console.error(/^\s+at\s+/.exec(line) ? line : ansi.fgRed(line));
+        console.error(line);
     }
     return process.exit(1);
 }

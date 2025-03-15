@@ -171,4 +171,6 @@ class OptionalWithGet<T> extends Optional<T> {
  * @returns an Optional of the given value
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export const optional = Optional.of;
+export function optional<T>(value: T) {
+    return Optional.of(value);
+}

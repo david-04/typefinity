@@ -17,7 +17,7 @@ New features
 - [it](https://david-04.github.io/typefinity/functions/it.html)
 - [Json](https://david-04.github.io/typefinity/types/Json.html)
 - [optional](https://david-04.github.io/typefinity/functions/optional.html)
-- [Optional](https://david-04.github.io/typefinity/classes/Optional-1.html)
+- [Optional](https://david-04.github.io/typefinity/classes/Optional.html)
 - [randomBoolean](https://david-04.github.io/typefinity/functions/randomBoolean.html)
 - [randomFalsyValue](https://david-04.github.io/typefinity/functions/randomFalsyValue.html)
 - [randomItem](https://david-04.github.io/typefinity/functions/randomItem.html)

@@ -389,7 +389,25 @@ describe("Optional", () => {
 });
 
 describe("optional", () => {
-    it("is an alias for Optional.of", () => {
-        expect(optional).toBe(Optional.of);
+    it("creates an Optional with the given value", () => {
+        const value = randomItem([0, false, "", Symbol("1")]);
+        assertHasValue(optional(value), value);
+    });
+
+    it("creates an empty Optional when passing null", () => {
+        assertIsEmpty(optional(null));
+    });
+
+    it("creates an empty Optional when passing undefined", () => {
+        assertIsEmpty(optional(undefined));
+    });
+
+    it("is typed correctly", () => {
+        expect(optional(1 as number | string)).toBeOfType<Optional<number | string>>();
+        expect(optional(1 as unknown)).toBeOfType<Optional<unknown>>();
+        expect(optional(null)).toBeOfType<Optional<never>>();
+        expect(optional(undefined)).toBeOfType<Optional<never>>();
+        expect(optional(null as null | undefined)).toBeOfType<Optional<never>>();
+        expect(optional(1 as number | string | null | undefined)).toBeOfType<Optional<number | string>>();
     });
 });

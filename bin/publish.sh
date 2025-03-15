@@ -40,5 +40,5 @@ for BUNDLE in cli web; do
     echo ""
     cd "../dist/typefinity-${BUNDLE?}"
     npm publish --access=public
-    cd "../bin"
+    cd "../../bin"
 done

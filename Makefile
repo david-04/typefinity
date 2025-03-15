@@ -20,10 +20,10 @@ $(call lp.tsc.add-after-hook, node bin/normalize-javadoc.mjs $(LP_CFG_TSC_OUT_DI
 # Bundling
 #-----------------------------------------------------------------------------------------------------------------------
 
-$(call lp.bundle.add, src/bundles/typefinity-cli.ts,    build/bundle/typefinity-cli.mjs,    cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-core.ts,   build/bundle/typefinity-core.mjs,   cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-test.ts,   build/bundle/typefinity-test.mjs,   cli dts minify sourcemap)
-$(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-web.mjs,    cli dts minify sourcemap)
+$(call lp.bundle.add, src/bundles/typefinity-cli.ts,    build/bundle/typefinity-cli.mjs,    cli dts minify sourcemap,, node bin/normalize-javadoc.mjs build/bundle/typefinity-cli.d.ts)
+$(call lp.bundle.add, src/bundles/typefinity-core.ts,   build/bundle/typefinity-core.mjs,   cli dts minify sourcemap,, node bin/normalize-javadoc.mjs build/bundle/typefinity-core.d.ts)
+$(call lp.bundle.add, src/bundles/typefinity-test.ts,   build/bundle/typefinity-test.mjs,   cli dts minify sourcemap,, node bin/normalize-javadoc.mjs build/bundle/typefinity-test.d.ts)
+$(call lp.bundle.add, src/bundles/typefinity-web.ts,    build/bundle/typefinity-web.mjs,    cli dts minify sourcemap,, node bin/normalize-javadoc.mjs build/bundle/typefinity-web.d.ts)
 
 #-----------------------------------------------------------------------------------------------------------------------
 # TypeDoc

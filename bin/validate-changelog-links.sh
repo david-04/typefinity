@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
-set -e
+function __tf_validate_changelog_links() {
+    unset -f __tf_validate_changelog_links
 
-[[ -f "bin/validate-changelog-links.sh" ]] && cd "bin"
-
-function __validate_changelog_links() {
-    unset -f __validate_changelog_links
+    if [[ -f "bin/validate-changelog-links.sh" ]]; then
+        if ! cd bin; then
+            echo "ERROR: Failed to cd to bin directory" >&2
+            return 1
+        fi
+    fi
 
     local URL="^https://david-04.github.io/typefinity/"
     local EXIT_CODE=0
@@ -29,4 +32,4 @@ function __validate_changelog_links() {
     fi
 }
 
-__validate_changelog_links
+__tf_validate_changelog_links "$@"

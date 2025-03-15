@@ -14,8 +14,13 @@
     "keywords": [],
     "license": "MIT",
     "main": "./index.mjs",
+    "module": "./index.mjs",
     "name": "@david-04/typefinity-cli",
-    "repository": "github:david-04/typefinity",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/david-04/typefinity.git"
+    },
     "type": "module",
+    "types": "./index.d.ts",
     "version": "0.0.0"
 }

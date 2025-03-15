@@ -30,7 +30,7 @@ cd ../bin
 
 for BUNDLE in cli web; do
     echo "Publishing ${BUNDLE?}..."
-    # cd "../dist/${BUNDLE?}"
-    # npm publish
-    # cd "../bin"
+    cd "../dist/${BUNDLE?}"
+    npm publish
+    cd "../bin"
 done

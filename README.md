@@ -10,4 +10,4 @@ A general-purpose TypeScript library with small tools and utilities that I use i
 Other resources:
 
 - [API documentation](https://david-04.github.io/typefinity/index.html)
-- [Changelog](https://github.com/david-04/typefinity/blob/main/CHANGLOG.md)
+- [Changelog](https://github.com/david-04/typefinity/blob/main/CHANGELOG.md)

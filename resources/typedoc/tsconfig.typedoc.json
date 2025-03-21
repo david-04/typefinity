@@ -1,5 +1,4 @@
 {
-    "extends": "../../.launchpad/tsconfig.default.json",
     "include": ["../../build/tsc/**/*"],
     "exclude": []
 }

@@ -1,10 +1,11 @@
 import { expect } from "../../../test/lib/expect.js";
 import { describe, it } from "../../../test/lib/test-runner.js";
-import { isBoolean, isFalsy, isNotBoolean, isNotNumber, isNumber, isTruthy } from "../type-guards.js";
+import { isBoolean, isFalsy, isNotBoolean, isNotNumber, isNumber, isString, isTruthy } from "../type-guards.js";
 
 type AllTypes = undefined | null | boolean | number | bigint | string | symbol | object | Function;
 type NotBoolean = Exclude<AllTypes, boolean>;
 type NotNumber = Exclude<AllTypes, number>;
+type NotString = Exclude<AllTypes, string>;
 
 describe("isBoolean", () => {
     itReturnsTrue(isBoolean, [true, false]);
@@ -208,6 +209,44 @@ describe("isNumber", () => {
 
         const value6 = 0 as unknown;
         isNumber(value6) ? expect(value6).toBeOfType<number>() : expect(value6).toBeOfType<unknown>();
+    });
+});
+
+describe("isString", () => {
+    itReturnsTrue(isString, ["", " ", String("")]);
+
+    itReturnsFalse(isString, [
+        undefined,
+        null,
+        true,
+        false,
+        0,
+        1,
+        BigInt("1"),
+        Symbol(""),
+        /regexp/,
+        { key: "value" },
+        () => {},
+    ]);
+
+    it("is typed correctly", () => {
+        const value1 = 0 as AllTypes;
+        isString(value1) ? expect(value1).toBeOfType<string>() : expect(value1).toBeOfType<NotString>();
+
+        const value2 = "" as string | NotString;
+        isString(value2) ? expect(value2).toBeOfType<string>() : expect(value2).toBeOfType<NotString>();
+
+        const value3 = "a" as "a" | "b" | NotString;
+        isString(value3) ? expect(value3).toBeOfType<"a" | "b">() : expect(value3).toBeOfType<NotString>();
+
+        const value4 = 0 as NotString;
+        isString(value4) ? (value4 satisfies never) : expect(value4).toBeOfType<NotString>();
+
+        const value5 = JSON.parse("0");
+        isString(value5) ? expect(value5).toBeOfType<string>() : expect(value5).toBeOfType<any>();
+
+        const value6 = 0 as unknown;
+        isString(value6) ? expect(value6).toBeOfType<string>() : expect(value6).toBeOfType<unknown>();
     });
 });
 

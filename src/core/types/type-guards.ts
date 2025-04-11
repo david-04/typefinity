@@ -78,6 +78,24 @@ export function isNumber(value: unknown) {
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
+ * Check if the given value is a string
+ *
+ * @param value The value to check
+ * @returns True if the value is a string
+ *--------------------------------------------------------------------------------------------------------------------*/
+
+export function isString(
+    value: null | undefined | boolean | number | bigint | symbol | object | Function
+): value is never;
+export function isString<T extends string>(
+    value: T | null | undefined | boolean | number | bigint | symbol | object | Function
+): value is string extends T ? string : T;
+export function isString(value: unknown): value is string;
+export function isString(value: unknown) {
+    return "string" === typeof value;
+}
+
+/**---------------------------------------------------------------------------------------------------------------------
  * Check if the given value is truthy
  *
  * @param value The value to check

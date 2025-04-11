@@ -8,6 +8,7 @@ New features
 - [isNotBoolean](https://david-04.github.io/typefinity/functions/isNotBoolean.html)
 - [isNotNumber](https://david-04.github.io/typefinity/functions/isNotNumber.html)
 - [isNumber](https://david-04.github.io/typefinity/functions/isNumber.html)
+- [isString](https://david-04.github.io/typefinity/functions/isString.html)
 
 Bug fixes
 

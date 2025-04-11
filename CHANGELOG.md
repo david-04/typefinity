@@ -2,6 +2,12 @@
 
 ## [0.0.4](https://github.com/david-04/typefinity/releases/tag/v0.0.4) (2025-04-11)
 
+New features
+
+- [isBoolean](https://david-04.github.io/typefinity/functions/isBoolean.html)
+- [isNotBoolean](https://david-04.github.io/typefinity/functions/isNotBoolean.html)
+- [isNotNumber](https://david-04.github.io/typefinity/functions/isNotNumber.html)
+- [isNumber](https://david-04.github.io/typefinity/functions/isNumber.html)
 
 Bug fixes
 

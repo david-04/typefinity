@@ -91,9 +91,7 @@ export class Optional<T> {
      * Map the value (if present)
      *----------------------------------------------------------------------------------------------------------------*/
 
-    public map<R>(
-        map: (value: T) => R
-    ): Optional<Exclude<R, undefined | null>> extends never ? Optional<Exclude<R, undefined | null>> : Optional<R> {
+    public map<R>(map: (value: T) => R): Optional<Exclude<R, undefined | null>> {
         return this.isPresent() ? Optional.of(map(this.get())) : Optional.empty<R>();
     }
 

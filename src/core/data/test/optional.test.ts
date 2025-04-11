@@ -281,6 +281,9 @@ describe("Optional", () => {
             expect(Optional.empty<string | number>().map(() => true as boolean | RegExp)).toBeOfType<
                 Optional<boolean | RegExp>
             >();
+            expect(Optional.empty<string>().map(() => true as boolean | number | undefined | null)).toBeOfType<
+                Optional<boolean | number>
+            >();
             Optional.empty<string | number>().map(value => expect(value).toBeOfType<string | number>());
         });
     });

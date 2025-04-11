@@ -1,6 +1,15 @@
 import { expect } from "../../../test/lib/expect.js";
 import { describe, it } from "../../../test/lib/test-runner.js";
-import { isBoolean, isFalsy, isNotBoolean, isNotNumber, isNumber, isString, isTruthy } from "../type-guards.js";
+import {
+    isBoolean,
+    isFalsy,
+    isNotBoolean,
+    isNotNumber,
+    isNotString,
+    isNumber,
+    isString,
+    isTruthy,
+} from "../type-guards.js";
 
 type AllTypes = undefined | null | boolean | number | bigint | string | symbol | object | Function;
 type NotBoolean = Exclude<AllTypes, boolean>;
@@ -171,6 +180,53 @@ describe("isNotNumber", () => {
         // same limitation as above
         const value8 = JSON.parse("0");
         isNotNumber(value8) ? expect(value8).toBeOfType<any>() : (value8 satisfies never);
+    });
+});
+
+describe("isNotString", () => {
+    itReturnsTrue(isNotString, [
+        undefined,
+        null,
+        true,
+        false,
+        0,
+        1,
+        BigInt("1"),
+        Symbol(""),
+        /regexp/,
+        { key: "value" },
+        () => {},
+    ]);
+
+    itReturnsFalse(isNotString, ["", " ", String("")]);
+
+    it("is typed correctly", () => {
+        const value1 = 0 as AllTypes;
+        isNotString(value1) ? expect(value1).toBeOfType<NotString>() : expect(value1).toBeOfType<string>();
+
+        const value2 = 0 as NotString;
+        isNotString(value2) ? expect(value2).toBeOfType<NotString>() : (value2 satisfies never);
+
+        const value3 = "1" as "1" | NotString;
+        isNotString(value3) ? expect(value3).toBeOfType<NotString>() : expect(value3).toBeOfType<"1">();
+
+        const value4 = (_param: number) => 1;
+        isNotString(value4) ? expect(value4).toBeOfType<(a: number) => number>() : (value4 satisfies never);
+
+        const value5 = "0" as "0";
+        isNotString(value5) ? (value5 satisfies never) : expect(value5).toBeOfType<"0">();
+
+        const value6 = "1" as string;
+        isNotString(value6) ? (value6 satisfies never) : expect(value6).toBeOfType<string>();
+
+        // TypeScript limitation: As the "if" branch resolves to "unknown", the else branch will wrongly evaluate to
+        // Exclude<unknown, unknown> = never
+        const value7 = 0 as unknown;
+        isNotString(value7) ? expect(value7).toBeOfType<unknown>() : (value7 satisfies never);
+
+        // same limitation as above
+        const value8 = JSON.parse("0");
+        isNotString(value8) ? expect(value8).toBeOfType<any>() : (value8 satisfies never);
     });
 });
 

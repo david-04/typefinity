@@ -60,6 +60,19 @@ export function isNotNumber<T>(
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
+ * Check if the given value is not a string
+ *
+ * @param value The value to check
+ * @returns True if the value is not a string
+ *--------------------------------------------------------------------------------------------------------------------*/
+
+export function isNotString<T>(
+    value: T
+): value is T extends string ? (unknown extends T ? T : never) : Exclude<T, string> {
+    return !isString(value);
+}
+
+/**---------------------------------------------------------------------------------------------------------------------
  * Check if the given value is a number
  *
  * @param value The value to check

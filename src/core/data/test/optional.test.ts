@@ -29,6 +29,8 @@ describe("Optional", () => {
             expect(Optional.empty<undefined>()).toBeOfType<Optional<never>>();
             expect(Optional.empty<null | undefined>()).toBeOfType<Optional<never>>();
             expect(Optional.empty<number | string | null | undefined>()).toBeOfType<Optional<number | string>>();
+            expect(Optional.empty<unknown>()).toBeOfType<Optional<unknown>>();
+            expect(Optional.empty<any>()).toBeOfType<Optional<any>>();
         });
     });
 
@@ -71,6 +73,7 @@ describe("Optional", () => {
             expect(Optional.empty<string | number>().filter(() => true)).toBeOfType<Optional<string | number>>();
             expect(Optional.empty<never>().filter(() => true)).toBeOfType<Optional<never>>();
             expect(Optional.empty<unknown>().filter(() => true)).toBeOfType<Optional<unknown>>();
+            expect(Optional.empty<any>().filter(() => true)).toBeOfType<Optional<any>>();
             Optional.empty<string | number>().filter(value => expect(value).toBeOfType<string | number>());
         });
     });
@@ -139,12 +142,22 @@ describe("Optional", () => {
         });
 
         it("is typed correctly", () => {
-            const optional = Optional.of(1 as number | string);
-            if (optional.isPresent()) {
-                expect(optional.get()).toBeOfType<number | string>();
+            const optional1 = Optional.of(1 as number | string);
+            if (optional1.isPresent()) {
+                expect(optional1.get()).toBeOfType<number | string>();
             } else {
                 // @ts-expect-error: "get" is only visible after
-                optional.get;
+                optional1.get;
+            }
+
+            const optional2 = Optional.of(1 as unknown);
+            if (optional2.isPresent()) {
+                expect(optional2.get()).toBeOfType<unknown>();
+            }
+
+            const optional3 = Optional.of(JSON.parse("0"));
+            if (optional3.isPresent()) {
+                expect(optional3.get()).toBeOfType<any>();
             }
         });
     });
@@ -216,6 +229,8 @@ describe("Optional", () => {
         describe("is typed correctly", () => {
             expect(Optional.empty<string | number>().ifPresent(() => true)).toBeOfType<Optional<string | number>>();
             Optional.empty<string | number>().ifPresent(value => expect(value).toBeOfType<string | number>());
+            Optional.empty<unknown>().ifPresent(value => expect(value).toBeOfType<unknown>());
+            Optional.empty<any>().ifPresent(value => expect(value).toBeOfType<any>());
         });
     });
 

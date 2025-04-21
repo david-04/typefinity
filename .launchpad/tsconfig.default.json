@@ -29,6 +29,9 @@
         "inlineSources": false,
         "isolatedDeclarations": false,
         "isolatedModules": true,
+        "lib": [
+            "es2022"
+        ],
         "libReplacement": false,
         "module": "nodenext",
         "moduleDetection": "force",
@@ -69,10 +72,7 @@
         "tsBuildInfoFile": "../build/tsc/.tsbuildinfo",
         "useDefineForClassFields": true,
         "useUnknownInCatchVariables": true,
-        "verbatimModuleSyntax": false,
-        "lib": [
-            "es2022"
-        ]
+        "verbatimModuleSyntax": false
     },
     "include": [
         "../src/**/*.ts",

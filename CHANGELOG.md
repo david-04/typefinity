@@ -5,16 +5,12 @@
 New features
 
 - [isBoolean](https://david-04.github.io/typefinity/functions/isBoolean.html)
-- [isNotBoolean](https://david-04.github.io/typefinity/functions/isNotBoolean.html)
-- [isNotNumber](https://david-04.github.io/typefinity/functions/isNotNumber.html)
-- [isNotString](https://david-04.github.io/typefinity/functions/isNotString.html)
 - [isNumber](https://david-04.github.io/typefinity/functions/isNumber.html)
 - [isString](https://david-04.github.io/typefinity/functions/isString.html)
 
 Bug fixes
 
 - [Optional](https://david-04.github.io/typefinity/classes/Optional.html).map now removes `null` and `undefined` from the mapper's return value
-
 
 ## [0.0.3](https://github.com/david-04/typefinity/releases/tag/v0.0.3) (2025-03-21)
 
@@ -28,8 +24,8 @@ New features
 - [describe](https://david-04.github.io/typefinity/functions/describe.html)
 - [expect](https://david-04.github.io/typefinity/functions/expect.html)
 - [fail](https://david-04.github.io/typefinity/functions/fail.html)
-- [isFalsy](https://david-04.github.io/typefinity/functions/isFalsy.html)
-- [isTruthy](https://david-04.github.io/typefinity/functions/isTruthy.html)
+- isFalsy (removed in version 0.0.4)
+- isTruthy (removed in version 0.0.4)
 - [it](https://david-04.github.io/typefinity/functions/it.html)
 - [Json](https://david-04.github.io/typefinity/types/Json.html)
 - [optional](https://david-04.github.io/typefinity/functions/optional.html)

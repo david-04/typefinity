@@ -1,5 +1,5 @@
 /**---------------------------------------------------------------------------------------------------------------------
- * Check if the given value is a boolean
+ * Check if the given value is a boolean.
  *
  * @param value The value to check
  * @returns True if the value is a boolean
@@ -20,56 +20,6 @@ export function isBoolean<T extends boolean>(
 export function isBoolean(value: unknown): value is boolean;
 export function isBoolean(value: unknown) {
     return "boolean" === typeof value;
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given value is falsy
- *
- * @param value The value to check
- * @returns True if the value is falsy
- *--------------------------------------------------------------------------------------------------------------------*/
-
-export function isFalsy(value: unknown): value is undefined | null | 0 | bigint | false | "" {
-    return !value;
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given value is not a boolean.
- *
- * @param value The value to check
- * @returns True if the value is not a boolean
- *--------------------------------------------------------------------------------------------------------------------*/
-
-export function isNotBoolean<T>(
-    value: T
-): value is T extends boolean ? (unknown extends T ? T : never) : Exclude<T, boolean> {
-    return !isBoolean(value);
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given value is not a number
- *
- * @param value The value to check
- * @returns True if the value is not a number
- *--------------------------------------------------------------------------------------------------------------------*/
-
-export function isNotNumber<T>(
-    value: T
-): value is T extends number ? (unknown extends T ? T : never) : Exclude<T, number> {
-    return !isNumber(value);
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given value is not a string
- *
- * @param value The value to check
- * @returns True if the value is not a string
- *--------------------------------------------------------------------------------------------------------------------*/
-
-export function isNotString<T>(
-    value: T
-): value is T extends string ? (unknown extends T ? T : never) : Exclude<T, string> {
-    return !isString(value);
 }
 
 /**---------------------------------------------------------------------------------------------------------------------
@@ -106,15 +56,4 @@ export function isString<T extends string>(
 export function isString(value: unknown): value is string;
 export function isString(value: unknown) {
     return "string" === typeof value;
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given value is truthy
- *
- * @param value The value to check
- * @returns True if the value is truthy
- *--------------------------------------------------------------------------------------------------------------------*/
-
-export function isTruthy<T>(value: T): value is Exclude<T, undefined | null | 0 | false | ""> {
-    return !!value;
 }

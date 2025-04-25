@@ -1,7 +1,7 @@
 import { crash } from "../error/crash.js";
 import { fail } from "../error/fail.js";
 
-export const NO_VALUE = Symbol("NO_VALUE");
+const EMPTY = Symbol("EMPTY");
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Wrapper for a value that might or might not be present.
@@ -24,7 +24,7 @@ export class Optional<T> {
      *----------------------------------------------------------------------------------------------------------------*/
 
     public static empty<T>(): Optional<Exclude<T, undefined | null>> {
-        const optional = this.EMPTY_INSTANCE ?? new OptionalWithGet(NO_VALUE);
+        const optional = this.EMPTY_INSTANCE ?? new OptionalWithGet(EMPTY);
         this.EMPTY_INSTANCE = optional;
         return optional as Optional<Exclude<T, undefined | null>>;
     }
@@ -72,7 +72,7 @@ export class Optional<T> {
      *----------------------------------------------------------------------------------------------------------------*/
 
     public isEmpty(): boolean {
-        return this.value === NO_VALUE;
+        return this.value === EMPTY;
     }
 
     /**-----------------------------------------------------------------------------------------------------------------

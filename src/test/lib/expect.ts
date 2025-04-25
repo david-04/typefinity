@@ -97,6 +97,15 @@ export namespace expect {
         toBeTruthy(): void;
 
         /**-------------------------------------------------------------------------------------------------------------
+         * Assert that actual string matches a regular expression
+         *
+         * @param expected The expected regular expression
+         * @throws If the actual string does not match the regular expression
+         *------------------------------------------------------------------------------------------------------------*/
+
+        toMatch(expected: RegExp): void;
+
+        /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual and expected values are equal (even if they are different instances)
          *
          * @param expected The expected value
@@ -176,6 +185,15 @@ export namespace expect {
          *------------------------------------------------------------------------------------------------------------*/
 
         toBeTruthy(): void;
+
+        /**-------------------------------------------------------------------------------------------------------------
+         * Assert that the actual string does not match a regular expression
+         *
+         * @param expected The regular expression to not match
+         * @throws If the actual string matches the regular expression
+         *------------------------------------------------------------------------------------------------------------*/
+
+        toMatch(expected: RegExp): void;
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual and unexpected values are not equal (i.e. don't have the same content)
@@ -308,6 +326,16 @@ class Assertions<T> implements expect.Assertions<T, expect.NotAssertions<T>> {
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
+     * Assert that the given string contains a value
+     *----------------------------------------------------------------------------------------------------------------*/
+
+    toMatch(expected: RegExp): void {
+        "string" === typeof this.actual
+            ? assert.match(this.actual, expected)
+            : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
+    }
+
+    /**-----------------------------------------------------------------------------------------------------------------
      * Assert that the actual promise rejects
      *----------------------------------------------------------------------------------------------------------------*/
 
@@ -403,6 +431,16 @@ class NotAssertions<T> implements expect.NotAssertions<T> {
     /* not */ toEqual(unexpected: T): void {
         assertNoPromiseAndNoFunction("toEqual", this.actual, unexpected);
         assert.notDeepStrictEqual(this.actual, unexpected);
+    }
+
+    /**-----------------------------------------------------------------------------------------------------------------
+     * Assert that the given string does not contain a value
+     *----------------------------------------------------------------------------------------------------------------*/
+
+    /* not */ toMatch(expected: RegExp): void {
+        `string` === typeof this.actual
+            ? assert.doesNotMatch(this.actual, expected)
+            : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
     }
 
     /**-----------------------------------------------------------------------------------------------------------------

@@ -307,6 +307,49 @@ describe("expect", () => {
             });
         });
 
+        describe("toMatch", () => {
+            it("fails when passing undefined", () => {
+                fails(() => expect(undefined).not.toMatch(/.*/));
+            });
+
+            it("fails when passing null", () => {
+                fails(() => expect(null).not.toMatch(/.*/));
+            });
+
+            it("fails when passing a boolean", () => {
+                fails(() => expect(true).not.toMatch(/.*/));
+            });
+
+            it("fails when passing a number", () => {
+                fails(() => expect(1).not.toMatch(/.*/));
+            });
+
+            it("fails when passing a bigint", () => {
+                fails(() => expect(1n).not.toMatch(/.*/));
+            });
+
+            it("fails when passing a symbol", () => {
+                fails(() => expect(Symbol("...")).not.toMatch(/.*/));
+            });
+
+            it("fails when passing an object", () => {
+                fails(() => expect({ key: "value" }).not.toMatch(/.*/));
+            });
+
+            it("fails when passing a function", () => {
+                // @ts-ignore-error
+                fails(() => expect(() => 1).not.toMatch(/.*/));
+            });
+
+            it("passes when passing a string that doesn't match", () => {
+                passes(() => expect("this text").not.toMatch(/does not match/));
+            });
+
+            it("fails when passing a string that matches", () => {
+                fails(() => expect("some random text content").not.toMatch(/random.*content$/));
+            });
+        });
+
         describe("toReject", () => {
             it("handles promises", async () => {
                 await rejects(() => expect(rejected()).not.toReject());
@@ -642,6 +685,49 @@ describe("expect", () => {
             fails(() => expect(Promise.resolve(1) as number | Promise<number>).toEqual(Promise.resolve(1)));
             // @ts-expect-error: The expected value can't be a function
             fails(() => expect((() => {}) as number | (() => void)).toEqual(() => {}));
+        });
+    });
+
+    describe("toMatch", () => {
+        it("fails when passing undefined", () => {
+            fails(() => expect(undefined).toMatch(/.*/));
+        });
+
+        it("fails when passing null", () => {
+            fails(() => expect(null).toMatch(/.*/));
+        });
+
+        it("fails when passing a boolean", () => {
+            fails(() => expect(true).toMatch(/.*/));
+        });
+
+        it("fails when passing a number", () => {
+            fails(() => expect(1).toMatch(/.*/));
+        });
+
+        it("fails when passing a bigint", () => {
+            fails(() => expect(1n).toMatch(/.*/));
+        });
+
+        it("fails when passing a symbol", () => {
+            fails(() => expect(Symbol("...")).toMatch(/.*/));
+        });
+
+        it("fails when passing an object", () => {
+            fails(() => expect({ key: "value" }).toMatch(/.*/));
+        });
+
+        it("fails when passing a function", () => {
+            // @ts-ignore-error
+            fails(() => expect(() => 1).toMatch(/.*/));
+        });
+
+        it("fails when passing a string that doesn't match", () => {
+            fails(() => expect("this text").toMatch(/does not match/));
+        });
+
+        it("passes when passing a string that matches", () => {
+            passes(() => expect("some random text content").toMatch(/random.*content$/));
         });
     });
 

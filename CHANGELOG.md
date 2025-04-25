@@ -4,6 +4,8 @@
 
 New features
 
+- [expect.not.toMatch](https://david-04.github.io/typefinity/functions/expect.html)
+- [expect.toMatch](https://david-04.github.io/typefinity/functions/expect.html)
 - [isBoolean](https://david-04.github.io/typefinity/functions/isBoolean.html)
 - [isNumber](https://david-04.github.io/typefinity/functions/isNumber.html)
 - [isString](https://david-04.github.io/typefinity/functions/isString.html)

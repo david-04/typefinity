@@ -1,5 +1,5 @@
-import { expect } from "../../../test/lib/expect.js";
-import { describe, it } from "../../../test/lib/test-runner.js";
+import { expect } from "../../../test/expect.js";
+import { describe, it } from "../../../test/test-runner.js";
 import { isBoolean, isNumber, isString } from "../type-guards.js";
 
 type AllTypes = undefined | null | boolean | number | bigint | string | symbol | object | Function;

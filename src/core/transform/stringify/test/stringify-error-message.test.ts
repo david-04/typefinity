@@ -1,5 +1,5 @@
-import { expect } from "../../../../test/lib/expect.js";
-import { describe, it } from "../../../../test/lib/test-runner.js";
+import { expect } from "../../../../test/expect.js";
+import { describe, it } from "../../../../test/test-runner.js";
 import { DescriptiveError } from "../../../error/descriptive-error.js";
 import { stringifyErrorMessage } from "../stringify-error-message.js";
 

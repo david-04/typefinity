@@ -1,7 +1,7 @@
 import { mock } from "node:test";
-import { expect } from "../../../test/lib/expect.js";
-import * as testRunner from "../../../test/lib/test-runner.js";
-import { afterEach, it } from "../../../test/lib/test-runner.js";
+import { expect } from "../../../test/expect.js";
+import * as testRunner from "../../../test/test-runner.js";
+import { afterEach, it } from "../../../test/test-runner.js";
 import {
     randomBoolean,
     randomFalsyValue,

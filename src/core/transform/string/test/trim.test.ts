@@ -1,5 +1,4 @@
-import { expect } from "../../../../test/expect.js";
-import { describe, it } from "../../../../test/test-runner.js";
+import { describe, expect, it } from "../../../api/core-import.js";
 import { trim } from "../trim.js";
 
 const text = ` \t\r\n text \t\r\n message \t\r\n`;

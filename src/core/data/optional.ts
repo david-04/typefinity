@@ -4,7 +4,7 @@ import { fail } from "../error/fail.js";
 const EMPTY = Symbol("EMPTY");
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Wrapper for a value that might or might not be present.
+ * Wrapper for an optional value that might or might not be present
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export class Optional<T> {
@@ -31,6 +31,11 @@ export class Optional<T> {
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Filter the value (if present)
+     *
+     * @param   filter A predicate that returns a truthy value (if the Optional's value should be preserved) or a falsy
+     *          value (if the Optional's value should be discarded)
+     * @returns The current Optional (if it is not empty and if the filter returns a truthy value) or an empty Optional
+     *          (if if the current Optional is empty or if the filter returns a falsy value)
      *----------------------------------------------------------------------------------------------------------------*/
 
     public filter(filter: (value: T) => unknown): Optional<T> {
@@ -38,7 +43,11 @@ export class Optional<T> {
     }
 
     /**-----------------------------------------------------------------------------------------------------------------
-     * Map the value (if present) and unwrap the resulting Optional
+     * Map the value (if present) to another Optional and unwrap it
+     *
+     * @param   map A function that maps the current Optional's value to another Optional
+     * @returns The Optional returned by the map function (if the current Optional is present) or an empty optional
+     *          (if the current Optional is empty)
      *----------------------------------------------------------------------------------------------------------------*/
 
     public flatMap<R>(map: (value: T) => Optional<R>): Optional<R> {
@@ -47,6 +56,9 @@ export class Optional<T> {
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Perform an action if the Optional does not contain a value
+     *
+     * @param   action The action to perform
+     * @returns The current Optional
      *----------------------------------------------------------------------------------------------------------------*/
 
     public ifEmpty(action: () => void): this {
@@ -58,6 +70,9 @@ export class Optional<T> {
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Perform an action if the Optional contains a value
+     *
+     * @param action The action to perform
+     * @returns The current Optional
      *----------------------------------------------------------------------------------------------------------------*/
 
     public ifPresent(action: (value: T) => void): this {

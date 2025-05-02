@@ -1,5 +1,4 @@
-import { expect } from "../../../../test/expect.js";
-import { describe, it } from "../../../../test/test-runner.js";
+import { describe, expect, it } from "../../../api/core-import.js";
 import { DescriptiveError } from "../../../error/descriptive-error.js";
 import { stringifyErrorMessage } from "../stringify-error-message.js";
 

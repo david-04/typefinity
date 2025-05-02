@@ -1,7 +1,5 @@
 import { mock } from "node:test";
-import { expect } from "../../../test/expect.js";
-import * as testRunner from "../../../test/test-runner.js";
-import { afterEach, it } from "../../../test/test-runner.js";
+import { afterEach, expect, it, describe as originalDescribe } from "../../api/core-import.js";
 import {
     randomBoolean,
     randomFalsyValue,
@@ -34,7 +32,7 @@ function createTestFunction(functionName: string) {
 }
 
 const describe = (functionName: string, callback: (test: ReturnType<typeof createTestFunction>) => void) => {
-    testRunner.describe(functionName, () => callback(createTestFunction(functionName)));
+    originalDescribe(functionName, () => callback(createTestFunction(functionName)));
 };
 
 const mockMathRandom = (value: number) => mock.method(Math, "random", () => value);

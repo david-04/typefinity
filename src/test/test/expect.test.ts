@@ -26,391 +26,19 @@ const resolves = assert.doesNotReject;
 const resolved = <T>(value: T) => Promise.resolve(value);
 const rejected = <T>(error: Error = new Error()) => Promise.reject<T>(error);
 
-/**---------------------------------------------------------------------------------------------------------------------
- * Test cases
- *--------------------------------------------------------------------------------------------------------------------*/
+//----------------------------------------------------------------------------------------------------------------------
+//
+// ######## ##     ## ########  ########  ######  ########
+// ##        ##   ##  ##     ## ##       ##    ##    ##
+// ##         ## ##   ##     ## ##       ##          ##
+// ######      ###    ########  ######   ##          ##
+// ##         ## ##   ##        ##       ##          ##
+// ##        ##   ##  ##        ##       ##    ##    ##
+// ######## ##     ## ##        ########  ######     ##
+//
+//----------------------------------------------------------------------------------------------------------------------
 
 describe("expect", () => {
-    describe("not", () => {
-        describe("toBe", () => {
-            it("handles undefined", () => {
-                fails(() => expect(undefined).not.toBe(undefined));
-                passes(() => expect(undefined as undefined | null).not.toBe(null));
-            });
-
-            it("handles null", () => {
-                fails(() => expect(null).not.toBe(null));
-                passes(() => expect(null as undefined | null).not.toBe(undefined));
-            });
-
-            it("handles booleans", () => {
-                fails(() => expect(true).not.toBe(true));
-                passes(() => expect(false).not.toBe(true));
-            });
-
-            it("handles numbers", () => {
-                fails(() => expect(1).not.toBe(1));
-                passes(() => expect(1).not.toBe(2));
-            });
-
-            it("handles strings", () => {
-                fails(() => expect("abc").not.toBe("abc"));
-                passes(() => expect("abc").not.toBe("123"));
-            });
-
-            it("handles regular expressions", () => {
-                const regularExpression = /a.b/i;
-                fails(() => expect(regularExpression).not.toBe(regularExpression));
-                passes(() => expect(/a.b/i).not.toBe(/a.b/i));
-            });
-
-            it("handles objects", () => {
-                const object = { a: [1, 2] };
-                fails(() => expect(object).not.toBe(object));
-                passes(() => expect({ a: 1 }).not.toBe({ a: 1 }));
-            });
-
-            it("handles promises", () => {
-                const promise = Promise.resolve(1);
-                fails(() => expect(promise).not.toBe(promise));
-                passes(() => expect(Promise.resolve(1)).not.toBe(Promise.resolve(1)));
-            });
-
-            it("handles parameterless functions", () => {
-                const fn = () => 1;
-                fails(() => expect(fn).not.toBe(fn));
-                passes(() => expect(() => 1).not.toBe(() => 1));
-            });
-
-            it("handles functions with parameters", () => {
-                const fn = (a: number) => a + 1;
-                fails(() => expect(fn).not.toBe(fn));
-                passes(() => expect((a: number) => a + 1).not.toBe((a: number) => a + 1));
-            });
-
-            it("is typed correctly", () => {
-                expect(1 as number | string).not.toBe(2 as number | string);
-                // @ts-expect-error: The expected value must match the type of the actual value
-                expect(1 as number | string).not.toBe(2 as number | string | boolean);
-                // @ts-expect-error: The expected value must match the nested types of the actual value
-                expect(Promise.resolve(1)).not.toBe(Promise.resolve("a"));
-                // @ts-expect-error: The expected value must match the nested types of the actual value
-                expect({ a: 1 }).not.toBe({ a: "2" });
-            });
-        });
-
-        describe("toBeFalsy", () => {
-            it("handles undefined", () => {
-                fails(() => expect(undefined).not.toBeFalsy());
-            });
-
-            it("handles null", () => {
-                fails(() => expect(null).not.toBeFalsy());
-            });
-
-            it("handles booleans", () => {
-                passes(() => expect(true).not.toBeFalsy());
-                fails(() => expect(false).not.toBeFalsy());
-            });
-
-            it("handles numbers", () => {
-                fails(() => expect(0).not.toBeFalsy());
-                passes(() => expect(1).not.toBeFalsy());
-            });
-
-            it("handles strings", () => {
-                fails(() => expect("").not.toBeFalsy());
-                passes(() => expect("abc").not.toBeFalsy());
-            });
-
-            it("handles regular expressions", () => {
-                passes(() => expect(/a.*b/i).not.toBeFalsy());
-            });
-
-            it("handles objects", () => {
-                passes(() => expect({ a: 1 }).not.toBeFalsy());
-            });
-
-            it("handles promises", () => {
-                passes(() => expect(Promise.resolve(true) as Promise<boolean> | boolean).not.toBeFalsy());
-            });
-
-            it("handles parameterless functions", () => {
-                passes(() => expect((() => 1) as (() => void) | boolean).not.toBeFalsy());
-            });
-
-            it("handles functions with parameters", () => {
-                passes(() => expect((a: number) => a + 1).not.toBeFalsy());
-            });
-
-            it("is typed correctly", () => {
-                expect(1 as number | string).not.toBeFalsy();
-                expect(1 as number | Promise<number>).not.toBeFalsy();
-                // @ts-expect-error: toBeFalsy is hidden for promises (they are never falsy)
-                expect(Promise.resolve(1)).not.toBeFalsy();
-                // @ts-expect-error: toBeFalsy is hidden for parameterless functions (they are never falsy)
-                expect(() => {}).not.toBeFalsy();
-            });
-        });
-
-        describe("toBeOfType", () => {
-            it("handles union types", () => {
-                expect(1 as string | number).not.toBeOfType<string>();
-                expect(1 as string | number).not.toBeOfType<string | number | boolean>();
-                // @ts-expect-error: The types are the same
-                expect(1 as string | number).not.toBeOfType<string | number>();
-            });
-
-            it("handles nested types", () => {
-                expect(resolved(1 as string | number)).not.toBeOfType<Promise<string>>();
-                expect(resolved(1 as string | number)).not.toBeOfType<Promise<boolean | string | number>>();
-                // @ts-expect-error: The types are the same
-                expect(resolved(1 as string | number)).not.toBeOfType<Promise<string | number>>();
-            });
-
-            it("handles function types", () => {
-                expect(() => {}).not.toBeOfType<(a?: number) => void>();
-                expect(() => 1).not.toBeOfType<() => string>();
-                // @ts-expect-error: The types are the same
-                expect(() => {}).not.toBeOfType<() => void>();
-                // @ts-expect-error: The types are the same
-                expect((a: number) => a + 1).not.toBeOfType<(a: number) => number>();
-            });
-        });
-
-        describe("toBeTruthy", () => {
-            it("handles undefined", () => {
-                passes(() => expect(undefined).not.toBeTruthy());
-            });
-
-            it("handles null", () => {
-                passes(() => expect(null).not.toBeTruthy());
-            });
-
-            it("handles booleans", () => {
-                fails(() => expect(true).not.toBeTruthy());
-                passes(() => expect(false).not.toBeTruthy());
-            });
-
-            it("handles numbers", () => {
-                passes(() => expect(0).not.toBeTruthy());
-                fails(() => expect(1).not.toBeTruthy());
-            });
-
-            it("handles strings", () => {
-                passes(() => expect("").not.toBeTruthy());
-                fails(() => expect("abc").not.toBeTruthy());
-            });
-
-            it("handles regular expressions", () => {
-                fails(() => expect(/a.*b/i).not.toBeTruthy());
-            });
-
-            it("handles objects", () => {
-                fails(() => expect({ a: 1 }).not.toBeTruthy());
-            });
-
-            it("handles promises", () => {
-                fails(() => expect(Promise.resolve(true) as Promise<boolean> | boolean).not.toBeTruthy());
-            });
-
-            it("handles parameterless functions", () => {
-                fails(() => expect((() => 1) as (() => void) | boolean).not.toBeTruthy());
-            });
-
-            it("handles functions with parameters", () => {
-                fails(() => expect((a: number) => a + 1).not.toBeTruthy());
-            });
-
-            it("is typed correctly", () => {
-                expect(0 as number | string).not.toBeTruthy();
-                expect(0 as number | Promise<number>).not.toBeTruthy();
-                // @ts-expect-error: toBeTruthy is hidden for promises (they are always truthy)
-                fails(() => expect(Promise.resolve(1)).not.toBeTruthy());
-                // @ts-expect-error: toBeTruthy is hidden for parameterless functions (they are always truthy)
-                fails(() => expect(() => {}).not.toBeTruthy());
-            });
-        });
-
-        describe("toEqual", () => {
-            it("handles undefined", () => {
-                fails(() => expect(undefined).not.toEqual(undefined));
-                passes(() => expect(undefined as undefined | null).not.toEqual(null));
-            });
-
-            it("handles null", () => {
-                fails(() => expect(null).not.toEqual(null));
-                passes(() => expect(null as undefined | null).not.toEqual(undefined));
-            });
-
-            it("handles booleans", () => {
-                fails(() => expect(true).not.toEqual(true));
-                passes(() => expect(false).not.toEqual(true));
-            });
-
-            it("handles numbers", () => {
-                fails(() => expect(1).not.toEqual(1));
-                passes(() => expect(1).not.toEqual(2));
-            });
-
-            it("handles strings", () => {
-                fails(() => expect("abc").not.toEqual("abc"));
-                passes(() => expect("abc").not.toEqual("123"));
-            });
-
-            it("handles regular expressions", () => {
-                fails(() => expect(/a.b/i).not.toEqual(/a.b/i));
-                passes(() => expect(/a.b/i).not.toEqual(/1.2/i));
-            });
-
-            it("handles objects", () => {
-                fails(() => expect({ a: [1, 2] }).not.toEqual({ a: [1, 2] }));
-                passes(() => expect({ a: [1, 2] }).not.toEqual({ a: [1, 3] }));
-            });
-
-            it("handles promises", () => {
-                const promise: unknown = Promise.resolve(1);
-                fails(() => expect(promise).not.toEqual(promise)); // node:assert can't compare promises
-                fails(() => expect(promise).not.toEqual(1));
-                fails(() => expect(1 as unknown).not.toEqual(promise));
-            });
-
-            it("handles parameterless functions", () => {
-                const fn: unknown = () => 1;
-                fails(() => expect(fn).not.toEqual(fn)); // node:assert can't compare functions
-                fails(() => expect(fn).not.toEqual(() => 2));
-                fails(() => expect(fn).not.toEqual(1));
-                fails(() => expect(1 as unknown).not.toEqual(fn));
-            });
-
-            it("handles functions with parameters", () => {
-                const fn: unknown = (a: number) => a + 1;
-                fails(() => expect(fn).not.toEqual(fn)); // node:assert can't compare functions
-                fails(() => expect(fn).not.toEqual(() => "abc"));
-                fails(() => expect(fn).not.toEqual(1));
-                fails(() => expect(1 as unknown).not.toEqual(fn));
-            });
-
-            it("is typed correctly", () => {
-                expect(1 as number | string).not.toEqual(2 as number | string);
-                // @ts-expect-error: The expected value's type must match the type actual value
-                expect(1).not.toEqual("2");
-                // @ts-expect-error: The expected value's type must match the nested types of the actual value
-                expect({ a: 1 }).not.toEqual({ a: "1" });
-                // @ts-expect-error: The expected value's type can't be bigger than the actual value's type
-                expect(1 as number | string).not.toEqual(2 as number | string | boolean);
-                expect(1 as number | Promise<number>).not.toEqual(2);
-                // @ts-expect-error: The expected value can't be a promise
-                fails(() => expect(1 as number | Promise<number>).not.toEqual(Promise.resolve(1)));
-                // @ts-expect-error: The expected value can't be a function
-                fails(() => expect(1 as number | (() => void)).not.toEqual(() => {}));
-            });
-        });
-
-        describe("toMatch", () => {
-            it("fails when passing undefined", () => {
-                fails(() => expect(undefined).not.toMatch(/.*/));
-            });
-
-            it("fails when passing null", () => {
-                fails(() => expect(null).not.toMatch(/.*/));
-            });
-
-            it("fails when passing a boolean", () => {
-                fails(() => expect(true).not.toMatch(/.*/));
-            });
-
-            it("fails when passing a number", () => {
-                fails(() => expect(1).not.toMatch(/.*/));
-            });
-
-            it("fails when passing a bigint", () => {
-                fails(() => expect(1n).not.toMatch(/.*/));
-            });
-
-            it("fails when passing a symbol", () => {
-                fails(() => expect(Symbol("...")).not.toMatch(/.*/));
-            });
-
-            it("fails when passing an object", () => {
-                fails(() => expect({ key: "value" }).not.toMatch(/.*/));
-            });
-
-            it("fails when passing a function", () => {
-                // @ts-ignore-error
-                fails(() => expect(() => 1).not.toMatch(/.*/));
-            });
-
-            it("passes when passing a string that doesn't match", () => {
-                passes(() => expect("this text").not.toMatch(/does not match/));
-            });
-
-            it("fails when passing a string that matches", () => {
-                fails(() => expect("some random text content").not.toMatch(/random.*content$/));
-            });
-        });
-
-        describe("toReject", () => {
-            it("handles promises", async () => {
-                await rejects(() => expect(rejected()).not.toReject());
-                await resolves(() => expect(resolved(0)).not.toReject());
-            });
-
-            it("is typed correctly", async () => {
-                // @ts-expect-error: toReject is hidden and throws an exception (undefined can't reject)
-                await rejects(expect(undefined).not.toReject());
-                // @ts-expect-error: toReject is hidden and throws an exception (null can't reject)
-                await rejects(expect(null).not.toReject());
-                // @ts-expect-error: toReject is hidden and throws an exception (boolean values can't reject)
-                await rejects(expect(false).not.toReject());
-                // @ts-expect-error: toReject is hidden and throws an exception (numbers can't reject)
-                await rejects(expect(0).not.toReject());
-                // @ts-expect-error: toReject is hidden and throws an exception (strings can't reject)
-                await rejects(expect("").not.toReject());
-                // @ts-expect-error: toReject is hidden and throws an exception (regular expressions can't reject)
-                await rejects(expect(/a.b/i).not.toReject());
-                // @ts-expect-error: toReject is hidden and throws an exception (objects can't reject)
-                await rejects(expect({ a: 1 }).not.toReject());
-                // @ts-expect-error: toReject is hidden and throws an exception (functions can't reject)
-                await rejects(expect(() => {}).not.toReject());
-                // @ts-expect-error: toReject is hidden and throws an exception (functions can't reject)
-                await rejects(expect((a: number) => a + 1).not.toReject());
-                // @ts-expect-error: toReject is hidden (the actual value might not be a promise)
-                await resolves(expect(resolved("") as Promise<void> | number).not.toReject());
-            });
-        });
-
-        describe("toThrow", () => {
-            it("handles functions", () => {
-                passes(() => expect(() => {}).not.toThrow());
-                fails(() => expect(errorFn()).not.toThrow());
-            });
-
-            it("is typed correctly", () => {
-                // @ts-expect-error: toThrow is hidden and throws an exception (undefined can't throw)
-                fails(() => expect(undefined).not.toThrow());
-                // @ts-expect-error: toThrow is hidden and throws an exception (null can't throw)
-                fails(() => expect(null).not.toThrow());
-                // @ts-expect-error: toThrow is hidden and throws an exception (boolean values can't throw)
-                fails(() => expect(false).not.toThrow());
-                // @ts-expect-error: toThrow is hidden and throws an exception (numbers can't throw)
-                fails(() => expect(0).not.toThrow());
-                // @ts-expect-error: toThrow is hidden and throws an exception (strings can't throw)
-                fails(() => expect("").not.toThrow());
-                // @ts-expect-error: toThrow is hidden and throws an exception (regular expressions can't throw)
-                fails(() => expect(/a.b/i).not.toThrow());
-                // @ts-expect-error: toThrow is hidden and throws an exception (objects can't throw)
-                fails(() => expect({ a: 1 }).not.toThrow());
-                // @ts-expect-error: toThrow is hidden and throws an exception (promises can't throw)
-                fails(() => expect(Promise.resolve(1)).not.toThrow());
-                // @ts-expect-error: toThrow is hidden (functions with parameters can't be executed)
-                passes(() => expect((a: number) => a + 1).not.toThrow());
-                // @ts-expect-error: toThrow is hidden (the actual value might not be a function)
-                passes(() => expect((() => {}) as (() => void) | number).not.toThrow());
-            });
-        });
-    });
-
     describe("toBe", () => {
         it("handles undefined", () => {
             passes(() => expect(undefined).toBe(undefined));
@@ -842,14 +470,18 @@ describe("expect", () => {
         it("handles parameterless functions", async () => {
             const fn = () => 1;
             await resolves(expect(resolved(fn)).toResolve());
-            await rejects(expect(resolved(fn)).toResolve(fn)); // node:assert can't compare functions
+            // @ts-expect-error node:assert can't compare functions
+            await rejects(expect(resolved(fn)).toResolve(fn));
+            // @ts-expect-error node:assert can't compare functions
             await rejects(expect(rejected<typeof fn>()).toResolve(fn));
         });
 
         it("handles functions with parameters", async () => {
             const fn = (a: number) => a + 1;
             await resolves(expect(resolved(fn)).toResolve());
-            await rejects(expect(resolved(fn)).toResolve(fn)); // node:assert can't compare functions
+            // @ts-expect-error node:assert can't compare functions
+            await rejects(expect(resolved(fn)).toResolve(fn));
+            // @ts-expect-error node:assert can't compare functions
             await rejects(expect(rejected<typeof fn>()).toResolve(fn));
         });
 
@@ -911,6 +543,398 @@ describe("expect", () => {
             fails(() => expect(resolved(1)).toThrow());
             // @ts-expect-error: toThrow is hidden (functions with parameters can't be executed)
             fails(() => expect((a: number) => a + 1).toThrow());
+        });
+    });
+});
+
+//----------------------------------------------------------------------------------------------------------------------
+//
+//   ######## ##     ## ########  ########  ######  ########        ##    ##  #######  ########
+//   ##        ##   ##  ##     ## ##       ##    ##    ##           ###   ## ##     ##    ##
+//   ##         ## ##   ##     ## ##       ##          ##           ####  ## ##     ##    ##
+//   ######      ###    ########  ######   ##          ##           ## ## ## ##     ##    ##
+//   ##         ## ##   ##        ##       ##          ##           ##  #### ##     ##    ##
+//   ##        ##   ##  ##        ##       ##    ##    ##     ###   ##   ### ##     ##    ##
+//   ######## ##     ## ##        ########  ######     ##     ###   ##    ##  #######     ##
+//
+//----------------------------------------------------------------------------------------------------------------------
+
+describe("expect.not", () => {
+    describe("toBe", () => {
+        it("handles undefined", () => {
+            fails(() => expect(undefined).not.toBe(undefined));
+            passes(() => expect(undefined as undefined | null).not.toBe(null));
+        });
+
+        it("handles null", () => {
+            fails(() => expect(null).not.toBe(null));
+            passes(() => expect(null as undefined | null).not.toBe(undefined));
+        });
+
+        it("handles booleans", () => {
+            fails(() => expect(true).not.toBe(true));
+            passes(() => expect(false).not.toBe(true));
+        });
+
+        it("handles numbers", () => {
+            fails(() => expect(1).not.toBe(1));
+            passes(() => expect(1).not.toBe(2));
+        });
+
+        it("handles strings", () => {
+            fails(() => expect("abc").not.toBe("abc"));
+            passes(() => expect("abc").not.toBe("123"));
+        });
+
+        it("handles regular expressions", () => {
+            const regularExpression = /a.b/i;
+            fails(() => expect(regularExpression).not.toBe(regularExpression));
+            passes(() => expect(/a.b/i).not.toBe(/a.b/i));
+        });
+
+        it("handles objects", () => {
+            const object = { a: [1, 2] };
+            fails(() => expect(object).not.toBe(object));
+            passes(() => expect({ a: 1 }).not.toBe({ a: 1 }));
+        });
+
+        it("handles promises", () => {
+            const promise = Promise.resolve(1);
+            fails(() => expect(promise).not.toBe(promise));
+            passes(() => expect(Promise.resolve(1)).not.toBe(Promise.resolve(1)));
+        });
+
+        it("handles parameterless functions", () => {
+            const fn = () => 1;
+            fails(() => expect(fn).not.toBe(fn));
+            passes(() => expect(() => 1).not.toBe(() => 1));
+        });
+
+        it("handles functions with parameters", () => {
+            const fn = (a: number) => a + 1;
+            fails(() => expect(fn).not.toBe(fn));
+            passes(() => expect((a: number) => a + 1).not.toBe((a: number) => a + 1));
+        });
+
+        it("is typed correctly", () => {
+            expect(1 as number | string).not.toBe(2 as number | string);
+            // @ts-expect-error: The expected value must match the type of the actual value
+            expect(1 as number | string).not.toBe(2 as number | string | boolean);
+            // @ts-expect-error: The expected value must match the nested types of the actual value
+            expect(Promise.resolve(1)).not.toBe(Promise.resolve("a"));
+            // @ts-expect-error: The expected value must match the nested types of the actual value
+            expect({ a: 1 }).not.toBe({ a: "2" });
+        });
+    });
+
+    describe("toBeFalsy", () => {
+        it("handles undefined", () => {
+            fails(() => expect(undefined).not.toBeFalsy());
+        });
+
+        it("handles null", () => {
+            fails(() => expect(null).not.toBeFalsy());
+        });
+
+        it("handles booleans", () => {
+            passes(() => expect(true).not.toBeFalsy());
+            fails(() => expect(false).not.toBeFalsy());
+        });
+
+        it("handles numbers", () => {
+            fails(() => expect(0).not.toBeFalsy());
+            passes(() => expect(1).not.toBeFalsy());
+        });
+
+        it("handles strings", () => {
+            fails(() => expect("").not.toBeFalsy());
+            passes(() => expect("abc").not.toBeFalsy());
+        });
+
+        it("handles regular expressions", () => {
+            passes(() => expect(/a.*b/i).not.toBeFalsy());
+        });
+
+        it("handles objects", () => {
+            passes(() => expect({ a: 1 }).not.toBeFalsy());
+        });
+
+        it("handles promises", () => {
+            passes(() => expect(Promise.resolve(true) as Promise<boolean> | boolean).not.toBeFalsy());
+        });
+
+        it("handles parameterless functions", () => {
+            passes(() => expect((() => 1) as (() => void) | boolean).not.toBeFalsy());
+        });
+
+        it("handles functions with parameters", () => {
+            passes(() => expect((a: number) => a + 1).not.toBeFalsy());
+        });
+
+        it("is typed correctly", () => {
+            expect(1 as number | string).not.toBeFalsy();
+            expect(1 as number | Promise<number>).not.toBeFalsy();
+            // @ts-expect-error: toBeFalsy is hidden for promises (they are never falsy)
+            expect(Promise.resolve(1)).not.toBeFalsy();
+            // @ts-expect-error: toBeFalsy is hidden for parameterless functions (they are never falsy)
+            expect(() => {}).not.toBeFalsy();
+        });
+    });
+
+    describe("toBeOfType", () => {
+        it("handles union types", () => {
+            expect(1 as string | number).not.toBeOfType<string>();
+            expect(1 as string | number).not.toBeOfType<string | number | boolean>();
+            // @ts-expect-error: The types are the same
+            expect(1 as string | number).not.toBeOfType<string | number>();
+        });
+
+        it("handles nested types", () => {
+            expect(resolved(1 as string | number)).not.toBeOfType<Promise<string>>();
+            expect(resolved(1 as string | number)).not.toBeOfType<Promise<boolean | string | number>>();
+            // @ts-expect-error: The types are the same
+            expect(resolved(1 as string | number)).not.toBeOfType<Promise<string | number>>();
+        });
+
+        it("handles function types", () => {
+            expect(() => {}).not.toBeOfType<(a?: number) => void>();
+            expect(() => 1).not.toBeOfType<() => string>();
+            // @ts-expect-error: The types are the same
+            expect(() => {}).not.toBeOfType<() => void>();
+            // @ts-expect-error: The types are the same
+            expect((a: number) => a + 1).not.toBeOfType<(a: number) => number>();
+        });
+    });
+
+    describe("toBeTruthy", () => {
+        it("handles undefined", () => {
+            passes(() => expect(undefined).not.toBeTruthy());
+        });
+
+        it("handles null", () => {
+            passes(() => expect(null).not.toBeTruthy());
+        });
+
+        it("handles booleans", () => {
+            fails(() => expect(true).not.toBeTruthy());
+            passes(() => expect(false).not.toBeTruthy());
+        });
+
+        it("handles numbers", () => {
+            passes(() => expect(0).not.toBeTruthy());
+            fails(() => expect(1).not.toBeTruthy());
+        });
+
+        it("handles strings", () => {
+            passes(() => expect("").not.toBeTruthy());
+            fails(() => expect("abc").not.toBeTruthy());
+        });
+
+        it("handles regular expressions", () => {
+            fails(() => expect(/a.*b/i).not.toBeTruthy());
+        });
+
+        it("handles objects", () => {
+            fails(() => expect({ a: 1 }).not.toBeTruthy());
+        });
+
+        it("handles promises", () => {
+            fails(() => expect(Promise.resolve(true) as Promise<boolean> | boolean).not.toBeTruthy());
+        });
+
+        it("handles parameterless functions", () => {
+            fails(() => expect((() => 1) as (() => void) | boolean).not.toBeTruthy());
+        });
+
+        it("handles functions with parameters", () => {
+            fails(() => expect((a: number) => a + 1).not.toBeTruthy());
+        });
+
+        it("is typed correctly", () => {
+            expect(0 as number | string).not.toBeTruthy();
+            expect(0 as number | Promise<number>).not.toBeTruthy();
+            // @ts-expect-error: toBeTruthy is hidden for promises (they are always truthy)
+            fails(() => expect(Promise.resolve(1)).not.toBeTruthy());
+            // @ts-expect-error: toBeTruthy is hidden for parameterless functions (they are always truthy)
+            fails(() => expect(() => {}).not.toBeTruthy());
+        });
+    });
+
+    describe("toEqual", () => {
+        it("handles undefined", () => {
+            fails(() => expect(undefined).not.toEqual(undefined));
+            passes(() => expect(undefined as undefined | null).not.toEqual(null));
+        });
+
+        it("handles null", () => {
+            fails(() => expect(null).not.toEqual(null));
+            passes(() => expect(null as undefined | null).not.toEqual(undefined));
+        });
+
+        it("handles booleans", () => {
+            fails(() => expect(true).not.toEqual(true));
+            passes(() => expect(false).not.toEqual(true));
+        });
+
+        it("handles numbers", () => {
+            fails(() => expect(1).not.toEqual(1));
+            passes(() => expect(1).not.toEqual(2));
+        });
+
+        it("handles strings", () => {
+            fails(() => expect("abc").not.toEqual("abc"));
+            passes(() => expect("abc").not.toEqual("123"));
+        });
+
+        it("handles regular expressions", () => {
+            fails(() => expect(/a.b/i).not.toEqual(/a.b/i));
+            passes(() => expect(/a.b/i).not.toEqual(/1.2/i));
+        });
+
+        it("handles objects", () => {
+            fails(() => expect({ a: [1, 2] }).not.toEqual({ a: [1, 2] }));
+            passes(() => expect({ a: [1, 2] }).not.toEqual({ a: [1, 3] }));
+        });
+
+        it("handles promises", () => {
+            const promise: unknown = Promise.resolve(1);
+            fails(() => expect(promise).not.toEqual(promise)); // node:assert can't compare promises
+            fails(() => expect(promise).not.toEqual(1));
+            fails(() => expect(1 as unknown).not.toEqual(promise));
+        });
+
+        it("handles parameterless functions", () => {
+            const fn: unknown = () => 1;
+            fails(() => expect(fn).not.toEqual(fn)); // node:assert can't compare functions
+            fails(() => expect(fn).not.toEqual(() => 2));
+            fails(() => expect(fn).not.toEqual(1));
+            fails(() => expect(1 as unknown).not.toEqual(fn));
+        });
+
+        it("handles functions with parameters", () => {
+            const fn: unknown = (a: number) => a + 1;
+            fails(() => expect(fn).not.toEqual(fn)); // node:assert can't compare functions
+            fails(() => expect(fn).not.toEqual(() => "abc"));
+            fails(() => expect(fn).not.toEqual(1));
+            fails(() => expect(1 as unknown).not.toEqual(fn));
+        });
+
+        it("is typed correctly", () => {
+            expect(1 as number | string).not.toEqual(2 as number | string);
+            // @ts-expect-error: The expected value's type must match the type actual value
+            expect(1).not.toEqual("2");
+            // @ts-expect-error: The expected value's type must match the nested types of the actual value
+            expect({ a: 1 }).not.toEqual({ a: "1" });
+            // @ts-expect-error: The expected value's type can't be bigger than the actual value's type
+            expect(1 as number | string).not.toEqual(2 as number | string | boolean);
+            expect(1 as number | Promise<number>).not.toEqual(2);
+            // @ts-expect-error: The expected value can't be a promise
+            fails(() => expect(1 as number | Promise<number>).not.toEqual(Promise.resolve(1)));
+            // @ts-expect-error: The expected value can't be a function
+            fails(() => expect(1 as number | (() => void)).not.toEqual(() => {}));
+        });
+    });
+
+    describe("toMatch", () => {
+        it("fails when passing undefined", () => {
+            fails(() => expect(undefined).not.toMatch(/.*/));
+        });
+
+        it("fails when passing null", () => {
+            fails(() => expect(null).not.toMatch(/.*/));
+        });
+
+        it("fails when passing a boolean", () => {
+            fails(() => expect(true).not.toMatch(/.*/));
+        });
+
+        it("fails when passing a number", () => {
+            fails(() => expect(1).not.toMatch(/.*/));
+        });
+
+        it("fails when passing a bigint", () => {
+            fails(() => expect(1n).not.toMatch(/.*/));
+        });
+
+        it("fails when passing a symbol", () => {
+            fails(() => expect(Symbol("...")).not.toMatch(/.*/));
+        });
+
+        it("fails when passing an object", () => {
+            fails(() => expect({ key: "value" }).not.toMatch(/.*/));
+        });
+
+        it("fails when passing a function", () => {
+            // @ts-ignore-error
+            fails(() => expect(() => 1).not.toMatch(/.*/));
+        });
+
+        it("passes when passing a string that doesn't match", () => {
+            passes(() => expect("this text").not.toMatch(/does not match/));
+        });
+
+        it("fails when passing a string that matches", () => {
+            fails(() => expect("some random text content").not.toMatch(/random.*content$/));
+        });
+    });
+
+    describe("toReject", () => {
+        it("handles promises", async () => {
+            await rejects(() => expect(rejected()).not.toReject());
+            await resolves(() => expect(resolved(0)).not.toReject());
+        });
+
+        it("is typed correctly", async () => {
+            // @ts-expect-error: toReject is hidden and throws an exception (undefined can't reject)
+            await rejects(expect(undefined).not.toReject());
+            // @ts-expect-error: toReject is hidden and throws an exception (null can't reject)
+            await rejects(expect(null).not.toReject());
+            // @ts-expect-error: toReject is hidden and throws an exception (boolean values can't reject)
+            await rejects(expect(false).not.toReject());
+            // @ts-expect-error: toReject is hidden and throws an exception (numbers can't reject)
+            await rejects(expect(0).not.toReject());
+            // @ts-expect-error: toReject is hidden and throws an exception (strings can't reject)
+            await rejects(expect("").not.toReject());
+            // @ts-expect-error: toReject is hidden and throws an exception (regular expressions can't reject)
+            await rejects(expect(/a.b/i).not.toReject());
+            // @ts-expect-error: toReject is hidden and throws an exception (objects can't reject)
+            await rejects(expect({ a: 1 }).not.toReject());
+            // @ts-expect-error: toReject is hidden and throws an exception (functions can't reject)
+            await rejects(expect(() => {}).not.toReject());
+            // @ts-expect-error: toReject is hidden and throws an exception (functions can't reject)
+            await rejects(expect((a: number) => a + 1).not.toReject());
+            // @ts-expect-error: toReject is hidden (the actual value might not be a promise)
+            await resolves(expect(resolved("") as Promise<void> | number).not.toReject());
+        });
+    });
+
+    describe("toThrow", () => {
+        it("handles functions", () => {
+            passes(() => expect(() => {}).not.toThrow());
+            fails(() => expect(errorFn()).not.toThrow());
+        });
+
+        it("is typed correctly", () => {
+            // @ts-expect-error: toThrow is hidden and throws an exception (undefined can't throw)
+            fails(() => expect(undefined).not.toThrow());
+            // @ts-expect-error: toThrow is hidden and throws an exception (null can't throw)
+            fails(() => expect(null).not.toThrow());
+            // @ts-expect-error: toThrow is hidden and throws an exception (boolean values can't throw)
+            fails(() => expect(false).not.toThrow());
+            // @ts-expect-error: toThrow is hidden and throws an exception (numbers can't throw)
+            fails(() => expect(0).not.toThrow());
+            // @ts-expect-error: toThrow is hidden and throws an exception (strings can't throw)
+            fails(() => expect("").not.toThrow());
+            // @ts-expect-error: toThrow is hidden and throws an exception (regular expressions can't throw)
+            fails(() => expect(/a.b/i).not.toThrow());
+            // @ts-expect-error: toThrow is hidden and throws an exception (objects can't throw)
+            fails(() => expect({ a: 1 }).not.toThrow());
+            // @ts-expect-error: toThrow is hidden and throws an exception (promises can't throw)
+            fails(() => expect(Promise.resolve(1)).not.toThrow());
+            // @ts-expect-error: toThrow is hidden (functions with parameters can't be executed)
+            passes(() => expect((a: number) => a + 1).not.toThrow());
+            // @ts-expect-error: toThrow is hidden (the actual value might not be a function)
+            passes(() => expect((() => {}) as (() => void) | number).not.toThrow());
         });
     });
 });

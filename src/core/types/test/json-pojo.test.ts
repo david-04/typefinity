@@ -1,4 +1,4 @@
-import { describe, it } from "../../../test/test-runner.js";
+import { describe, it } from "../../api/core-import.js";
 import { randomItem } from "../../data/random.js";
 import { Json, ReadonlyJson } from "../json-pojo.js";
 

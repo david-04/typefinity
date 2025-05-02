@@ -1,50 +1,62 @@
 import * as assert from "node:assert";
+import { assertError, assertNoPromiseAndNoFunction, executeCodeBlock } from "./expect-utils.js";
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Inspect a parameterless function (wrapper for node:assert - requires NodeJS)
+ * Perform assertions on a function (inspecting the value it returns or the error that it throws)
  *
- * @type T The type of the parameterless function
- * @param fn The parameterless function
- * @return Assertions applicable to parameterless functions
+ * @type    T Type of the function
+ * @param   fn The function to inspect
+ * @return  Assertions applicable to the return value or errors raised by the function
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function expect<T>(fn: () => T): expect.CallbackAssertions<() => T>;
+export function expect<T extends () => unknown>(fn: T): expect.CallbackAssertions<T>;
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Inspect a promise (wrapper for node:assert - requires NodeJS)
+ * Perform assertions on a promise
  *
- * @type T The type of the promise
- * @param promise The promise to inspect
- * @return Assertions applicable to promises
+ * @type    T The type of the promise
+ * @param   promise The promise to inspect
+ * @returns Assertions applicable to promises
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function expect<T extends Promise<unknown>>(promise: T): expect.PromiseAssertions<T>;
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Inspect any values/object/function other than promises and parameterless functions (wrapper for node:assert -
- * requires NodeJS)
+ * Perform assertions on any value or object
  *
- * @type T The type of the value
- * @param actual The actual value/object/function to inspect
- * @return Assertions applicable to the actual value
+ * @type    T The type of the value or object
+ * @param   value The value or object to inspect
+ * @return  Assertions applicable to the given value (type)
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function expect<T>(actual: T): expect.GeneralAssertions<T>;
+export function expect<T>(value: T): expect.GeneralAssertions<T>;
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Inspect a value/object/function (wrapper for node:assert - requires NodeJS)
- *
- * @type T The type of the actual value
- * @param actual The actual value/object/function to inspect
- * @return Assertions applicable to the actual value/object/function
+ * Perform assertions on any value, object, function or promise
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function expect<T>(actual: T): unknown {
-    return new Assertions(actual);
+export function expect<T>(actual: T) {
+    return new expect.Assertions(actual, new expect.NotAssertions(actual));
 }
 
-/** @mergeModuleWith expect */
+/**---------------------------------------------------------------------------------------------------------------------
+ * @mergeModuleWith expect
+ *--------------------------------------------------------------------------------------------------------------------*/
+
 export namespace expect {
+    //
+    //------------------------------------------------------------------------------------------------------------------
+    //
+    //      ###     ######   ######  ######## ########  ########
+    //     ## ##   ##    ## ##    ## ##       ##     ##    ##
+    //    ##   ##  ##       ##       ##       ##     ##    ##
+    //   ##     ##  ######   ######  ######   ########     ##
+    //   #########       ##       ## ##       ##   ##      ##
+    //   ##     ## ##    ## ##    ## ##       ##    ##     ##
+    //   ##     ##  ######   ######  ######## ##     ##    ##
+    //
+    //------------------------------------------------------------------------------------------------------------------
+
     /**-----------------------------------------------------------------------------------------------------------------
      * Assertions
      *
@@ -52,21 +64,30 @@ export namespace expect {
      * @type N The type of the negated (".not") assertions
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export interface Assertions<T, N> {
+    export class Assertions<T, N> {
+        //
         /**-------------------------------------------------------------------------------------------------------------
-         * Negate the meaning of the assertion
+         * Initialization
+         *
+         * @param actual The actual value to be inspected
+         * @param not The negate the meaning of the assertion
          *------------------------------------------------------------------------------------------------------------*/
 
-        not: N;
+        public constructor(
+            private readonly actual: T,
+            public readonly not: N
+        ) {}
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the actual and expected values are not only equal but identical (i.e. the same instance)
+         * Assert that the actual and expected values are identical (i.e. the same instance, not just equal)
          *
-         * @param expected The expected value
+         * @param  expected The expected value
          * @throws If the actual and expected values are not identical (even if they are equal)
          *------------------------------------------------------------------------------------------------------------*/
 
-        toBe(expected: T): void;
+        public toBe(expected: T): void {
+            assert.strictEqual(this.actual, expected);
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual value is falsy
@@ -74,19 +95,50 @@ export namespace expect {
          * @throws If the actual value is truthy
          *------------------------------------------------------------------------------------------------------------*/
 
-        toBeFalsy(): void;
+        public toBeFalsy(): void {
+            if (this.actual) {
+                throw new Error(`Expected a falsy value but received ${String(this.actual) || typeof this.actual}`);
+            }
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the actual value is of the specified type
+         * Assert that the actual value is an instance of the specified class
          *
-         * @type U The actual value's expected type
+         * @param  expected The expected class
+         * @throws If the actual value is not an instance of the expected class
          *------------------------------------------------------------------------------------------------------------*/
 
-        toBeOfType<U>(
+        public toBeInstanceOf(expected: new () => T) {
+            if (this.actual && "object" === typeof this.actual) {
+                if (!(this.actual instanceof expected)) {
+                    assert.fail(
+                        `Expected an instance of ${expected.constructor.name} but received ${this.actual.constructor.name}`
+                    );
+                }
+            } else {
+                assert.fail(`Expected an instance of ${expected.constructor.name} but received ${typeof this.actual}`);
+            }
+        }
+
+        /**-------------------------------------------------------------------------------------------------------------
+         * Assert that the actual value is of the specified type. This is a compile-time check:
+         *
+         * ```
+         * expect(1 as number | string).toBeOfType<number|string>() // ok
+         * expect(1 as number | string).toBeOfType<number>() // does not compile
+         * ```
+         *
+         * @type  U The expected type
+         * @param params Accepts no parameters when both types match
+         *------------------------------------------------------------------------------------------------------------*/
+
+        public toBeOfType<U>(
             ...params: (<V>() => V extends T ? 1 : 2) extends <V>() => V extends U ? 1 : 2
                 ? []
                 : ["ERROR: The types are not the same"]
-        ): void;
+        ) {
+            void params;
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual value is truthy
@@ -94,89 +146,175 @@ export namespace expect {
          * @throws If the actual value is falsy
          *------------------------------------------------------------------------------------------------------------*/
 
-        toBeTruthy(): void;
-
-        /**-------------------------------------------------------------------------------------------------------------
-         * Assert that actual string matches a regular expression
-         *
-         * @param expected The expected regular expression
-         * @throws If the actual string does not match the regular expression
-         *------------------------------------------------------------------------------------------------------------*/
-
-        toMatch(expected: RegExp): void;
+        public toBeTruthy() {
+            assert.ok(this.actual);
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual and expected values are equal (even if they are different instances)
          *
-         * @param expected The expected value
+         * @param  expected The expected value
          * @throws If the actual and expected values are not equal
          *------------------------------------------------------------------------------------------------------------*/
 
-        toEqual(expected: Exclude<T, Promise<unknown> | Function>): void;
+        public toEqual(expected: Exclude<T, Promise<unknown> | Function>) {
+            assertNoPromiseAndNoFunction("toEqual", this.actual, expected);
+            assert.deepStrictEqual(this.actual, expected);
+        }
+
+        /**-------------------------------------------------------------------------------------------------------------
+         * Assert that actual string matches a regular expression
+         *
+         * @param  expected The expected regular expression
+         * @throws If the actual string does not match the regular expression (or if the actual value is not a string)
+         *------------------------------------------------------------------------------------------------------------*/
+
+        public toMatch(expected: RegExp) {
+            "string" === typeof this.actual
+                ? assert.match(this.actual, expected)
+                : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the promise rejects (with the expected error, if given)
          *
-         * @param expectedError The expected error or error message
+         * @param  expected The expected error (or error message)
          * @throws If the promise resolves or if it rejects with an error other than the expected one (if given)
          *------------------------------------------------------------------------------------------------------------*/
 
-        toReject(expectedError?: Error | string | RegExp): Promise<void>;
+        public async toReject(expected?: Error | string | RegExp) {
+            await assert.rejects(this.actual as Promise<T>);
+            if (undefined !== expected) {
+                try {
+                    await this.actual;
+                } catch (error) {
+                    assertError(error, "equals", expected);
+                }
+            }
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the promise resolves (to the expected value, if given)
          *
-         * @param expected The expected resolved value
+         * @param  expected The expected value to resolve to
          * @throws If the promise rejects or if it resolves to a value other than the expected one (if given)
          *------------------------------------------------------------------------------------------------------------*/
 
-        toResolve(expected?: Awaited<T>): Promise<void>;
+        public async toResolve(expected?: Exclude<Awaited<T>, Function>) {
+            await assert.doesNotReject(this.actual as Promise<T>);
+            if (0 < arguments.length) {
+                assertNoPromiseAndNoFunction("toResolve", await this.actual, expected);
+                assert.deepStrictEqual(await this.actual, expected);
+            }
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the code block throws an error matching the expected one (if given)
+         * Assert that the function throws an error matching the expected one (if given)
          *
-         * @param expectedError The expected error or error message
-         * @throws If the code block does not raise an error or if it raises an error other than the expected one (if
+         * @param  expected The expected error or error message
+         * @throws If the function does not raise an error or if it raises an error other than the expected one (if
          * given)
          *------------------------------------------------------------------------------------------------------------*/
 
-        toThrow(expectedError?: Error | string | RegExp): void;
+        public toThrow(expected?: string | RegExp | Error) {
+            const result = executeCodeBlock(this.actual);
+            if (result.success) {
+                throw new Error("No error was thrown");
+            }
+            if (undefined !== expected) {
+                assertError(result.error, "equals", expected);
+            }
+        }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    //
+    //       ###     ######   ######  ######## ########  ########        ##    ##  #######  ########
+    //      ## ##   ##    ## ##    ## ##       ##     ##    ##           ###   ## ##     ##    ##
+    //     ##   ##  ##       ##       ##       ##     ##    ##           ####  ## ##     ##    ##
+    //    ##     ##  ######   ######  ######   ########     ##           ## ## ## ##     ##    ##
+    //    #########       ##       ## ##       ##   ##      ##           ##  #### ##     ##    ##
+    //    ##     ## ##    ## ##    ## ##       ##    ##     ##           ##   ### ##     ##    ##
+    //    ##     ##  ######   ######  ######## ##     ##    ##           ##    ##  #######     ##
+    //
+    //------------------------------------------------------------------------------------------------------------------
+
     /**-----------------------------------------------------------------------------------------------------------------
-     * Negated assertions
+     * Negated assertions (i.e. assert that something is not true)
      *
      * @type T The type of the actual value to be inspected
      *----------------------------------------------------------------------------------------------------------------*/
 
-    export interface NotAssertions<T> {
+    export class NotAssertions<T> {
+        //
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the actual and unexpected values are not identical (i.e. not the same instance)
-         *
-         * @param unexpected The unexpected value
-         * @throws If the actual and expected values are identical
+         * Initialization
          *------------------------------------------------------------------------------------------------------------*/
 
-        toBe(unexpected: T): void;
+        public constructor(private readonly actual: T) {}
+
+        /**-------------------------------------------------------------------------------------------------------------
+         * Assert that the actual and (un)expected values are not identical (i.e. not the same instance). They might
+         * still be equal.
+         *
+         * @param  unexpected The unexpected value
+         * @throws If the actual and unexpected values are identical
+         *------------------------------------------------------------------------------------------------------------*/
+
+        /* not */ toBe(unexpected: T): void {
+            assert.notStrictEqual(this.actual, unexpected);
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual value is not falsy
+         *
          * @throws If the actual value is falsy
          *------------------------------------------------------------------------------------------------------------*/
 
-        toBeFalsy(): void;
+        /* not */ toBeFalsy(): void {
+            assert.ok(this.actual);
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the actual value is not of the specified type
+         * Assert that the actual value is not an instance of of the specified class
          *
-         * @type U The actual value's unexpected type
+         * @param  unexpected The class which the current value should not be an instance of
+         * @throws If the actual value is an instance of the unexpected class
          *------------------------------------------------------------------------------------------------------------*/
 
-        toBeOfType<U>(
+        /* not */ toBeInstanceOf(unexpected: new () => T) {
+            if (this.actual && "object" === typeof this.actual) {
+                if (this.actual instanceof unexpected) {
+                    assert.fail(
+                        `Expected an instance of ${unexpected.constructor.name} but received ${this.actual.constructor.name}`
+                    );
+                }
+            } else if (this.actual) {
+                assert.fail(
+                    `Expected an object other than ${unexpected.constructor.name} but received ${typeof this.actual}`
+                );
+            }
+        }
+
+        /**-------------------------------------------------------------------------------------------------------------
+         * Assert that the actual value is not of the specified type. This is a compile-time check:
+         *
+         * ```
+         * expect(1 as number | string).not.toBeOfType<number>() // ok
+         * expect(1 as number | string).not.toBeOfType<number|string>() // does not compile
+         * ```
+         *
+         * @type  U The actual value's unexpected type
+         * @param params Accepts no parameters when both types are different
+         *------------------------------------------------------------------------------------------------------------*/
+
+        /* not */ toBeOfType<U>(
             ...params: (<V>() => V extends T ? 1 : 2) extends <V>() => V extends U ? 1 : 2
                 ? ["ERROR: The types are the same"]
                 : []
-        ): void;
+        ) {
+            void params;
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual value is not truthy
@@ -184,25 +322,36 @@ export namespace expect {
          * @throws If the actual value is truthy
          *------------------------------------------------------------------------------------------------------------*/
 
-        toBeTruthy(): void;
-
-        /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the actual string does not match a regular expression
-         *
-         * @param expected The regular expression to not match
-         * @throws If the actual string matches the regular expression
-         *------------------------------------------------------------------------------------------------------------*/
-
-        toMatch(expected: RegExp): void;
+        /* not */ toBeTruthy(): void {
+            if (this.actual) {
+                throw new Error(`Expected a non-truthy value but received ${String(this.actual)}`);
+            }
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual and unexpected values are not equal (i.e. don't have the same content)
          *
-         * @param unexpected The unexpected value
+         * @param  unexpected The unexpected value
          * @throws If the actual and expected values are equal (have the same content)
          *------------------------------------------------------------------------------------------------------------*/
 
-        toEqual(unexpected: Exclude<T, Promise<unknown> | Function>): void;
+        /* not */ toEqual(unexpected: Exclude<T, Promise<unknown> | Function>): void {
+            assertNoPromiseAndNoFunction("toEqual", this.actual, unexpected);
+            assert.notDeepStrictEqual(this.actual, unexpected);
+        }
+
+        /**-------------------------------------------------------------------------------------------------------------
+         * Assert that the actual string does not match the given regular expression
+         *
+         * @param  unexpected The regular expression that should not match
+         * @throws If the actual value matches the regular expression or if the actual value is not a string
+         *------------------------------------------------------------------------------------------------------------*/
+
+        /* not */ toMatch(unexpected: RegExp): void {
+            `string` === typeof this.actual
+                ? assert.doesNotMatch(this.actual, unexpected)
+                : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the promise does not reject
@@ -210,21 +359,42 @@ export namespace expect {
          * @throws If the promise rejects
          *------------------------------------------------------------------------------------------------------------*/
 
-        toReject(): Promise<void>;
+        async /* not */ toReject(): Promise<void> {
+            await assert.doesNotReject(this.actual as Promise<T>);
+        }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the actual function completes without throwing an error
+         * Assert that the function completes without throwing an error
          *
-         * @throws If the code block throws an error
+         * @throws If the function throws an error
          *------------------------------------------------------------------------------------------------------------*/
 
-        toThrow(): void;
+        /* not */ toThrow(): void {
+            const { actual } = this;
+            if ("function" === typeof actual) {
+                assert.doesNotThrow(() => actual());
+            } else {
+                throw new Error(`The actual value is of type ${typeof actual} (expected a function)`);
+            }
+        }
     }
 
+    //------------------------------------------------------------------------------------------------------------------
+    //
+    //    ######## ##    ## ########  ######## ########
+    //       ##     ##  ##  ##     ## ##       ##     ##
+    //       ##      ####   ##     ## ##       ##     ##
+    //       ##       ##    ########  ######   ##     ##
+    //       ##       ##    ##        ##       ##     ##
+    //       ##       ##    ##        ##       ##     ##
+    //       ##       ##    ##        ######## ########
+    //
+    //------------------------------------------------------------------------------------------------------------------
+
     /**-----------------------------------------------------------------------------------------------------------------
-     * Assertions for callbacks/actions (type () => void)
+     * Assertions for parameterless functions
      *
-     * @type T The type of the actual value to be inspected
+     * @type T The type of the function to be inspected
      *----------------------------------------------------------------------------------------------------------------*/
 
     export type CallbackAssertions<T extends () => void> = Pick<
@@ -235,7 +405,7 @@ export namespace expect {
     /**-----------------------------------------------------------------------------------------------------------------
      * Assertions for promises
      *
-     * @type T The type of the actual value to be inspected
+     * @type T The type of the promise to be inspected
      *----------------------------------------------------------------------------------------------------------------*/
 
     export type PromiseAssertions<T extends Promise<unknown>> = Pick<
@@ -245,6 +415,8 @@ export namespace expect {
 
     /**-----------------------------------------------------------------------------------------------------------------
      * Assertions for all types other than promises and callbacks/actions (type: () => void)
+     *
+     * @type T The type of the value to be inspected
      *----------------------------------------------------------------------------------------------------------------*/
 
     export type GeneralAssertions<T> = Omit<
@@ -257,304 +429,4 @@ export namespace expect {
         >,
         "toReject" | "toResolve" | "toThrow" | (Exclude<T, Promise<unknown> | Function> extends never ? "toEqual" : "")
     >;
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Assertions
- *--------------------------------------------------------------------------------------------------------------------*/
-
-class Assertions<T> implements expect.Assertions<T, expect.NotAssertions<T>> {
-    private _not?: expect.NotAssertions<T>;
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Initialization
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    public constructor(private readonly actual: T) {}
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Get negated assertions
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    get not() {
-        return (this._not ??= new NotAssertions(this.actual));
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual and expected values are identical
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    toBe(expected: T): void {
-        assert.strictEqual(this.actual, expected);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual value is falsy
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    toBeFalsy(): void {
-        if (this.actual) {
-            throw new Error(`Expected a falsy value but received ${String(this.actual)}`);
-        }
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual is of a specific type
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    toBeOfType<U>(
-        ..._params: (<V>() => V extends T ? 1 : 2) extends <V>() => V extends U ? 1 : 2
-            ? []
-            : ["ERROR: The types are not the same"]
-    ) {}
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual value is truthy
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    toBeTruthy(): void {
-        assert.ok(this.actual);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual and expected values have the same content
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    toEqual(expected: T): void {
-        assertNoPromiseAndNoFunction("toEqual", this.actual, expected);
-        assert.deepStrictEqual(this.actual, expected);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the given string contains a value
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    toMatch(expected: RegExp): void {
-        "string" === typeof this.actual
-            ? assert.match(this.actual, expected)
-            : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual promise rejects
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    async toReject(expectedErrorOrMessage?: Error | string | RegExp): Promise<void> {
-        await assert.rejects(this.actual as Promise<T>);
-        if (undefined !== expectedErrorOrMessage) {
-            try {
-                await this.actual;
-            } catch (error) {
-                assertError(error, "equals", expectedErrorOrMessage);
-            }
-        }
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual promise resolves
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    async toResolve(expected?: Exclude<Awaited<T>, Function>): Promise<void> {
-        await assert.doesNotReject(this.actual as Promise<T>);
-        if (0 < arguments.length) {
-            assertNoPromiseAndNoFunction("toResolve", await this.actual, expected);
-            assert.deepStrictEqual(await this.actual, expected);
-        }
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual function throws an error
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    toThrow(expectedErrorOrMessage?: Error | string | RegExp): void {
-        const result = executeCodeBlock(this.actual);
-        if (result.success) {
-            throw new Error("No error was thrown");
-        }
-        if (undefined !== expectedErrorOrMessage) {
-            assertError(result.error, "equals", expectedErrorOrMessage);
-        }
-    }
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Negated assertions
- *--------------------------------------------------------------------------------------------------------------------*/
-
-class NotAssertions<T> implements expect.NotAssertions<T> {
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Initialization
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    public constructor(private readonly actual: T) {}
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual and unexpected values are not identical
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    /* not */ toBe(unexpected: T): void {
-        assert.notStrictEqual(this.actual, unexpected);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual value is not falsy
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    /* not */ toBeFalsy(): void {
-        assert.ok(this.actual);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual value is not of a specific type
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    /* not */ toBeOfType<U>(
-        ..._params: (<V>() => V extends T ? 1 : 2) extends <V>() => V extends U ? 1 : 2
-            ? ["ERROR: The types are the same"]
-            : []
-    ) {}
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual value is not truthy
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    /* not */ toBeTruthy(): void {
-        if (this.actual) {
-            throw new Error(`Expected a non-truthy value but received ${String(this.actual)}`);
-        }
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual and unexpected values don't have the same content
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    /* not */ toEqual(unexpected: T): void {
-        assertNoPromiseAndNoFunction("toEqual", this.actual, unexpected);
-        assert.notDeepStrictEqual(this.actual, unexpected);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the given string does not contain a value
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    /* not */ toMatch(expected: RegExp): void {
-        `string` === typeof this.actual
-            ? assert.doesNotMatch(this.actual, expected)
-            : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual promise doesn't reject
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    async /* not */ toReject(): Promise<void> {
-        await assert.doesNotReject(this.actual as Promise<T>);
-    }
-
-    /**-----------------------------------------------------------------------------------------------------------------
-     * Assert that the actual function does not throw an error
-     *----------------------------------------------------------------------------------------------------------------*/
-
-    /* not */ toThrow(): void {
-        const actual = this.actual;
-        if (!(actual instanceof Function)) {
-            throw new Error(`The actual value is of type ${typeof actual} (expected a function)`);
-        }
-        assert.doesNotThrow(() => actual());
-    }
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Execute a code block and catch errors for later inspection
- *--------------------------------------------------------------------------------------------------------------------*/
-
-function executeCodeBlock(action: unknown) {
-    if ("function" !== typeof action) {
-        throw new Error("The actual value is not a function");
-    }
-    try {
-        const result = action();
-        return { success: true, result, replay: () => result } as const;
-    } catch (error) {
-        const replay = () => {
-            throw error;
-        };
-        return { success: false, error, replay } as const;
-    }
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Assert that the given values are neither promises nor functions
- *--------------------------------------------------------------------------------------------------------------------*/
-
-function assertNoPromiseAndNoFunction(method: string, ...values: ReadonlyArray<unknown>) {
-    if (containsFunction(...values)) {
-        throw new Error(`${method}() can't be used with functions`);
-    } else if (containsPromise(...values)) {
-        throw new Error(`${method}() can't be used with promises`);
-    }
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given values contain a function
- *--------------------------------------------------------------------------------------------------------------------*/
-
-function containsFunction(...values: ReadonlyArray<unknown>) {
-    for (const value of values) {
-        if ("function" === typeof value) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given values contain a promise
- *--------------------------------------------------------------------------------------------------------------------*/
-
-function containsPromise(...values: ReadonlyArray<unknown>) {
-    for (const value of values) {
-        if (value && "object" === typeof value && "then" in value && "function" === typeof value.then) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Assert that the given error matches the expected one in regards to the class and message (the stack trace and any
- * other [custom] properties are excluded from the comparison)
- *--------------------------------------------------------------------------------------------------------------------*/
-
-function assertError(actual: unknown, mode: "equals" | "does-not-equal", expected: Error | string | RegExp): void {
-    const message = actual instanceof Error ? actual.message : String(actual);
-    if ("string" === typeof expected) {
-        assert["equals" === mode ? "deepStrictEqual" : "notDeepStrictEqual"](message, expected);
-    } else if (expected instanceof RegExp) {
-        assert["equals" === mode ? "match" : "doesNotMatch"](message, expected);
-    } else {
-        expected satisfies Error;
-        if (actual instanceof Error) {
-            assert["equals" === mode ? "deepStrictEqual" : "notDeepStrictEqual"](
-                normalizeError(actual),
-                normalizeError(expected)
-            );
-        } else {
-            assert["equals" === mode ? "deepStrictEqual" : "notDeepStrictEqual"](message, expected);
-        }
-    }
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Normalize an error by extracting only the class name and the message
- *--------------------------------------------------------------------------------------------------------------------*/
-
-function normalizeError(error: Error) {
-    const result = [{ type: error.constructor, message: error.message }];
-    for (let current: unknown = error; current; current = current instanceof Error ? current.cause : undefined) {
-        if (current instanceof Error) {
-            result.push({ type: current.constructor, message: current.message });
-        }
-    }
-    return result;
 }

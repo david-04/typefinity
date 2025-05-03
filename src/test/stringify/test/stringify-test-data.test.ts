@@ -1,5 +1,5 @@
 import { describe, it } from "node:test";
-import { expect } from "../../expect.js";
+import { expect } from "../../expect/expect.js";
 import { stringifyTestData } from "../stringify-test-data.js";
 
 describe("stringifyTestData", () => {

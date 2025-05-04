@@ -6,7 +6,7 @@ import * as assert from "assert";
 
 export function executeCodeBlock(action: unknown) {
     if ("function" !== typeof action) {
-        throw new Error("The actual value is not a function");
+        assert.fail("The actual value is not a function");
     }
     try {
         const result = action();
@@ -23,29 +23,13 @@ export function executeCodeBlock(action: unknown) {
  *--------------------------------------------------------------------------------------------------------------------*/
 
 export function assertNoPromiseAndNoFunction(method: string, ...values: ReadonlyArray<unknown>) {
-    if (containsFunction(...values)) {
-        throw new Error(`${method}() can't be used with functions`);
-    } else if (containsPromise(...values)) {
-        throw new Error(`${method}() can't be used with promises`);
+    if (values.some(value => "function" === typeof value)) {
+        assert.fail(`${method}() can't be used with functions`);
+    } else if (values.some(value => value instanceof Promise)) {
+        assert.fail(`${method}() can't be used with promises`);
     }
 }
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given values contain a function
- *--------------------------------------------------------------------------------------------------------------------*/
 
-export function containsFunction(...values: ReadonlyArray<unknown>) {
-    return values.some(value => "function" === typeof value);
-}
-
-/**---------------------------------------------------------------------------------------------------------------------
- * Check if the given values contain a promise
- *--------------------------------------------------------------------------------------------------------------------*/
-
-export function containsPromise(...values: ReadonlyArray<unknown>) {
-    return values.some(
-        value => value && "object" === typeof value && "then" in value && "function" === typeof value.then
-    );
-}
 /**---------------------------------------------------------------------------------------------------------------------
  * Assert that the given error matches the expected one in regards to the class and message (the stack trace and any
  * other [custom] properties are excluded from the comparison)
@@ -54,7 +38,7 @@ export function containsPromise(...values: ReadonlyArray<unknown>) {
 export function assertError(
     actual: unknown,
     mode: "equals" | "does-not-equal",
-    expected: Error | string | RegExp
+    expected: string | RegExp | Error
 ): void {
     const message = actual instanceof Error ? actual.message : String(actual);
     if ("string" === typeof expected) {

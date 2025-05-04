@@ -1,4 +1,5 @@
 import * as assert from "node:assert";
+import { stringifyTestData } from "../stringify/stringify-test-data.js";
 import { assertError, assertNoPromiseAndNoFunction, executeCodeBlock } from "./expect-utils.js";
 
 /**---------------------------------------------------------------------------------------------------------------------
@@ -9,7 +10,7 @@ import { assertError, assertNoPromiseAndNoFunction, executeCodeBlock } from "./e
  * @return  Assertions applicable to the return value or errors raised by the function
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function expect<T extends () => unknown>(fn: T): expect.CallbackAssertions<T>;
+export function expect<T>(fn: () => T): expect.CallbackAssertions<() => T>;
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Perform assertions on a promise
@@ -19,7 +20,7 @@ export function expect<T extends () => unknown>(fn: T): expect.CallbackAssertion
  * @returns Assertions applicable to promises
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function expect<T extends Promise<unknown>>(promise: T): expect.PromiseAssertions<T>;
+export function expect<T>(promise: Promise<T>): expect.PromiseAssertions<Promise<Awaited<T>>>;
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Perform assertions on any value or object
@@ -35,7 +36,7 @@ export function expect<T>(value: T): expect.GeneralAssertions<T>;
  * Perform assertions on any value, object, function or promise
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function expect<T>(actual: T) {
+export function expect<T>(actual: T): unknown {
     return new expect.Assertions(actual, new expect.NotAssertions(actual));
 }
 
@@ -47,13 +48,13 @@ export namespace expect {
     //
     //------------------------------------------------------------------------------------------------------------------
     //
-    //      ###     ######   ######  ######## ########  ########
-    //     ## ##   ##    ## ##    ## ##       ##     ##    ##
-    //    ##   ##  ##       ##       ##       ##     ##    ##
-    //   ##     ##  ######   ######  ######   ########     ##
-    //   #########       ##       ## ##       ##   ##      ##
-    //   ##     ## ##    ## ##    ## ##       ##    ##     ##
-    //   ##     ##  ######   ######  ######## ##     ##    ##
+    //       ###     ######   ######  ######## ########  ########
+    //      ## ##   ##    ## ##    ## ##       ##     ##    ##
+    //     ##   ##  ##       ##       ##       ##     ##    ##
+    //    ##     ##  ######   ######  ######   ########     ##
+    //    #########       ##       ## ##       ##   ##      ##
+    //    ##     ## ##    ## ##    ## ##       ##    ##     ##
+    //    ##     ##  ######   ######  ######## ##     ##    ##
     //
     //------------------------------------------------------------------------------------------------------------------
 
@@ -97,18 +98,19 @@ export namespace expect {
 
         public toBeFalsy(): void {
             if (this.actual) {
-                throw new Error(`Expected a falsy value but received ${String(this.actual) || typeof this.actual}`);
+                assert.fail(`Expected a falsy value but received ${stringifyTestData(this.actual)}`);
             }
         }
 
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual value is an instance of the specified class
          *
+         * @type   U A potential parent type of the actual value's class
          * @param  expected The expected class
          * @throws If the actual value is not an instance of the expected class
          *------------------------------------------------------------------------------------------------------------*/
 
-        public toBeInstanceOf(expected: new () => T) {
+        public toBeInstanceOf<U>(expected: new (...args: any[]) => T extends U ? U : T) {
             if (this.actual && "object" === typeof this.actual) {
                 if (!(this.actual instanceof expected)) {
                     assert.fail(
@@ -123,7 +125,7 @@ export namespace expect {
         /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual value is of the specified type. This is a compile-time check:
          *
-         * ```
+         * ```ts
          * expect(1 as number | string).toBeOfType<number|string>() // ok
          * expect(1 as number | string).toBeOfType<number>() // does not compile
          * ```
@@ -183,7 +185,7 @@ export namespace expect {
          *------------------------------------------------------------------------------------------------------------*/
 
         public async toReject(expected?: Error | string | RegExp) {
-            await assert.rejects(this.actual as Promise<T>);
+            await assert.rejects(this.actual as Promise<unknown>);
             if (undefined !== expected) {
                 try {
                     await this.actual;
@@ -194,17 +196,22 @@ export namespace expect {
         }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the promise resolves (to the expected value, if given)
+         * Assert that the promise resolves (to the expected value, if given). Values are compared as `toEqual` (not
+         * `toBe`). To verify if a specific instance is returned, pass the awaited promise to `expect` instead:
+         *
+         * ```ts
+         * await expect(await myFn()).toBe(expectedInstance);
+         * ```
          *
          * @param  expected The expected value to resolve to
          * @throws If the promise rejects or if it resolves to a value other than the expected one (if given)
          *------------------------------------------------------------------------------------------------------------*/
 
-        public async toResolve(expected?: Exclude<Awaited<T>, Function>) {
-            await assert.doesNotReject(this.actual as Promise<T>);
-            if (0 < arguments.length) {
-                assertNoPromiseAndNoFunction("toResolve", await this.actual, expected);
-                assert.deepStrictEqual(await this.actual, expected);
+        public async toResolve() {
+            if (this.actual instanceof Promise) {
+                await assert.doesNotReject(this.actual);
+            } else {
+                assert.fail(`toResolve can only be called on a promise - received ${this.actual}`);
             }
         }
 
@@ -229,13 +236,13 @@ export namespace expect {
 
     //------------------------------------------------------------------------------------------------------------------
     //
-    //       ###     ######   ######  ######## ########  ########        ##    ##  #######  ########
-    //      ## ##   ##    ## ##    ## ##       ##     ##    ##           ###   ## ##     ##    ##
-    //     ##   ##  ##       ##       ##       ##     ##    ##           ####  ## ##     ##    ##
-    //    ##     ##  ######   ######  ######   ########     ##           ## ## ## ##     ##    ##
-    //    #########       ##       ## ##       ##   ##      ##           ##  #### ##     ##    ##
-    //    ##     ## ##    ## ##    ## ##       ##    ##     ##           ##   ### ##     ##    ##
-    //    ##     ##  ######   ######  ######## ##     ##    ##           ##    ##  #######     ##
+    //    ##    ##  #######  ########
+    //    ###   ## ##     ##    ##
+    //    ####  ## ##     ##    ##
+    //    ## ## ## ##     ##    ##
+    //    ##  #### ##     ##    ##
+    //    ##   ### ##     ##    ##
+    //    ##    ##  #######     ##
     //
     //------------------------------------------------------------------------------------------------------------------
 
@@ -266,30 +273,20 @@ export namespace expect {
         }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the actual value is not falsy
-         *
-         * @throws If the actual value is falsy
-         *------------------------------------------------------------------------------------------------------------*/
-
-        /* not */ toBeFalsy(): void {
-            assert.ok(this.actual);
-        }
-
-        /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual value is not an instance of of the specified class
          *
          * @param  unexpected The class which the current value should not be an instance of
          * @throws If the actual value is an instance of the unexpected class
          *------------------------------------------------------------------------------------------------------------*/
 
-        /* not */ toBeInstanceOf(unexpected: new () => T) {
+        /* not */ toBeInstanceOf<U>(unexpected: new (...args: any[]) => T extends U ? U : T) {
             if (this.actual && "object" === typeof this.actual) {
                 if (this.actual instanceof unexpected) {
                     assert.fail(
                         `Expected an instance of ${unexpected.constructor.name} but received ${this.actual.constructor.name}`
                     );
                 }
-            } else if (this.actual) {
+            } else {
                 assert.fail(
                     `Expected an object other than ${unexpected.constructor.name} but received ${typeof this.actual}`
                 );
@@ -317,18 +314,6 @@ export namespace expect {
         }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the actual value is not truthy
-         *
-         * @throws If the actual value is truthy
-         *------------------------------------------------------------------------------------------------------------*/
-
-        /* not */ toBeTruthy(): void {
-            if (this.actual) {
-                throw new Error(`Expected a non-truthy value but received ${String(this.actual)}`);
-            }
-        }
-
-        /**-------------------------------------------------------------------------------------------------------------
          * Assert that the actual and unexpected values are not equal (i.e. don't have the same content)
          *
          * @param  unexpected The unexpected value
@@ -351,16 +336,6 @@ export namespace expect {
             `string` === typeof this.actual
                 ? assert.doesNotMatch(this.actual, unexpected)
                 : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
-        }
-
-        /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the promise does not reject
-         *
-         * @throws If the promise rejects
-         *------------------------------------------------------------------------------------------------------------*/
-
-        async /* not */ toReject(): Promise<void> {
-            await assert.doesNotReject(this.actual as Promise<T>);
         }
 
         /**-------------------------------------------------------------------------------------------------------------
@@ -409,7 +384,7 @@ export namespace expect {
      *----------------------------------------------------------------------------------------------------------------*/
 
     export type PromiseAssertions<T extends Promise<unknown>> = Pick<
-        Assertions<T, Pick<NotAssertions<T>, "toBe" | "toBeOfType" | "toReject">>,
+        Assertions<T, Pick<NotAssertions<T>, "toBe" | "toBeOfType">>,
         "not" | "toBe" | "toBeOfType" | "toReject" | "toResolve"
     >;
 
@@ -422,11 +397,8 @@ export namespace expect {
     export type GeneralAssertions<T> = Omit<
         Assertions<
             T,
-            Omit<
-                NotAssertions<T>,
-                "toReject" | "toThrow" | (Exclude<T, Promise<unknown> | Function> extends never ? "toEqual" : "")
-            >
+            Omit<NotAssertions<T>, "toThrow" | (Exclude<T, Promise<unknown> | Function> extends never ? "toEqual" : "")>
         >,
-        "toReject" | "toResolve" | "toThrow" | (Exclude<T, Promise<unknown> | Function> extends never ? "toEqual" : "")
+        "toResolve" | "toReject" | "toThrow" | (Exclude<T, Promise<unknown> | Function> extends never ? "toEqual" : "")
     >;
 }

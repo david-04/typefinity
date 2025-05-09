@@ -218,7 +218,6 @@ describe("expect", () => {
             fails(() => expect(asObject(0n)).toBeInstanceOf(Object));
             fails(() => expect(asObject("")).toBeInstanceOf(Object));
             fails(() => expect(asObject(symbol)).toBeInstanceOf(Object));
-            fails(() => expect(asObject(fn)).toBeInstanceOf(Object));
         });
 
         it("handles objects", () => {
@@ -232,6 +231,8 @@ describe("expect", () => {
             passes(() => expect({}).toBeInstanceOf(Object));
             // arrays
             passes(() => expect([]).toBeInstanceOf(Array));
+            // functions
+            passes(() => expect(asObject(fn)).toBeInstanceOf(Function));
         });
 
         it("is typed correctly", () => {

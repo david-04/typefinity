@@ -1,6 +1,7 @@
 import * as assert from "node:assert";
+import { classifyTestData } from "../stringify/classify-test-data.js";
 import { stringifyTestData } from "../stringify/stringify-test-data.js";
-import { assertError, assertNoPromiseAndNoFunction, executeCodeBlock } from "./expect-utils.js";
+import { assertError, assertNoPromiseAndNoFunction } from "./expect-utils.js";
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Perform assertions on a function (inspecting the value it returns or the error that it throws)
@@ -111,14 +112,10 @@ export namespace expect {
          *------------------------------------------------------------------------------------------------------------*/
 
         public toBeInstanceOf<U>(expected: new (...args: any[]) => T extends U ? U : T) {
-            if (this.actual && "object" === typeof this.actual) {
-                if (!(this.actual instanceof expected)) {
-                    assert.fail(
-                        `Expected an instance of ${expected.constructor.name} but received ${this.actual.constructor.name}`
-                    );
-                }
-            } else {
-                assert.fail(`Expected an instance of ${expected.constructor.name} but received ${typeof this.actual}`);
+            if (!this.actual || !(this.actual instanceof expected)) {
+                const expectedClass = expected.constructor.name;
+                const actual = classifyTestData(this.actual);
+                assert.fail(`Expected an instance of ${expectedClass} but received ${actual}`);
             }
         }
 
@@ -174,7 +171,7 @@ export namespace expect {
         public toMatch(expected: RegExp) {
             "string" === typeof this.actual
                 ? assert.match(this.actual, expected)
-                : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
+                : assert.fail(`Expected a string but received ${classifyTestData(this.actual)}`);
         }
 
         /**-------------------------------------------------------------------------------------------------------------
@@ -211,7 +208,7 @@ export namespace expect {
             if (this.actual instanceof Promise) {
                 await assert.doesNotReject(this.actual);
             } else {
-                assert.fail(`toResolve can only be called on a promise - received ${this.actual}`);
+                assert.fail(`toResolve() can only be called for promises (received ${classifyTestData(this.actual)})`);
             }
         }
 
@@ -224,12 +221,20 @@ export namespace expect {
          *------------------------------------------------------------------------------------------------------------*/
 
         public toThrow(expected?: string | RegExp | Error) {
-            const result = executeCodeBlock(this.actual);
-            if (result.success) {
-                throw new Error("No error was thrown");
+            if ("function" !== typeof this.actual) {
+                assert.fail(`toThrow() only works with promises (received: ${classifyTestData(this.actual)})`);
             }
-            if (undefined !== expected) {
-                assertError(result.error, "equals", expected);
+            let caughtError = false;
+            try {
+                this.actual();
+            } catch (error) {
+                caughtError = true;
+                if (undefined !== expected) {
+                    assertError(error, "equals", expected);
+                }
+            }
+            if (!caughtError) {
+                assert.fail("No error was thrown");
             }
         }
     }
@@ -280,16 +285,10 @@ export namespace expect {
          *------------------------------------------------------------------------------------------------------------*/
 
         /* not */ toBeInstanceOf<U>(unexpected: new (...args: any[]) => T extends U ? U : T) {
-            if (this.actual && "object" === typeof this.actual) {
-                if (this.actual instanceof unexpected) {
-                    assert.fail(
-                        `Expected an instance of ${unexpected.constructor.name} but received ${this.actual.constructor.name}`
-                    );
-                }
-            } else {
-                assert.fail(
-                    `Expected an object other than ${unexpected.constructor.name} but received ${typeof this.actual}`
-                );
+            if ("object" !== typeof this.actual || !this.actual || this.actual instanceof unexpected) {
+                const actual = classifyTestData(this.actual);
+                const expected = unexpected.constructor.name;
+                assert.fail(`Expected an instance of ${expected} but received ${actual}`);
             }
         }
 
@@ -333,9 +332,9 @@ export namespace expect {
          *------------------------------------------------------------------------------------------------------------*/
 
         /* not */ toMatch(unexpected: RegExp): void {
-            `string` === typeof this.actual
+            "string" === typeof this.actual
                 ? assert.doesNotMatch(this.actual, unexpected)
-                : assert.fail(`Expected a string but received a value of type ${typeof this.actual}`);
+                : assert.fail(`Expected a string but received ${classifyTestData(this.actual)}`);
         }
 
         /**-------------------------------------------------------------------------------------------------------------
@@ -346,11 +345,9 @@ export namespace expect {
 
         /* not */ toThrow(): void {
             const { actual } = this;
-            if ("function" === typeof actual) {
-                assert.doesNotThrow(() => actual());
-            } else {
-                throw new Error(`The actual value is of type ${typeof actual} (expected a function)`);
-            }
+            "function" === typeof actual
+                ? assert.doesNotThrow(() => actual())
+                : assert.fail(`toThrow() can only be called on functions (received: ${classifyTestData(actual)})`);
         }
     }
 

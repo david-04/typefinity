@@ -1,32 +1,18 @@
 import * as assert from "assert";
 
 /**---------------------------------------------------------------------------------------------------------------------
- * Execute a code block and catch errors for later inspection
- *--------------------------------------------------------------------------------------------------------------------*/
-
-export function executeCodeBlock(action: unknown) {
-    if ("function" !== typeof action) {
-        assert.fail("The actual value is not a function");
-    }
-    try {
-        const result = action();
-        return { success: true, result, replay: () => result } as const;
-    } catch (error) {
-        const replay = () => {
-            throw error;
-        };
-        return { success: false, error, replay } as const;
-    }
-}
-/**---------------------------------------------------------------------------------------------------------------------
  * Assert that the given values are neither promises nor functions
  *--------------------------------------------------------------------------------------------------------------------*/
 
-export function assertNoPromiseAndNoFunction(method: string, ...values: ReadonlyArray<unknown>) {
-    if (values.some(value => "function" === typeof value)) {
-        assert.fail(`${method}() can't be used with functions`);
-    } else if (values.some(value => value instanceof Promise)) {
-        assert.fail(`${method}() can't be used with promises`);
+export function assertNoPromiseAndNoFunction(method: string, value1: unknown, value2: unknown) {
+    if ("function" === typeof value1) {
+        assert.fail(`${method}() can't be called on functions`);
+    } else if (value1 instanceof Promise) {
+        assert.fail(`${method}() can't be called on functions`);
+    } else if ("function" === typeof value2) {
+        assert.fail(`${method}() doesn't accept functions as parameter`);
+    } else if (value2 instanceof Promise) {
+        assert.fail(`${method}() doesn't accept promises as parameter`);
     }
 }
 

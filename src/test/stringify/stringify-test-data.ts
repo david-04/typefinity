@@ -48,7 +48,7 @@ export function stringifyTestData(value: unknown): string {
 //
 //----------------------------------------------------------------------------------------------------------------------
 
-function stringifyNumber(value: number) {
+export function stringifyNumber(value: number) {
     if (isNaN(value)) {
         return "NaN";
     } else if (value === Infinity) {
@@ -72,7 +72,7 @@ function stringifyNumber(value: number) {
 //
 //----------------------------------------------------------------------------------------------------------------------
 
-function stringifyString(value: string) {
+export function stringifyString(value: string) {
     const values = [
         ['"', value.replaceAll("\\", "\\\\").replaceAll('"', '\\"'), '"'].join(""),
         ["'", value.replaceAll("\\", "\\\\").replaceAll("'", "\\'"), "'"].join(""),

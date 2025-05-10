@@ -193,14 +193,13 @@ export namespace expect {
         }
 
         /**-------------------------------------------------------------------------------------------------------------
-         * Assert that the promise resolves (to the expected value, if given). Values are compared as `toEqual` (not
-         * `toBe`). To verify if a specific instance is returned, pass the awaited promise to `expect` instead:
+         * Assert that the promise resolves. To inspect the resolved value, pass the promise to `expect` (rather than
+         * using `toResolve`).
          *
          * ```ts
-         * await expect(await myFn()).toBe(expectedInstance);
+         * await expect(await promise).toBe(expected);
          * ```
          *
-         * @param  expected The expected value to resolve to
          * @throws If the promise rejects or if it resolves to a value other than the expected one (if given)
          *------------------------------------------------------------------------------------------------------------*/
 

@@ -1,18 +1,29 @@
 # Change Log
 
-## [0.0.4](https://github.com/david-04/typefinity/releases/tag/v0.0.4) (2025-04-11)
+## [0.0.4](https://github.com/david-04/typefinity/releases/tag/v0.0.4) (2025-05-10)
+
+Breaking changes
+
+- [expect.not.toBeFalsy](https://david-04.github.io/typefinity/classes/expect.NotAssertions.html) has been removed (use `expect.toBeTruthy` instead)
+- [expect.not.toBeTruthy](https://david-04.github.io/typefinity/classes/expect.NotAssertions.html) has been removed (use `expect.toBeFalsy` instead)
+- [expect.not.toReject](https://david-04.github.io/typefinity/classes/expect.NotAssertions.html) has been removed (use `expect.toResolve` instead)
+- [expect.toResolve](https://david-04.github.io/typefinity/classes/expect.Assertions.html) no longer accepts parameters (use `expect(await actual).toBe(expected)` or `.toEqual(expected)` instead)
+- `isFalsy` has been removed (type guarding did not always work accurately, especially with `unknown` and `any`)
+- `isTruthy` has been removed (type guarding did not always work accurately, especially with `unknown` and `any`)
 
 New features
 
-- [expect.not.toMatch](https://david-04.github.io/typefinity/functions/expect.html)
-- [expect.toMatch](https://david-04.github.io/typefinity/functions/expect.html)
+- [expect.not.toBeInstanceOf](https://david-04.github.io/typefinity/classes/expect.NotAssertions.html)
+- [expect.not.toMatch](https://david-04.github.io/typefinity/classes/expect.NotAssertions.html)
+- [expect.toBeInstanceOf](https://david-04.github.io/typefinity/classes/expect.Assertions.html)
+- [expect.toMatch](https://david-04.github.io/typefinity/classes/expect.Assertions.html)
 - [isBoolean](https://david-04.github.io/typefinity/functions/isBoolean.html)
 - [isNumber](https://david-04.github.io/typefinity/functions/isNumber.html)
 - [isString](https://david-04.github.io/typefinity/functions/isString.html)
 
 Bug fixes
 
-- [Optional](https://david-04.github.io/typefinity/classes/Optional.html).map now removes `null` and `undefined` from the mapper's return value
+- [Optional.map](https://david-04.github.io/typefinity/classes/Optional.html) now removes `null` and `undefined` from the mapper's return value
 
 ## [0.0.3](https://github.com/david-04/typefinity/releases/tag/v0.0.3) (2025-03-21)
 
@@ -26,8 +37,8 @@ New features
 - [describe](https://david-04.github.io/typefinity/functions/describe.html)
 - [expect](https://david-04.github.io/typefinity/functions/expect.html)
 - [fail](https://david-04.github.io/typefinity/functions/fail.html)
-- isFalsy (removed in version 0.0.4)
-- isTruthy (removed in version 0.0.4)
+- `isFalsy` (was later removed in version 0.0.4)
+- `isTruthy` (was later removed in version 0.0.4)
 - [it](https://david-04.github.io/typefinity/functions/it.html)
 - [Json](https://david-04.github.io/typefinity/types/Json.html)
 - [optional](https://david-04.github.io/typefinity/functions/optional.html)

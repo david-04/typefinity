@@ -1,4 +1,4 @@
-import { equal } from "assert";
+import { equal } from "node:assert";
 import { describe, it } from "node:test";
 import * as typefinity from "../describe.js";
 

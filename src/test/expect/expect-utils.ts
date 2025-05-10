@@ -1,4 +1,4 @@
-import * as assert from "assert";
+import * as assert from "node:assert";
 
 /**---------------------------------------------------------------------------------------------------------------------
  * Assert that the given values are neither promises nor functions
